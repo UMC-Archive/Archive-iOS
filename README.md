@@ -1,7 +1,6 @@
-# Front
-Front
+# Front (Swift)
 
-Branch Convention
+## Branch Convention
 작업 브랜치 생성
 기능 개발: [feature/#이슈번호]-title
 ex) [feature/#32]-title
@@ -11,7 +10,7 @@ ex) [fix/#32]-login
 ex) [refactor/#32]-login
 
 -----------------------------------------------
-Issue Convention
+##Issue Convention
 Feature: 기능 추가 시 작성
 Issue: ✅ Feature
 내용: 작업하고자 하는 기능을 입력
@@ -35,7 +34,7 @@ TODO:
 ETC: 논의할 사항 작성
 
 -----------------------------------------------------
-PR Convention
+##PR Convention
 **🔗 관련 이슈**
 
 연관된 이슈 번호를 적어주세요. (예: #123)
@@ -70,7 +69,7 @@ PR에 대해 추가적으로 논의하거나 참고해야 할 내용을 작성�
 (예: 변경사항이 코드베이스에 미치는 영향, 테스트 방법 등)
 
 -----------------------------------------------------------
-COMMIT Convention
+##COMMIT Convention
 feature : 새로운 기능이 추가되는 경우
 fix : bug가 수정되는 경우
 docs : 문서에 변경 사항이 있는 경우
