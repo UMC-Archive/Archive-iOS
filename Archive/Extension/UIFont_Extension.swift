@@ -17,10 +17,15 @@ extension UIFont {
         switch (font, rawValue) {
         case (.SFPro, 700):
             return UIFont(name: "SFProText-Bold", size: size) ?? .systemFont(ofSize: size)
+        case (.SFPro, 590):
+            return UIFont(name: "SFProText-Semibold", size: size) ?? .systemFont(ofSize: size)
         case (.SFPro, 510):
             return UIFont(name: "SFProText-Medium", size: size) ?? .systemFont(ofSize: size)
         case (.SFPro, 400):
             return UIFont(name: "SFProText-Regular", size: size) ?? .systemFont(ofSize: size)
+        case (.SFPro, 274):
+            return UIFont(name: "SFProText-Light", size: size) ?? .systemFont(ofSize: size)
+ 
         default:
             return .systemFont(ofSize: size)
         }
