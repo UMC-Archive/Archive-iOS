@@ -18,8 +18,7 @@ extension PlayListDummy {
             PlayListDummy(albumImage: UIImage(named: "myPageIcon") ?? UIImage()),
             PlayListDummy(albumImage: UIImage(named: "myPageIcon") ?? UIImage()),
             PlayListDummy(albumImage: UIImage(named: "myPageIcon") ?? UIImage()),
-            PlayListDummy(albumImage: UIImage(named: "myPageIcon") ?? UIImage()),
-            
+            PlayListDummy(albumImage: UIImage(named: "myPageIcon") ?? UIImage())
         ]
     }
 }

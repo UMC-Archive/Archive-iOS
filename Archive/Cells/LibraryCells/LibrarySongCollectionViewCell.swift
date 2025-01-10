@@ -1,16 +1,17 @@
 //
-//  PlayListCollectionViewCell.swift
+//  LibrarySongCollectionViewCell.swift
 //  Archive
 //
-//  Created by 송재곤 on 1/9/25.
+//  Created by 송재곤 on 1/10/25.
 //
+
 
 import UIKit
 import Then
 import SnapKit
 
-class PlayListCollectionViewCell: UICollectionViewCell {
-    static let playListCollectionViewIdentifier = "playListCollectionViewIdentifier"
+class LibrarySongCollectionViewCell: UICollectionViewCell {
+    static let librarySongCollectionViewIdentifier = "librarySongCollectionViewIdentifier"
     
     private enum constant {
         static let playListAlbumImageCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 50, height: 50) : CGSize(width: 50, height: 50)
@@ -28,21 +29,21 @@ class PlayListCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let playListAlbumImageCollectionView = UIImageView() //collectionView로 변경 예정
+    private let songAlbumImage = UIImageView() //collectionView로 변경 예정
     
     private let playListLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
     }
     
-    private let playListLabel = UILabel().then{
-        $0.text = "플레이리스트"
+    private let songLabel = UILabel().then{
+        $0.text = "노래 제목"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
     
-    private let trackNumLabel = UILabel().then{
-        $0.text = "재생목록 · N 트랙"
+    private let artistYearLabel = UILabel().then{
+        $0.text = "아티스트 · 년도"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
     }
@@ -53,32 +54,32 @@ class PlayListCollectionViewCell: UICollectionViewCell {
     
     private func setComponent(){
         [
-            playListAlbumImageCollectionView,
+            songAlbumImage,
             playListLabelStackView,
             etcImage
         ].forEach{
             addSubview($0)
         }
         
-        playListLabelStackView.addSubview(playListLabel)
-        playListLabelStackView.addSubview(trackNumLabel)
+        playListLabelStackView.addSubview(songLabel)
+        playListLabelStackView.addSubview(artistYearLabel)
         
-        playListAlbumImageCollectionView.snp.makeConstraints{
+        songAlbumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
             $0.size.equalTo(constant.playListAlbumImageCollectionViewSize)
         }
         
         playListLabelStackView.snp.makeConstraints{
-            $0.leading.equalTo(playListAlbumImageCollectionView.snp.trailing).offset(10 * UIScreen.main.screenWidth / 375)
+            $0.leading.equalTo(songAlbumImage.snp.trailing).offset(10 * UIScreen.main.screenWidth / 375)
             $0.size.equalTo(constant.playListLabelStackViewSize)
             $0.centerY.equalToSuperview()
         }
-        playListLabel.snp.makeConstraints{
+        songLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
         }
-        trackNumLabel.snp.makeConstraints{
-            $0.top.equalTo(playListLabel.snp.bottom)
+        artistYearLabel.snp.makeConstraints{
+            $0.top.equalTo(songLabel.snp.bottom)
         }
         etcImage.snp.makeConstraints{
             $0.trailing.equalToSuperview()
@@ -88,7 +89,13 @@ class PlayListCollectionViewCell: UICollectionViewCell {
 
     }
     
-    public func config(image: UIImage){
-        playListAlbumImageCollectionView.image = image
+    public func config(image: UIImage, songName: String, artist: String, year: String){
+        songAlbumImage.image = image
+        songLabel.text = songName
+        
+        songLabel.text = songName
+        
+        let updatedText = "\(artist) · \(year)"
+        artistYearLabel.text = updatedText
     }
 }

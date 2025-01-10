@@ -17,7 +17,10 @@ class LibraryMainViewController: UIViewController {
         self.view = rootView
         rootView.backgroundColor = .black
         rootView.playlistCollectionView.dataSource = self
+        rootView.songCollectionView.dataSource = self
+        hideAllCollectionViews()
         setupActions()
+        showCollectionView(for: segmentIndexNum)
     }
     private func setupActions() {
         rootView.librarySegmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
@@ -35,19 +38,25 @@ class LibraryMainViewController: UIViewController {
                 $0.leading.equalTo(self.rootView.librarySegmentControl.snp.leading).offset(newLeading)
                 $0.width.equalTo(underbarWidth)
             }
+            print(self.segmentIndexNum)
             self.rootView.layoutIfNeeded()
         })
         hideAllCollectionViews()
         showCollectionView(for: segmentIndexNum)
     }
+    
     private func hideAllCollectionViews() {
-          rootView.playlistCollectionView.isHidden = true
-          // 다른 컬렉션뷰도 필요시 추가로 숨길 수 있습니다.
-      }
+        rootView.playlistCollectionView.isHidden = true
+        rootView.songCollectionView.isHidden = true
+        // 다른 컬렉션뷰도 필요시 추가로 숨길 수 있습니다.
+    }
+    
     private func showCollectionView(for index: Int) {
            switch index {
            case 0:
                rootView.playlistCollectionView.isHidden = false
+           case 1:
+               rootView.songCollectionView.isHidden = false
            default:
                break
            }
@@ -57,42 +66,49 @@ class LibraryMainViewController: UIViewController {
 
 extension LibraryMainViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        let dummyCount : Int
-        switch (segmentIndexNum){
-            
-        case 0:
-            dummyCount = PlayListDummy.dummy().count
-        case 1:
-            dummyCount = 0
-        case 2:
-            dummyCount = 0
-        case 3:
-            dummyCount = 0
-        case 4:
-            dummyCount = 0
+        switch collectionView {
+        case rootView.playlistCollectionView:
+            return PlayListDummy.dummy().count
+        case rootView.songCollectionView:
+            return SongCollectionViewModel.dummy().count
         default:
-            dummyCount = 0
+            return 0
         }
-        return dummyCount
     }
-    
+
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        
-        switch (segmentIndexNum){
-        case 0:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PlayListCollectionViewCell.playListCollectionViewIdentifier, for: indexPath) as? PlayListCollectionViewCell else {
-                return UICollectionViewCell()
+        switch collectionView {
+        case rootView.playlistCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: PlayListCollectionViewCell.playListCollectionViewIdentifier,
+                for: indexPath
+            ) as? PlayListCollectionViewCell else {
+                fatalError("Failed to dequeue PlayListCollectionViewCell")
             }
-            
             let dummy = PlayListDummy.dummy()
-            
             cell.config(image: dummy[indexPath.row].albumImage)
             return cell
-            
+
+        case rootView.songCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: LibrarySongCollectionViewCell.librarySongCollectionViewIdentifier,
+                for: indexPath
+            ) as? LibrarySongCollectionViewCell else {
+                fatalError("Failed to dequeue LibrarySongCollectionViewCell")
+            }
+            let dummy = SongCollectionViewModel.dummy()
+            cell.config(
+                image: dummy[indexPath.row].albumImage,
+                songName: dummy[indexPath.row].songName,
+                artist: dummy[indexPath.row].artist,
+                year: dummy[indexPath.row].year
+            )
+            return cell
+
         default:
-            return UICollectionViewCell()
+            fatalError("Unknown UICollectionView")
         }
-        
     }
 }
+
 
