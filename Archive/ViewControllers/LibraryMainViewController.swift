@@ -25,7 +25,9 @@ class LibraryMainViewController: UIViewController {
     private func datasourceSetting() {
         rootView.playlistCollectionView.dataSource = self
         rootView.songCollectionView.dataSource = self
+        rootView.albumCollectionView.dataSource = self
         rootView.genreCollectionView.dataSource = self
+        rootView.artistCollectionView.dataSource = self
     }
     
     private func setupActions() {
@@ -54,8 +56,9 @@ class LibraryMainViewController: UIViewController {
     private func hideAllCollectionViews() {
         rootView.playlistCollectionView.isHidden = true
         rootView.songCollectionView.isHidden = true
+        rootView.albumCollectionView.isHidden = true
         rootView.genreCollectionView.isHidden = true
-        // 다른 컬렉션뷰도 필요시 추가로 숨길 수 있습니다.
+        rootView.artistCollectionView.isHidden = true
     }
     
     private func showCollectionView(for index: Int) {
@@ -64,8 +67,12 @@ class LibraryMainViewController: UIViewController {
                rootView.playlistCollectionView.isHidden = false
            case 1:
                rootView.songCollectionView.isHidden = false
+           case 2:
+               rootView.albumCollectionView.isHidden = false
            case 3:
                rootView.genreCollectionView.isHidden = false
+           case 4:
+               rootView.artistCollectionView.isHidden = false
            default:
                break
            }
@@ -83,8 +90,14 @@ extension LibraryMainViewController: UICollectionViewDataSource {
         case rootView.songCollectionView:
             return SongCollectionViewModel.dummy().count
             
+        case rootView.albumCollectionView:
+            return AlbumModel.dummy().count
+            
         case rootView.genreCollectionView:
             return GenreModel.dummy().count
+            
+        case rootView.artistCollectionView:
+            return ArtistModel.dummy().count
             
         default:
             return 0
@@ -120,6 +133,20 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             )
             return cell
             
+        case rootView.albumCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: AlbumCollectionViewCell.albumCollectionViewIdentifier,
+                for: indexPath
+            ) as? AlbumCollectionViewCell else {
+                fatalError("Failed to dequeue albumCollectionViewCell")
+            }
+            let dummy = AlbumModel.dummy()
+            cell.config(
+                image: dummy[indexPath.row].albumImage,
+                albumName: dummy[indexPath.row].albumName
+            )
+            return cell
+            
         case rootView.genreCollectionView:
             guard let cell = collectionView.dequeueReusableCell(
                 withReuseIdentifier: GenreCollectionViewCell.genreCollectionViewIdentifier,
@@ -133,6 +160,20 @@ extension LibraryMainViewController: UICollectionViewDataSource {
                 songName: dummy[indexPath.row].songName,
                 artist: dummy[indexPath.row].artist,
                 year: dummy[indexPath.row].year
+            )
+            return cell
+            
+        case rootView.artistCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: ArtistCollectionViewCell.artistCollectionViewIdentifier,
+                for: indexPath
+            ) as? ArtistCollectionViewCell else {
+                fatalError("Failed to dequeue genreCollectionViewCell")
+            }
+            let dummy = GenreModel.dummy()
+            cell.config(
+                image: dummy[indexPath.row].albumImage,
+                artistName: dummy[indexPath.row].artist
             )
             return cell
         default:

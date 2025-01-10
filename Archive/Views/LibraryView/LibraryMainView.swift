@@ -21,6 +21,9 @@ class LibraryMainView : UIView {
         static let playlistCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 50) : CGSize(width: 355, height: 50)
         
         static let playlistCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 422) : CGSize(width: 355, height: 422)
+        
+        static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 422) : CGSize(width: 355, height: 422)
+        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 206) : CGSize(width: 160, height: 206)
       }
     
     private let libraryLabel = UILabel().then{
@@ -31,6 +34,12 @@ class LibraryMainView : UIView {
       
     private let mypageIcon = UIImageView().then{
         $0.image = UIImage(named: "myPageIcon")
+    }
+    private let exploreIcon = UIImageView().then{
+        $0.image = UIImage(named: "exploreIcon")
+    }
+    private let searchIcon = UIImageView().then{
+        $0.image = UIImage(named: "searchIcon")
     }
     
     //상단 세그먼트
@@ -96,6 +105,16 @@ class LibraryMainView : UIView {
         $0.register(LibrarySongCollectionViewCell.self, forCellWithReuseIdentifier: "librarySongCollectionViewIdentifier")
     }
     
+    public let albumCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
+        $0.scrollDirection = .vertical
+        $0.itemSize = constant.albumCollectionViewIconSize
+        $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
+    }).then{
+        $0.backgroundColor = .black
+        $0.isScrollEnabled = true
+        $0.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: "albumCollectionViewIdentifier")
+    }
+    
     public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical
         $0.itemSize = constant.playlistCollectionViewIconSize
@@ -106,6 +125,15 @@ class LibraryMainView : UIView {
         $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
     }
     
+    public let artistCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
+        $0.scrollDirection = .vertical
+        $0.itemSize = constant.albumCollectionViewIconSize
+        $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
+    }).then{
+        $0.backgroundColor = .black
+        $0.isScrollEnabled = true
+        $0.register(ArtistCollectionViewCell.self, forCellWithReuseIdentifier: "artistCollectionViewIdentifier")
+    }
     
     private func setComponent(){
         
@@ -118,7 +146,11 @@ class LibraryMainView : UIView {
             selectedUnderbar,
             playlistCollectionView,
             songCollectionView,
-            genreCollectionView
+            albumCollectionView,
+            genreCollectionView,
+            artistCollectionView,
+            exploreIcon,
+            searchIcon
         ].forEach{
             addSubview($0)
         }
@@ -129,6 +161,16 @@ class LibraryMainView : UIView {
             $0.size.equalTo(constant.libraryLabelSize)
         }
         
+        exploreIcon.snp.makeConstraints{
+            $0.centerY.equalTo(libraryLabel)
+            $0.size.equalTo(constant.myPageIconSize)
+            $0.trailing.equalTo(searchIcon.snp.leading).offset(-20 * UIScreen.main.screenWidth / 375)
+        }
+        searchIcon.snp.makeConstraints{
+            $0.centerY.equalTo(libraryLabel)
+            $0.size.equalTo(constant.myPageIconSize)
+            $0.trailing.equalTo(mypageIcon.snp.leading).offset(-20 * UIScreen.main.screenWidth / 375)
+        }
         mypageIcon.snp.makeConstraints{
             $0.centerY.equalTo(libraryLabel)
             $0.size.equalTo(constant.myPageIconSize)
@@ -162,7 +204,17 @@ class LibraryMainView : UIView {
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
             $0.leading.equalTo(librarySegmentControl.snp.leading)
         }
+        albumCollectionView.snp.makeConstraints{
+            $0.size.equalTo(constant.albumCollectionViewSize)
+            $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
+            $0.leading.equalTo(librarySegmentControl.snp.leading)
+        }
         genreCollectionView.snp.makeConstraints{
+            $0.size.equalTo(constant.playlistCollectionViewSize)
+            $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
+            $0.leading.equalTo(librarySegmentControl.snp.leading)
+        }
+        artistCollectionView.snp.makeConstraints{
             $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
             $0.leading.equalTo(librarySegmentControl.snp.leading)

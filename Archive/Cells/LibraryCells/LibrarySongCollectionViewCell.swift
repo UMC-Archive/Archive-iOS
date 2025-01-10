@@ -14,7 +14,7 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
     static let librarySongCollectionViewIdentifier = "librarySongCollectionViewIdentifier"
     
     private enum constant {
-        static let playListAlbumImageCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 50, height: 50) : CGSize(width: 50, height: 50)
+        static let playListAlbumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 50, height: 50) : CGSize(width: 50, height: 50)
         static let playListLabelStackViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 101, height: 39) : CGSize(width: 101, height: 39)
         static let etcImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 3, height: 17) : CGSize(width: 3, height: 17)
     }
@@ -29,7 +29,7 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let songAlbumImage = UIImageView() //collectionView로 변경 예정
+    private let songAlbumImage = UIImageView() 
     
     private let playListLabelStackView = UIStackView().then{
         $0.axis = .vertical
@@ -67,7 +67,7 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         songAlbumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
-            $0.size.equalTo(constant.playListAlbumImageCollectionViewSize)
+            $0.size.equalTo(constant.playListAlbumImageSize)
         }
         
         playListLabelStackView.snp.makeConstraints{
