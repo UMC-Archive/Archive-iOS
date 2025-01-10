@@ -8,7 +8,7 @@
 import UIKit
 
 struct SongCollectionViewModel {
-    let albumImage: UIImage //collectionView로 변경예정?
+    let albumImage: UIImage
     let songName: String
     let artist: String
     let year: String

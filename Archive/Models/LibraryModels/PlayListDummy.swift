@@ -8,7 +8,7 @@
 import UIKit
 
 struct PlayListDummy {
-    let albumImage: UIImage //collectionView로 변경예정?
+    let albumImage: UIImage 
 }
 
 extension PlayListDummy {

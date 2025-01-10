@@ -16,12 +16,18 @@ class LibraryMainViewController: UIViewController {
         super.viewDidLoad()
         self.view = rootView
         rootView.backgroundColor = .black
-        rootView.playlistCollectionView.dataSource = self
-        rootView.songCollectionView.dataSource = self
+        datasourceSetting()
         hideAllCollectionViews()
         setupActions()
         showCollectionView(for: segmentIndexNum)
     }
+    
+    private func datasourceSetting() {
+        rootView.playlistCollectionView.dataSource = self
+        rootView.songCollectionView.dataSource = self
+        rootView.genreCollectionView.dataSource = self
+    }
+    
     private func setupActions() {
         rootView.librarySegmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
     }
@@ -48,6 +54,7 @@ class LibraryMainViewController: UIViewController {
     private func hideAllCollectionViews() {
         rootView.playlistCollectionView.isHidden = true
         rootView.songCollectionView.isHidden = true
+        rootView.genreCollectionView.isHidden = true
         // 다른 컬렉션뷰도 필요시 추가로 숨길 수 있습니다.
     }
     
@@ -57,6 +64,8 @@ class LibraryMainViewController: UIViewController {
                rootView.playlistCollectionView.isHidden = false
            case 1:
                rootView.songCollectionView.isHidden = false
+           case 3:
+               rootView.genreCollectionView.isHidden = false
            default:
                break
            }
@@ -67,10 +76,16 @@ class LibraryMainViewController: UIViewController {
 extension LibraryMainViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
+            
         case rootView.playlistCollectionView:
             return PlayListDummy.dummy().count
+            
         case rootView.songCollectionView:
             return SongCollectionViewModel.dummy().count
+            
+        case rootView.genreCollectionView:
+            return GenreModel.dummy().count
+            
         default:
             return 0
         }
@@ -104,7 +119,22 @@ extension LibraryMainViewController: UICollectionViewDataSource {
                 year: dummy[indexPath.row].year
             )
             return cell
-
+            
+        case rootView.genreCollectionView:
+            guard let cell = collectionView.dequeueReusableCell(
+                withReuseIdentifier: GenreCollectionViewCell.genreCollectionViewIdentifier,
+                for: indexPath
+            ) as? GenreCollectionViewCell else {
+                fatalError("Failed to dequeue genreCollectionViewCell")
+            }
+            let dummy = GenreModel.dummy()
+            cell.config(
+                image: dummy[indexPath.row].albumImage,
+                songName: dummy[indexPath.row].songName,
+                artist: dummy[indexPath.row].artist,
+                year: dummy[indexPath.row].year
+            )
+            return cell
         default:
             fatalError("Unknown UICollectionView")
         }

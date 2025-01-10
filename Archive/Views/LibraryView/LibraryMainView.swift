@@ -96,6 +96,16 @@ class LibraryMainView : UIView {
         $0.register(LibrarySongCollectionViewCell.self, forCellWithReuseIdentifier: "librarySongCollectionViewIdentifier")
     }
     
+    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
+        $0.scrollDirection = .vertical
+        $0.itemSize = constant.playlistCollectionViewIconSize
+        $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
+    }).then{
+        $0.backgroundColor = .black
+        $0.isScrollEnabled = true
+        $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
+    }
+    
     
     private func setComponent(){
         
@@ -107,7 +117,8 @@ class LibraryMainView : UIView {
             normalUnderbar,
             selectedUnderbar,
             playlistCollectionView,
-            songCollectionView
+            songCollectionView,
+            genreCollectionView
         ].forEach{
             addSubview($0)
         }
@@ -147,6 +158,11 @@ class LibraryMainView : UIView {
             $0.leading.equalTo(librarySegmentControl.snp.leading)
         }
         songCollectionView.snp.makeConstraints{
+            $0.size.equalTo(constant.playlistCollectionViewSize)
+            $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
+            $0.leading.equalTo(librarySegmentControl.snp.leading)
+        }
+        genreCollectionView.snp.makeConstraints{
             $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
             $0.leading.equalTo(librarySegmentControl.snp.leading)
