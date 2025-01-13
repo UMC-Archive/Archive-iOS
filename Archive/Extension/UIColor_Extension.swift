@@ -88,6 +88,11 @@ extension UIColor {
     static let black_35 = UIColor(hex: "454444")
     static let black_20 = UIColor(hex: "4F4F4F")
     static let black_10 = UIColor(hex: "555555")
+    
+    // CustimWhite
+    static let white_70 = UIColor.white.withAlphaComponent(0.7)
+    static let white_35 = UIColor.white.withAlphaComponent(0.35)
+    static let white_10 = UIColor.white.withAlphaComponent(0.1)
 }
 // Example
 // let buttonColor = .lightOrange // Hex: #FFFDF3
