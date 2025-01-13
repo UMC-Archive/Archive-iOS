@@ -61,6 +61,8 @@ class HeaderView: UICollectionViewCell {
         switch headerTitle {
         case .Banner:
             detailButton.isHidden = true
+        default:
+            return
         }
     }
 }

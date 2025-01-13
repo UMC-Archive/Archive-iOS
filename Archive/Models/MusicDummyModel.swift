@@ -1,5 +1,5 @@
 //
-//  DummyModel.swift
+//  MusicDummyModel.swift
 //  Archive
 //
 //  Created by 이수현 on 1/13/25.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct DummyModel: Hashable {
+struct MusicDummyModel: Hashable {
     let musicId: Int
     let albumURL: String
     let albumTitle: String
@@ -18,10 +18,10 @@ struct DummyModel: Hashable {
     let year: Int
 }
 
-extension DummyModel {
-    static func dummy() -> [DummyModel] {
+extension MusicDummyModel {
+    static func dummy() -> [MusicDummyModel] {
         return [
-            DummyModel(musicId: 1,
+            MusicDummyModel(musicId: 1,
                        albumURL: "https://musicmeta-phinf.pstatic.net/album/032/261/32261031.jpg?type=r360Fll&v=20241031162400",
                        albumTitle: "POWER",
                        albumSubTitle: "POWER입니다",
@@ -29,7 +29,7 @@ extension DummyModel {
                        musicTitle: "POWER",
                        artist: "G-DRAGN",
                        year: 2024),
-            DummyModel(musicId: 2,
+            MusicDummyModel(musicId: 2,
                        albumURL: "https://musicmeta-phinf.pstatic.net/album/032/261/32261031.jpg?type=r360Fll&v=20241031162400",
                        albumTitle: "POWER",
                        albumSubTitle: "POWER입니다",
@@ -37,7 +37,7 @@ extension DummyModel {
                        musicTitle: "POWER",
                        artist: "G-DRAGN",
                        year: 2024),
-            DummyModel(musicId: 3,
+            MusicDummyModel(musicId: 3,
                        albumURL: "https://musicmeta-phinf.pstatic.net/album/032/261/32261031.jpg?type=r360Fll&v=20241031162400",
                        albumTitle: "POWER",
                        albumSubTitle: "POWER입니다",
@@ -45,7 +45,7 @@ extension DummyModel {
                        musicTitle: "POWER",
                        artist: "G-DRAGN",
                        year: 2024),
-            DummyModel(musicId: 4,
+            MusicDummyModel(musicId: 4,
                        albumURL: "https://musicmeta-phinf.pstatic.net/album/032/261/32261031.jpg?type=r360Fll&v=20241031162400",
                        albumTitle: "POWER",
                        albumSubTitle: "POWER입니다",
@@ -53,7 +53,7 @@ extension DummyModel {
                        musicTitle: "POWER",
                        artist: "G-DRAGN",
                        year: 2024),
-            DummyModel(musicId: 5,
+            MusicDummyModel(musicId: 5,
                        albumURL: "https://musicmeta-phinf.pstatic.net/album/032/261/32261031.jpg?type=r360Fll&v=20241031162400",
                        albumTitle: "POWER",
                        albumSubTitle: "POWER입니다",

@@ -10,7 +10,7 @@ import UIKit
 class HomeViewController: UIViewController {
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let dummyData = DummyModel.dummy()
+    private let dummyData = MusicDummyModel.dummy()
     
     override func viewDidLoad() {
         super.viewDidLoad()

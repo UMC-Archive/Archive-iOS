@@ -122,7 +122,7 @@ class BannerCell: UICollectionViewCell {
     }
     
     
-    public func config(album: DummyModel) {
+    public func config(album: MusicDummyModel) {
         albumImageView.kf.setImage(with: URL(string: album.albumURL))
         albumTitleLabel.text = album.albumTitle
         albumSubTitleLabel.text = album.albumSubTitle
