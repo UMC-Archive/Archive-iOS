@@ -19,8 +19,9 @@ class HomeView: UIView {
         view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
         
         // 셀 등록
-        view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        view.register(BigBannerCell.self, forCellWithReuseIdentifier: BigBannerCell.id)
         view.register(PointOfViewCell.self, forCellWithReuseIdentifier: PointOfViewCell.id)
+        view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
 
     }
     
@@ -65,17 +66,19 @@ class HomeView: UIView {
         return UICollectionViewCompositionalLayout(sectionProvider: {[weak self] sectionIndex, _ in
             switch sectionIndex {
             case 0: // 당신을 위한 아카이브
-                return self?.createBannerSection()
+                return self?.createBigBannerSection()
             case 1: // 탐색했던 시점
                 return self?.createPointOfViewSection()
-            default:
+            case 2: // 빠른 선곡
                 return self?.createBannerSection()
+            default:
+                return self?.createBigBannerSection()
             }
         }, configuration: config)
     }
     
     // 당신을 위한 아카이브
-    private func createBannerSection() -> NSCollectionLayoutSection {
+    private func createBigBannerSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
@@ -85,13 +88,10 @@ class HomeView: UIView {
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-//        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
         
-        // 헤더
-        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
-        let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
-        
+        let header = createHeader()
         section.boundarySupplementaryItems = [header]
+        
         return section
     }
     
@@ -106,13 +106,36 @@ class HomeView: UIView {
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-//        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
         
-        // 헤더
+        let header = createHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
+    // 빠른 선곡 / 최근 들은 노래
+    private func createBannerSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 14)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(140), heightDimension: .absolute(186))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        
+        let header = createHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+
+    // 헤더 생성
+    private func createHeader() -> NSCollectionLayoutBoundarySupplementaryItem {
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
         let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         
-        section.boundarySupplementaryItems = [header]
-        return section
+        return header
     }
 }

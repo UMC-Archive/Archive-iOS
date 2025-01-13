@@ -59,7 +59,7 @@ class HeaderView: UICollectionViewCell {
         
         // 배너일 경우 디테일 버튼 히든 처리
         switch headerTitle {
-        case .Banner:
+        case .Archive:
             detailButton.isHidden = true
         default:
             return

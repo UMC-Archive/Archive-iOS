@@ -10,8 +10,9 @@ import UIKit
 class HomeViewController: UIViewController {
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let musicDummyData = MusicDummyModel.dummy()
-    private let pointDummyData = PointOfViewDummyModel.dummy()
+    private let archiveData = MusicDummyModel.dummy()
+    private let pointData = PointOfViewDummyModel.dummy()
+    private let fastSelectionData = MusicDummyModel.dummy()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,13 +25,17 @@ class HomeViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case .musicItem(let item):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.config(album: item)
+            case .ArchiveItem(let item):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
+                (cell as? BigBannerCell)?.config(album: item)
                 return cell
-            case .pointItem(let item):
+            case .PointItem(let item):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
                 (cell as? PointOfViewCell)?.config(data: item)
+                return cell
+            case .FastSelectionItem(let item):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.config(data: item)
                 return cell
             }
         })
@@ -39,9 +44,11 @@ class HomeViewController: UIViewController {
             let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
             switch section {
-            case .Banner(let headerTitle):
+            case .BigBanner(let headerTitle):
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
             case .PointOfView(let headerTitle):
+                (headerView as? HeaderView)?.config(headerTitle: headerTitle)
+            case .Banner(let headerTitle):
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
             default:
                 return UICollectionReusableView()
@@ -52,16 +59,26 @@ class HomeViewController: UIViewController {
     }
     
     private func setSnapShot() {
+        // 스냅샷 생성
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        let bannerSection = Section.Banner(.Banner) // 당신을 위한 아카이브 섹션
+        
+        // 섹션 정의
+        let archiveSection = Section.BigBanner(.Archive) // 당신을 위한 아카이브 섹션
         let pointOfViewSection = Section.PointOfView(.PointOfView) // 탐색했던 시점
-        snapshot.appendSections([bannerSection, pointOfViewSection])
+        let fastSelectionSection = Section.Banner(.FastSelection) // 빠른 선곡
         
-        let bannerItem = musicDummyData.map{Item.musicItem($0)}
-        snapshot.appendItems(bannerItem, toSection: bannerSection)
         
-        let pointItem = pointDummyData.map{Item.pointItem($0)}
+        // 섹션 추가
+        snapshot.appendSections([archiveSection, pointOfViewSection, fastSelectionSection])
+        
+        let archiveItem = archiveData.map{Item.ArchiveItem($0)}
+        snapshot.appendItems(archiveItem, toSection: archiveSection)
+        
+        let pointItem = pointData.map{Item.PointItem($0)}
         snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        
+        let fastSelectionItem = fastSelectionData.map{Item.FastSelectionItem($0)}
+        snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
         
         dataSource?.apply(snapshot)
     }
