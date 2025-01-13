@@ -22,7 +22,7 @@ class HomeView: UIView {
         view.register(BigBannerCell.self, forCellWithReuseIdentifier: BigBannerCell.id)
         view.register(PointOfViewCell.self, forCellWithReuseIdentifier: PointOfViewCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
-
+        view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
     }
     
     override init(frame: CGRect) {
@@ -71,6 +71,8 @@ class HomeView: UIView {
                 return self?.createPointOfViewSection()
             case 2: // 빠른 선곡
                 return self?.createBannerSection()
+            case 3 : // 추천 곡
+                return self?.createVerticalSection()
             default:
                 return self?.createBigBannerSection()
             }
@@ -121,6 +123,24 @@ class HomeView: UIView {
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(140), heightDimension: .absolute(186))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        
+        let header = createHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
+    // 추천곡 / 최근 추가 노래
+    private func createVerticalSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.25))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 10, trailing: 20)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(317), heightDimension: .absolute(275))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 4)
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
