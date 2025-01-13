@@ -7,8 +7,12 @@
 
 import Foundation
 
+enum HeaderTitle: String {
+    case Banner = "당신을 위한 아카이브"
+}
+
 enum Section: Hashable {
-    case Banner // 홈 - 당신을 위한 아카이브
+    case Banner(HeaderTitle) // 홈 - 당신을 위한 아카이브
 }
 
 enum Item: Hashable {

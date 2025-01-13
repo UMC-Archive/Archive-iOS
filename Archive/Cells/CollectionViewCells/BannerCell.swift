@@ -10,11 +10,15 @@ import Kingfisher
 
 class BannerCell: UICollectionViewCell {
     static let id = "BannerCell"
+    private let imageWidth = 185.0
     
     // 앨범 이미지
-    private let albumImageView = UIImageView().then { view in
+    private lazy var albumImageView = UIImageView().then { view in
         view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
+        view.layer.cornerRadius = imageWidth / 2
+        view.layer.borderWidth = 2
+        view.layer.borderColor = UIColor(hex: "929292")?.withAlphaComponent(0.5).cgColor
     }
     
     private let infoGroupView = UIView()
@@ -47,12 +51,19 @@ class BannerCell: UICollectionViewCell {
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .clear
+        setBorder()
         setSubView()
         setUI()
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    private func setBorder() {
+        self.layer.cornerRadius = 10
+        self.layer.borderWidth = 1
+        self.layer.borderColor = UIColor.white.cgColor
     }
     
     private func setSubView() {
@@ -73,7 +84,7 @@ class BannerCell: UICollectionViewCell {
     private func setUI() {
         // 앨범 이미지
         albumImageView.snp.makeConstraints { make in
-            make.width.height.equalTo(185)
+            make.width.height.equalTo(imageWidth)
             make.top.equalToSuperview().inset(10.5)
             make.trailing.equalToSuperview().inset(11)
         }
