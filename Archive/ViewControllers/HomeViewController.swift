@@ -10,9 +10,8 @@ import UIKit
 class HomeViewController: UIViewController {
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let archiveData = MusicDummyModel.dummy()
+    private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
-    private let fastSelectionData = MusicDummyModel.dummy()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -33,16 +32,14 @@ class HomeViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
                 (cell as? PointOfViewCell)?.config(data: item)
                 return cell
-            case .FastSelectionItem(let item): // 빠른 선곡 / 최근 들은 노래
+            case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.config(data: item)
                 return cell
-            case .RecommendMusicItem(let item): // 추천곡 / 최근 추가 노래
+            case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: item)
                 return cell
-            default:
-                return UICollectionViewCell()
             }
         })
         
@@ -75,23 +72,32 @@ class HomeViewController: UIViewController {
         let pointOfViewSection = Section.PointOfView(.PointOfView) // 탐색했던 시점
         let fastSelectionSection = Section.Banner(.FastSelection) // 빠른 선곡
         let recommendSection = Section.Vertical(.RecommendMusic) // 당신을 위한 추천곡
+        let RecentlyListendMusicSection = Section.Banner(.RecentlyListendMusic) // 최근 들은 노래
+        let RecentlyAddMusicSection = Section.Vertical(.RecentlyAddMusic) // 최근 추가한 노래
         
         
         // 섹션 추가
         snapshot.appendSections([archiveSection, pointOfViewSection, fastSelectionSection,
-                                 recommendSection])
+                                 recommendSection, RecentlyListendMusicSection,
+                                 RecentlyAddMusicSection])
         
-        let archiveItem = archiveData.map{Item.ArchiveItem($0)}
+        let archiveItem = musicData.map{Item.ArchiveItem($0)}
         snapshot.appendItems(archiveItem, toSection: archiveSection)
         
         let pointItem = pointData.map{Item.PointItem($0)}
         snapshot.appendItems(pointItem, toSection: pointOfViewSection)
         
-        let fastSelectionItem = fastSelectionData.map{Item.FastSelectionItem($0)}
+        let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
-        let recommendItem = archiveData.map{Item.RecommendMusicItem($0)}
+        let recommendItem = musicData.map{Item.RecommendMusicItem($0)}
         snapshot.appendItems(recommendItem, toSection: recommendSection)
+        
+        let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
+        snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
+        
+        let RecentlyAddMusicItem = musicData.map{Item.RecentlyAddMusicItem($0)}
+        snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
     }

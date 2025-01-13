@@ -69,9 +69,9 @@ class HomeView: UIView {
                 return self?.createBigBannerSection()
             case 1: // 탐색했던 시점
                 return self?.createPointOfViewSection()
-            case 2: // 빠른 선곡
+            case 2, 4: // 빠른 선곡, 최근 들은 노래
                 return self?.createBannerSection()
-            case 3 : // 추천 곡
+            case 3, 5 : // 추천 곡, 최근 추가 노래
                 return self?.createVerticalSection()
             default:
                 return self?.createBigBannerSection()

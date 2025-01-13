@@ -62,7 +62,7 @@ class HeaderView: UICollectionViewCell {
         case .Archive:
             detailButton.isHidden = true
         default:
-            return
+            detailButton.isHidden = false
         }
     }
 }
