@@ -19,4 +19,5 @@ enum Section: Hashable {
 
 enum Item: Hashable {
     case musicItem(MusicDummyModel) // 앨범 아이템
+    case pointItem(PointOfViewDummyModel) // 탐색했던 시점 아이템
 }

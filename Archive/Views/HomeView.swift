@@ -15,8 +15,13 @@ class HomeView: UIView {
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
         view.backgroundColor = .clear
         
-        view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        // 헤더 등록
         view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
+        
+        // 셀 등록
+        view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        view.register(PointOfViewCell.self, forCellWithReuseIdentifier: PointOfViewCell.id)
+
     }
     
     override init(frame: CGRect) {
@@ -59,14 +64,17 @@ class HomeView: UIView {
         config.interSectionSpacing = 40  // 섹션 간 간격
         return UICollectionViewCompositionalLayout(sectionProvider: {[weak self] sectionIndex, _ in
             switch sectionIndex {
-            case 0:
+            case 0: // 당신을 위한 아카이브
                 return self?.createBannerSection()
+            case 1: // 탐색했던 시점
+                return self?.createPointOfViewSection()
             default:
                 return self?.createBannerSection()
             }
         }, configuration: config)
     }
     
+    // 당신을 위한 아카이브
     private func createBannerSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
@@ -77,7 +85,28 @@ class HomeView: UIView {
         
         let section = NSCollectionLayoutSection(group: group)
         section.orthogonalScrollingBehavior = .continuous
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
+//        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
+        
+        // 헤더
+        let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
+        let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        
+        section.boundarySupplementaryItems = [header]
+        return section
+    }
+    
+    // 탐색했던 시점
+    private func createPointOfViewSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 10)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(100), heightDimension: .absolute(35))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+//        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
         
         // 헤더
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))

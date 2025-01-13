@@ -38,6 +38,7 @@ class PointOfViewCell: UICollectionViewCell {
     
     private func setBorder() {
         self.layer.cornerRadius = 6
+        self.clipsToBounds = true
     }
     
     private func setSubView() {
