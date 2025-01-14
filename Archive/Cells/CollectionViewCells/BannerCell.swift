@@ -61,7 +61,7 @@ class BannerCell: UICollectionViewCell {
         // 아티스트
         artistLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
-            make.horizontalEdges.bottom.equalToSuperview().inset(3)
+            make.horizontalEdges.equalToSuperview().inset(3)
         }
     }
     

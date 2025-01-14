@@ -46,7 +46,7 @@ class HeaderView: UICollectionViewCell {
         }
         
         detailButton.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview()
+            make.centerY.equalToSuperview()
             make.leading.equalTo(titleLabel.snp.trailing)
             make.trailing.equalToSuperview().inset(8)
             make.width.equalTo(12)

@@ -14,6 +14,7 @@ enum HeaderTitle: String {
     case RecommendMusic = "당신을 위한 추천곡"
     case RecentlyListendMusic = "최근 들은 노래"
     case RecentlyAddMusic = "최근에 추가한 노래"
+    case none
 }
 
 enum Section: Hashable {

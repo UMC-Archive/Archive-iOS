@@ -12,9 +12,12 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.isHidden = true
+        self.homeView.collectionView.delegate = self
         
         view = homeView
         setDataSource()
@@ -100,5 +103,23 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+}
+
+extension HomeViewController: UICollectionViewDelegate {
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else {return }
+        
+        switch section {
+        case .BigBanner(let headerTitle):
+            // 연결 필요
+            return
+        case .PointOfView(let headerTitle):
+            // 연결 필요
+            return
+        case .Banner, .Vertical:
+            let nextVC = DetailViewController(section: section)
+            self.navigationController?.pushViewController(nextVC, animated: true)
+        }
     }
 }
