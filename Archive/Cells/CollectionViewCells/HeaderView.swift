@@ -7,7 +7,7 @@
 
 import UIKit
 
-class HeaderView: UICollectionViewCell {
+class HeaderView: UICollectionReusableView {
     static let id = "HeaderView"
     
     // 헤더 타이틀
@@ -20,7 +20,6 @@ class HeaderView: UICollectionViewCell {
     public lazy var detailButton = UIButton().then { btn in
         btn.setImage(.init(systemName: "chevron.right"), for: .normal)
         btn.tintColor = .white
-//        btn.isHidden = self.headerTitle == .Banner // 홈일 때는 숨기기
     }
     
     override init(frame: CGRect) {
@@ -31,6 +30,13 @@ class HeaderView: UICollectionViewCell {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.titleLabel.text = ""
+        detailButton.removeTarget(nil, action: nil, for: .allEvents)
     }
     
     private func setSubView() {

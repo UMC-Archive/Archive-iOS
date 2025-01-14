@@ -48,6 +48,10 @@ class DetailViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.config(data: data)
                 return cell
+            case .RecommendMusicItem(let data), .RecentlyAddMusicItem(let data):
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+                (cell as? VerticalCell)?.config(data: data)
+                return cell
             default:
                 return UICollectionViewCell()
             }

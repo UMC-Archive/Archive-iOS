@@ -34,6 +34,7 @@ class DetailView: UIView {
         view.backgroundColor = .black
         
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
     }
     
     required init?(coder: NSCoder) {
@@ -66,8 +67,8 @@ class DetailView: UIView {
             switch self?.section {
             case .Banner:  // 빠른 선곡, 최근 들은 노래
                 self?.createBannerSection()
-//            case .Vertical: // 당신을 위한 추천곡, 최근 추가한 노래
-//                <#code#>
+            case .Vertical: // 당신을 위한 추천곡, 최근 추가한 노래
+                self?.createVerticalSection()
             default:
                 self?.createBannerSection()
             }
@@ -77,15 +78,25 @@ class DetailView: UIView {
     private func createBannerSection() -> NSCollectionLayoutSection {
         let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.5), heightDimension: .fractionalHeight(1.0))
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
-//        item.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 20, trailing: 0) // 위아래 간격 추가
-        
-        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(250))
+
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(225))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, repeatingSubitem: item, count: 2)
-        group.interItemSpacing = .fixed(10)
-//        group.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 15, trailing: 0)
+        group.interItemSpacing = .fixed(15)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 30, trailing: 0)
+        
+        return section
+    }
+    
+    // 추천곡 / 최근 추가 노래
+    private func createVerticalSection() -> NSCollectionLayoutSection {
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(0.25))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 12, trailing: 0)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(275))
+        let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, subitems: [item])
+        let section = NSCollectionLayoutSection(group: group)
         
         return section
     }

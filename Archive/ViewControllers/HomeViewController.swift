@@ -17,12 +17,12 @@ class HomeViewController: UIViewController {
         super.viewDidLoad()
         
         self.navigationController?.navigationBar.isHidden = true
-        self.homeView.collectionView.delegate = self
         
         view = homeView
         setDataSource()
         setSnapShot()
     }
+
     
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
@@ -47,8 +47,16 @@ class HomeViewController: UIViewController {
         })
         
         dataSource?.supplementaryViewProvider = {[weak self] collectionView, kind, indexPath in
-            let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
+            guard let self = self else {return UICollectionReusableView() }
+            let section = self.dataSource?.sectionIdentifier(for: indexPath.section)
+            
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
+            // 버튼에 UIAction 추가
+            (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
+                guard let self = self, let section = section else { return }
+                self.handleDetailButtonTap(for: section)
+            }), for: .touchUpInside)
+
             switch section {
             case .BigBanner(let headerTitle):
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
@@ -64,6 +72,12 @@ class HomeViewController: UIViewController {
             
             return headerView
         }
+        
+    }
+    
+    private func handleDetailButtonTap(for section: Section) {
+        let nextVC = DetailViewController(section: section)
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     private func setSnapShot() {
@@ -103,23 +117,5 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
-    }
-}
-
-extension HomeViewController: UICollectionViewDelegate {
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let section = dataSource?.sectionIdentifier(for: indexPath.section) else {return }
-        
-        switch section {
-        case .BigBanner(let headerTitle):
-            // 연결 필요
-            return
-        case .PointOfView(let headerTitle):
-            // 연결 필요
-            return
-        case .Banner, .Vertical:
-            let nextVC = DetailViewController(section: section)
-            self.navigationController?.pushViewController(nextVC, animated: true)
-        }
     }
 }

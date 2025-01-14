@@ -42,6 +42,15 @@ class VerticalCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        imageView.image = nil
+        titleLabel.text = ""
+        artistYearLabel.text = ""
+        overflowButton.removeTarget(nil, action: nil, for: .allEvents)
+    }
+    
     private func setSubView() {
         [
             imageView,
