@@ -11,6 +11,28 @@ import Kingfisher
 class BigBannerCell: UICollectionViewCell {
     static let id = "BigBannerCell"
     private let imageWidth = 185.0
+    private let holeWidthHeight = 28.68
+    
+    // CD 그룹
+    private let CDGrorupView = UIView()
+    
+    // CD 케이스
+    private let CDCaseImageView = UIImageView().then { view in
+        view.image = .cDcase
+        view.contentMode = .scaleAspectFit
+        view.clipsToBounds = true
+    }
+    
+    // CD 구멍
+    private lazy var CDHole = UIImageView().then { view in
+        view.image = .ellipse
+        view.contentMode = .scaleAspectFit
+        view.clipsToBounds = true
+        
+        view.layer.cornerRadius = holeWidthHeight / 2
+        view.layer.borderColor = UIColor(hex: "#929292")?.withAlphaComponent(0.5).cgColor
+        view.layer.borderWidth = 2
+    }
     
     // 앨범 이미지
     private lazy var albumImageView = UIImageView().then { view in
@@ -77,6 +99,11 @@ class BigBannerCell: UICollectionViewCell {
     }
     
     private func setSubView() {
+        [
+            CDCaseImageView,
+            albumImageView,
+            CDHole
+        ].forEach{CDGrorupView.addSubview($0)}
         
         [
             albumTitleLabel,
@@ -86,12 +113,24 @@ class BigBannerCell: UICollectionViewCell {
         ].forEach{infoGroupView.addSubview($0)}
         
         [
-            albumImageView,
+            CDGrorupView,
             infoGroupView
         ].forEach{self.addSubview($0)}
     }
     
     private func setUI() {
+        
+        // CD 그룹
+        CDGrorupView.snp.makeConstraints { make in
+            make.top.horizontalEdges.equalToSuperview()
+            make.height.equalTo(206)
+        }
+        
+        // CD case
+        CDCaseImageView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
         // 앨범 이미지
         albumImageView.snp.makeConstraints { make in
             make.width.height.equalTo(imageWidth)
@@ -99,9 +138,15 @@ class BigBannerCell: UICollectionViewCell {
             make.trailing.equalToSuperview().inset(11)
         }
         
+        // CD 구멍
+        CDHole.snp.makeConstraints { make in
+            make.center.equalTo(albumImageView)
+            make.width.height.equalTo(holeWidthHeight)
+        }
+        
         // 정보 그룹
         infoGroupView.snp.makeConstraints { make in
-            make.top.equalTo(albumImageView.snp.bottom).offset(8)
+            make.top.equalTo(CDGrorupView.snp.bottom).offset(8)
             make.horizontalEdges.equalToSuperview().inset(14)
             make.bottom.equalToSuperview().inset(8)
         }
