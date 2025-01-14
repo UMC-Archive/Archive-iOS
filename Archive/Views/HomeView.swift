@@ -9,7 +9,7 @@ import UIKit
 
 class HomeView: UIView {
     // 상단 뷰
-    private let topView = TopView(type: .home)
+    public let topView = TopView(type: .home)
     
     // 모던 컬렉션뷰
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in

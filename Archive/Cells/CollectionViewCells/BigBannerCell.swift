@@ -60,6 +60,16 @@ class BigBannerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        albumImageView.image = nil
+        albumTitleLabel.text = ""
+        albumSubTitleLabel.text = ""
+        yearLabel.text = ""
+        artistLabel.text = ""
+    }
+    
+    
     private func setBorder() {
         self.layer.cornerRadius = 10
         self.layer.borderWidth = 1

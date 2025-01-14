@@ -36,6 +36,13 @@ class PointOfViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        albumImageView.image = nil
+        titleLabel.text = ""
+    }
+    
     private func setBorder() {
         self.layer.cornerRadius = 6
         self.clipsToBounds = true
