@@ -22,7 +22,6 @@ class HomeViewController: UIViewController {
         setDataSource()
         setSnapShot()
     }
-
     
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
