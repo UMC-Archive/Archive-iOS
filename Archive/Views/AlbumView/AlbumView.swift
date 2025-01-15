@@ -102,7 +102,6 @@ class AlbumView: UIView {
             make.edges.equalToSuperview()
             make.width.equalTo(scrollView)
             make.bottom.equalTo(collectionView)
-//            make.height.equalTo(2000).priority(.low)
         }
         
         albumCDView.snp.makeConstraints { make in

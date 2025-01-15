@@ -10,6 +10,12 @@ import UIKit
 // 수록곡 뷰
 class AlbumTrackView: UIView {
     private let artistImageWidth: CGFloat = 20
+    
+    // 이미지 포합 그룹 뷰
+    private let imageInfoGroupView = UIView()
+    
+    // 정보 그룹 뷰
+    private let infoGroupView = UIView()
         
     // 수록곡 이미지 뷰
     private let trackImageView = AlbumImageView()
@@ -44,7 +50,8 @@ class AlbumTrackView: UIView {
 
     // 수록곡 컬렉션뷰
     public let trackCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then({ layout in
-        layout.itemSize = CGSize(width: 303, height: 50)
+        // AlbumTrackView의 inset 합 40, collectionView inset 합 32
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 72, height: 50)
         layout.minimumInteritemSpacing = 10
     })).then { view in
         view.backgroundColor = .clear
@@ -66,49 +73,67 @@ class AlbumTrackView: UIView {
     
     private func setSubView() {
         [
-            trackImageView,
             trackTitleLabel,
             trackArtist,
             artistImageView,
             trackDetailLabel,
+        ].forEach{infoGroupView.addSubview($0)}
+        
+        [
+            trackImageView,
+            infoGroupView
+        ].forEach{imageInfoGroupView.addSubview($0)}
+        
+        [
+            imageInfoGroupView,
             trackCollectionView
         ].forEach{self.addSubview($0)}
     }
     
     private func setUI() {
+        
+        imageInfoGroupView.snp.makeConstraints { make in
+            make.top.equalToSuperview().offset(17)
+            make.horizontalEdges.equalToSuperview().inset(16)
+            make.height.equalTo(120)
+        }
+        
         trackImageView.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(17)
-            make.leading.equalToSuperview().inset(16)
+            make.top.leading.equalToSuperview()
             make.width.height.equalTo(120)
         }
         
+        infoGroupView.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview().inset(17)
+            make.leading.equalTo(trackImageView.snp.trailing).offset(16)
+            make.trailing.equalToSuperview()
+        }
+        
+        
         trackTitleLabel.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(34)
-            make.leading.equalTo(trackImageView.snp.trailing).offset(15)
-            make.trailing.equalToSuperview().inset(15)
+            make.top.horizontalEdges.equalToSuperview()
             make.height.equalTo(40)
         }
         
         artistImageView.snp.makeConstraints { make in
             make.top.equalTo(trackTitleLabel.snp.bottom).offset(10)
-            make.leading.equalTo(trackTitleLabel)
+            make.leading.equalToSuperview()
             make.width.height.equalTo(artistImageWidth)
         }
         
         trackArtist.snp.makeConstraints { make in
             make.centerY.equalTo(artistImageView)
             make.leading.equalTo(artistImageView.snp.trailing).offset(6)
-            make.trailing.equalTo(trackTitleLabel)
+            make.trailing.equalToSuperview().priority(.low)
         }
         
         trackDetailLabel.snp.makeConstraints { make in
             make.top.equalTo(artistImageView.snp.bottom).offset(2)
-            make.leading.equalTo(trackTitleLabel)
-            make.trailing.equalTo(trackTitleLabel)
+            make.horizontalEdges.equalToSuperview()
         }
         
         trackCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(trackImageView.snp.bottom).offset(20)
+            make.top.equalTo(imageInfoGroupView.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().inset(17)
         }
