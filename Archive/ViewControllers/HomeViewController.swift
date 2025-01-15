@@ -36,12 +36,14 @@ class HomeViewController: UIViewController {
                 return cell
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.config(data: item)
+                (cell as? BannerCell)?.configMusic(data: item)
                 return cell
             case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: item)
                 return cell
+            default:
+                return UICollectionViewCell()
             }
         })
         
