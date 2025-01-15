@@ -14,6 +14,8 @@ enum HeaderTitle: String {
     case RecommendMusic = "당신을 위한 추천곡"
     case RecentlyListendMusic = "최근 들은 노래"
     case RecentlyAddMusic = "최근에 추가한 노래"
+    case AnotherAlbum = "이 아티스트의 다른 앨범"
+    case RecommendAlbum = "당신을 위한 앨범 추천"
 }
 
 enum Section: Hashable {
@@ -30,4 +32,6 @@ enum Item: Hashable {
     case RecommendMusicItem(MusicDummyModel) // 당신을 위한 추천곡
     case RecentlyListendMusicItem(MusicDummyModel) // 최근 들은 노래
     case RecentlyAddMusicItem(MusicDummyModel) // 최근에 추가한 노래
+    case AnotherAlbum(AlbumDummyModel) // 이 아티스트의 다른 앨범
+    case RecommendAlbum(AlbumDummyModel) // 당신을 위한 앨범 추천
 }
