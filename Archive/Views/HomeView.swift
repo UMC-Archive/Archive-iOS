@@ -85,7 +85,7 @@ class HomeView: UIView {
         let item = NSCollectionLayoutItem(layoutSize: itemSize)
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 20)
         
-        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(230), heightDimension: .absolute(278))
+        let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(250), heightDimension: .absolute(264))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
