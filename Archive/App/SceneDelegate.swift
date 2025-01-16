@@ -6,6 +6,7 @@
 //
 import SpotifyiOS
 import UIKit
+import Foundation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -26,17 +27,23 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.makeKeyAndVisible()
     }
     
+    
     // Spotify 인증 콜백 처리
        func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
            guard let url = URLContexts.first?.url else { return }
 
-           let parameters = SpotifyAuthManager.shared.appRemote.authorizationParameters(from: url)
-           if let accessToken = parameters?[SPTAppRemoteAccessTokenKey] {
-               SpotifyAuthManager.shared.accessToken = accessToken
-               SpotifyAuthManager.shared.appRemote.connectionParameters.accessToken = accessToken
-           } else if let errorDescription = parameters?[SPTAppRemoteErrorDescriptionKey] {
-               print("Spotify authorization error: \(errorDescription)")
-           }
+              guard let appRemote = SpotifyAuthManager.shared.appRemote else {
+                  print("AppRemote is not initialized")
+                  return
+              }
+
+              let parameters = appRemote.authorizationParameters(from: url)
+              if let accessToken = parameters?[SPTAppRemoteAccessTokenKey] {
+                  SpotifyAuthManager.shared.accessToken = accessToken
+                  appRemote.connectionParameters.accessToken = accessToken
+              } else if let errorDescription = parameters?[SPTAppRemoteErrorDescriptionKey] {
+                  print("Spotify authorization error: \(errorDescription)")
+              }
        }
 
        // 앱 활성화 시 Spotify 연결
@@ -71,16 +78,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
     }
 
-    func sceneDidBecomeActive(_ scene: UIScene) {
-        // Called when the scene has moved from an inactive state to an active state.
-        // Use this method to restart any tasks that were paused (or not yet started) when the scene was inactive.
-    }
+ 
 
-    func sceneWillResignActive(_ scene: UIScene) {
-        // Called when the scene will move from an active state to an inactive state.
-        // This may occur due to temporary interruptions (ex. an incoming phone call).
-    }
-
+   
     func sceneWillEnterForeground(_ scene: UIScene) {
         // Called as the scene transitions from the background to the foreground.
         // Use this method to undo the changes made on entering the background.

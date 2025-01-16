@@ -25,7 +25,6 @@
 		CB0135952D2D773300166130 /* Exceptions for "Archive" folder in "Archive" target */ = {
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
-				App/SpotifyAuthManager.swift,
 				Assets.xcassets,
 				Info.plist,
 			);
