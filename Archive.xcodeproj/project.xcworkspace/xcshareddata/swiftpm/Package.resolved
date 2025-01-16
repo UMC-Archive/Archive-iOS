@@ -1,5 +1,5 @@
 {
-  "originHash" : "76bf9c2e4f1f75b33a34ec4d5f5d78fcabffbe2a360339d59e6df8d79a04ecf1",
+  "originHash" : "707cb521d3bc0696711f1c14de9c789bc1a321738839ee3633a2cf743b3df2c7",
   "pins" : [
     {
       "identity" : "alamofire",
@@ -8,6 +8,15 @@
       "state" : {
         "revision" : "513364f870f6bfc468f9d2ff0a95caccc10044c5",
         "version" : "5.10.2"
+      }
+    },
+    {
+      "identity" : "ios-sdk",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/spotify/ios-sdk",
+      "state" : {
+        "revision" : "abb7052d6c6969c79d52ba7fe8b9ddb5f2613f79",
+        "version" : "1.2.5"
       }
     },
     {

@@ -4,7 +4,7 @@
 //
 //  Created by 이수현 on 1/7/25.
 //
-
+import SpotifyiOS
 import UIKit
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -19,9 +19,50 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-        window?.rootViewController = UIViewController()
+        // StartPageView를 루트 뷰 컨트롤러로 설정
+        let startPageView = StartPageVC()
+        window?.rootViewController = startPageView
+   
         window?.makeKeyAndVisible()
     }
+    
+    // Spotify 인증 콜백 처리
+       func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+           guard let url = URLContexts.first?.url else { return }
+
+           let parameters = SpotifyAuthManager.shared.appRemote.authorizationParameters(from: url)
+           if let accessToken = parameters?[SPTAppRemoteAccessTokenKey] {
+               SpotifyAuthManager.shared.accessToken = accessToken
+               SpotifyAuthManager.shared.appRemote.connectionParameters.accessToken = accessToken
+           } else if let errorDescription = parameters?[SPTAppRemoteErrorDescriptionKey] {
+               print("Spotify authorization error: \(errorDescription)")
+           }
+       }
+
+       // 앱 활성화 시 Spotify 연결
+       func sceneDidBecomeActive(_ scene: UIScene) {
+           if let _ = SpotifyAuthManager.shared.accessToken {
+               SpotifyAuthManager.shared.connect()
+           }
+       }
+
+       // 앱 비활성화 시 Spotify 연결 해제
+       func sceneWillResignActive(_ scene: UIScene) {
+           SpotifyAuthManager.shared.disconnect()
+       }
+    func appRemoteDidEstablishConnection(_ appRemote: SPTAppRemote) {
+      print("connected")
+    }
+    func appRemote(_ appRemote: SPTAppRemote, didDisconnectWithError error: Error?) {
+      print("disconnected")
+    }
+    func appRemote(_ appRemote: SPTAppRemote, didFailConnectionAttemptWithError error: Error?) {
+      print("failed")
+    }
+    func playerStateDidChange(_ playerState: SPTAppRemotePlayerState) {
+      print("player state changed")
+    }
+
 
     func sceneDidDisconnect(_ scene: UIScene) {
         // Called as the scene is being released by the system.
