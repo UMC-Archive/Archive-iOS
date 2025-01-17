@@ -50,21 +50,8 @@ extension AlbumCurationDummyModel {
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024)
                                    ]),
-            anotherAlbum: [
-                AlbumDummyModel(id: 0, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 1, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 2, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 3, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 4, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans")
-            ],
-            
-            recommendAlbum: [
-                AlbumDummyModel(id: 0, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 1, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 2, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 3, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans"),
-                AlbumDummyModel(id: 4, albumImageURL: albumImage, albumTitle: "NewJeans 2nd EP", artist: "New Jeans")
-            ]
+            anotherAlbum: AlbumDummyModel.dummy(),
+            recommendAlbum: AlbumDummyModel.dummy()
         )
     }
 }

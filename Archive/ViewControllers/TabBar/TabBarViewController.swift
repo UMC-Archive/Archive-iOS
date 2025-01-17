@@ -9,7 +9,7 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
-    private let exploreVC = UIViewController()
+    private let exploreVC = UINavigationController(rootViewController: ExploreViewController())
     private let libraryVC = LibraryMainViewController()
     private let myPageVC = UIViewController()
     
@@ -26,5 +26,6 @@ class TabBarViewController: UITabBarController {
         self.tabBar.unselectedItemTintColor = .white_35 // 선택되지 않은 아이템의 색상
         self.tabBar.isTranslucent = false   // 탭 바의 배경 불투명으로 설정
         self.tabBar.backgroundColor = .black
+        self.view.backgroundColor = .black
     }
 }
