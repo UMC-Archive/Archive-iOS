@@ -14,6 +14,7 @@ class HomeView: UIView {
     // 모던 컬렉션뷰
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
         view.backgroundColor = .clear
+        view.showsVerticalScrollIndicator = false
         
         // 헤더 등록
         view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
