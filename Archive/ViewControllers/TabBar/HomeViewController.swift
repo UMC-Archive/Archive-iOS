@@ -12,9 +12,11 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        self.navigationController?.navigationBar.isHidden = true
         
         view = homeView
         setDataSource()
@@ -34,18 +36,28 @@ class HomeViewController: UIViewController {
                 return cell
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.config(data: item)
+                (cell as? BannerCell)?.configMusic(data: item)
                 return cell
             case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: item)
                 return cell
+            default:
+                return UICollectionViewCell()
             }
         })
         
         dataSource?.supplementaryViewProvider = {[weak self] collectionView, kind, indexPath in
-            let section = self?.dataSource?.sectionIdentifier(for: indexPath.section)
+            guard let self = self else {return UICollectionReusableView() }
+            let section = self.dataSource?.sectionIdentifier(for: indexPath.section)
+            
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
+            // 버튼에 UIAction 추가
+            (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
+                guard let self = self, let section = section else { return }
+                self.handleDetailButtonTap(for: section)
+            }), for: .touchUpInside)
+
             switch section {
             case .BigBanner(let headerTitle):
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
@@ -61,6 +73,12 @@ class HomeViewController: UIViewController {
             
             return headerView
         }
+        
+    }
+    
+    private func handleDetailButtonTap(for section: Section) {
+        let nextVC = DetailViewController(section: section)
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     private func setSnapShot() {

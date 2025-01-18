@@ -51,6 +51,7 @@ class TopView: UIView {
         
         setSubView()
         setUI()
+        setIcon()
     }
     
     required init?(coder: NSCoder) {
@@ -92,6 +93,28 @@ class TopView: UIView {
             make.trailing.equalTo(searchIconButton.snp.leading).offset(-20)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(22)
+        }
+    }
+    
+    // 각 화면에 따라 아이콘 유무 설정
+    private func setIcon() {
+        switch type {
+        case .home:
+            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.exploreIconButton.isHidden = false // 탐색 아이콘
+            self.searchIconButton.isHidden = false  // 검색 아이콘
+        case .library:
+            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.exploreIconButton.isHidden = false // 탐색 아이콘
+            self.searchIconButton.isHidden = false  // 검색 아이콘
+        case .explore:
+            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.exploreIconButton.isHidden = true // 탐색 아이콘
+            self.searchIconButton.isHidden = false  // 검색 아이콘
+        case .myPage:
+            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.exploreIconButton.isHidden = false // 탐색 아이콘
+            self.searchIconButton.isHidden = false  // 검색 아이콘
         }
     }
 }

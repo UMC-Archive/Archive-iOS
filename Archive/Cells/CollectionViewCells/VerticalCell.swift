@@ -42,6 +42,15 @@ class VerticalCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        imageView.image = nil
+        titleLabel.text = ""
+        artistYearLabel.text = ""
+        overflowButton.removeTarget(nil, action: nil, for: .allEvents)
+    }
+    
     private func setSubView() {
         [
             imageView,
@@ -54,8 +63,9 @@ class VerticalCell: UICollectionViewCell {
     private func setUI(){
         // 이미지 뷰
         imageView.snp.makeConstraints { make in
-            make.verticalEdges.leading.equalToSuperview()
+            make.top.leading.equalToSuperview()
             make.width.height.equalTo(50)
+            make.bottom.equalToSuperview().priority(.low)
         }
         
         // 타이틀
@@ -70,7 +80,7 @@ class VerticalCell: UICollectionViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
             make.leading.equalTo(titleLabel)
             make.trailing.equalTo(overflowButton.snp.leading)
-            make.bottom.equalTo(imageView).inset(6)
+//            make.bottom.equalTo(imageView).inset(6)
         }
         
         // 더보기 버튼

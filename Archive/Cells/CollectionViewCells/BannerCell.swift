@@ -37,6 +37,13 @@ class BannerCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        imageView.image = nil
+        titleLabel.text = ""
+        artistLabel.text = ""
+    }
+    
     private func setSubView() {
         [
             imageView,
@@ -61,13 +68,19 @@ class BannerCell: UICollectionViewCell {
         // 아티스트
         artistLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
-            make.horizontalEdges.bottom.equalToSuperview().inset(3)
+            make.horizontalEdges.equalToSuperview().inset(3)
         }
     }
     
-    public func config(data: MusicDummyModel){
+    public func configMusic(data: MusicDummyModel){
         imageView.kf.setImage(with: URL(string: data.albumURL))
         titleLabel.text = data.musicTitle
+        artistLabel.text = data.artist
+    }
+    
+    public func configAlbum(data: AlbumDummyModel) {
+        imageView.kf.setImage(with: URL(string: data.albumImageURL))
+        titleLabel.text = data.albumTitle
         artistLabel.text = data.artist
     }
 }
