@@ -20,10 +20,11 @@ class BannerCell: UICollectionViewCell {
         lbl.numberOfLines = 1
     }
     
-    private let artistLabel = UILabel().then { lbl in
+    public let artistLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
+        lbl.isUserInteractionEnabled = true
     }
     
     override init(frame: CGRect) {
@@ -42,6 +43,7 @@ class BannerCell: UICollectionViewCell {
         imageView.image = nil
         titleLabel.text = ""
         artistLabel.text = ""
+        self.gestureRecognizers = nil
     }
     
     private func setSubView() {

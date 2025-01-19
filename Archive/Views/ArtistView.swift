@@ -24,7 +24,17 @@ class ArtistView: UIView {
     
     // 그라데이션뷰
     public let gradientView = UIView().then { view in
-//        view.backgroundColor = .yellow
+        view.isUserInteractionEnabled = false
+    }
+    
+    public let gradientLayer = CAGradientLayer().then { layer in
+        layer.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 162)
+        layer.colors = [
+            UIColor.clear.cgColor,
+            UIColor.black_100?.withAlphaComponent(0.15).cgColor ?? UIColor.black.cgColor,
+            UIColor.black_100?.withAlphaComponent(0.8117).cgColor ?? UIColor.black.cgColor,
+            UIColor.black_100?.cgColor ?? UIColor.black.cgColor,
+        ]
     }
     
     // 이름 라벨
@@ -38,7 +48,7 @@ class ArtistView: UIView {
     // 재생 버튼
     public let playButton = UIButton().then { btn in
         var config = UIButton.Configuration.plain()
-        let imageConfig = UIImage.SymbolConfiguration(pointSize: 40, weight: .light)
+        let imageConfig = UIImage.SymbolConfiguration(pointSize: 41, weight: .light)
         config.image = .init(systemName: "play.circle.fill")?.withConfiguration(imageConfig)
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         btn.configuration = config
@@ -46,7 +56,7 @@ class ArtistView: UIView {
         btn.imageView?.contentMode = .scaleAspectFill
         btn.layer.cornerRadius = 25
         btn.clipsToBounds = true
-        btn.tintColor = UIColor(hex: "#191817")
+        btn.tintColor = .black_100
         btn.backgroundColor = .white
     }
     
@@ -94,7 +104,10 @@ class ArtistView: UIView {
             descriptionLabel,
             collectionView
         ].forEach{contentView.addSubview($0)}
+        
+        gradientView.layer.addSublayer(gradientLayer)
     }
+    
     
     private func setUI() {
         scrollView.snp.makeConstraints { make in
@@ -124,7 +137,7 @@ class ArtistView: UIView {
         nameLabel.snp.makeConstraints { make in
             make.bottom.equalTo(imageView).offset(-33.5)
             make.leading.equalToSuperview().inset(20)
-            make.trailing.equalTo(playButton.snp.leading)
+            make.trailing.equalTo(playButton.snp.leading).offset(-8)
         }
         
         // 재생 버튼
@@ -145,7 +158,7 @@ class ArtistView: UIView {
             make.top.equalTo(descriptionLabel.snp.bottom).offset(40)
             make.leading.equalToSuperview().inset(20)
             make.trailing.bottom.equalToSuperview()
-            make.height.equalTo(2000)
+            make.height.equalTo(1100)
         }
     }
     

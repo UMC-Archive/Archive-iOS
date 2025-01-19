@@ -10,17 +10,25 @@ import UIKit
 class ArtistViewController: UIViewController {
     private let artistView = ArtistView()
     private let artistData = ArtistDummyModel.dummy()
-    private let gradientLayer = CAGradientLayer()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
+    private let gradientLayer = CAGradientLayer()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         view = artistView
-        setGradient()
+        setNavigationBar()
         setAction()
         setDataSource()
         setSnapshot()
+    }
+    
+    private func setNavigationBar(){
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
+        self.navigationController?.navigationBar.shadowImage = UIImage()
+        self.navigationController?.navigationBar.isTranslucent = true
+        self.navigationController?.view.backgroundColor = UIColor.clear
     }
     
     private func setDataSource() {
@@ -119,17 +127,5 @@ class ArtistViewController: UIViewController {
             self?.artistView.layoutIfNeeded() // 애니메이션 반영
         }
     }
-    
-    public func setGradient() {
-        print("Gradient View Bounds (after layout):", artistView.gradientView.bounds)
-        gradientLayer.frame = artistView.gradientView.bounds
-        gradientLayer.colors = [
-            UIColor.clear,
-            UIColor.black_100?.withAlphaComponent(0.15) ?? UIColor.red,
-            UIColor.black_100?.withAlphaComponent(0.8117) ?? UIColor.red,
-            UIColor.black_100 ?? UIColor.red,
-        ]
-        artistView.gradientView.layer.addSublayer(gradientLayer)
-//        artistView.layoutIfNeeded()
-    }
+
 }

@@ -21,10 +21,11 @@ class VerticalCell: UICollectionViewCell {
     }
     
     // 아티스트 ⦁ year
-    private let artistYearLabel = UILabel().then { lbl in
+    public let artistYearLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
+        lbl.isUserInteractionEnabled = true
     }
     
     // 더보기 버튼
@@ -49,6 +50,7 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.text = ""
         artistYearLabel.text = ""
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
+        gestureRecognizers = nil
     }
     
     private func setSubView() {

@@ -10,7 +10,6 @@ import UIKit
 class MusicVideoCell: UICollectionViewCell {
     static let id = "MusicVideoSection"
     
-    
     // 이미지 뷰
     private let imageView = UIImageView().then { view in
         view.contentMode = .scaleAspectFill
