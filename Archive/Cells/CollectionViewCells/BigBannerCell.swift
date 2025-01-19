@@ -41,9 +41,10 @@ class BigBannerCell: UICollectionViewCell {
 //    }
     
     // 아티스트
-    private let artistLabel = UILabel().then { lbl in
+    public let artistLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         lbl.textColor = .white_70
+        lbl.isUserInteractionEnabled = true
     }
     
     // 년도
@@ -71,7 +72,7 @@ class BigBannerCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
-//        albumImageView.image = nil
+        CDImageView.albumImageView.image = nil
         albumTitleLabel.text = ""
 //        albumSubTitleLabel.text = ""
         yearLabel.text = ""

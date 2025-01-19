@@ -16,19 +16,25 @@ class HomeViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        self.navigationController?.navigationBar.isHidden = true
-        
         view = homeView
         setDataSource()
         setSnapShot()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    
     private func setDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {[weak self] collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
             case .ArchiveItem(let item): // 아카이브
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
-                (cell as? BigBannerCell)?.config(album: item)
+                if let bigBannerCell = cell as? BigBannerCell {
+                    bigBannerCell.config(album: item)
+                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    bigBannerCell.artistLabel.addGestureRecognizer(tapGesture)
+                 }
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
@@ -36,11 +42,19 @@ class HomeViewController: UIViewController {
                 return cell
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configMusic(data: item)
+                if let bannerCell = cell as? BannerCell {
+                     bannerCell.configMusic(data: item)
+                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                     bannerCell.artistLabel.addGestureRecognizer(tapGesture)
+                 }
                 return cell
             case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.config(data: item)
+                if let verticalCell = cell as? VerticalCell {
+                    verticalCell.config(data: item)
+                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
+                 }
                 return cell
             default:
                 return UICollectionViewCell()
@@ -76,6 +90,13 @@ class HomeViewController: UIViewController {
         
     }
     
+    // 아티스트 버튼
+    @objc private func TapArtistLabelGesture() {
+        let nextVC = ArtistViewController()
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    // 자세히 보기 버튼
     private func handleDetailButtonTap(for section: Section) {
         let nextVC = DetailViewController(section: section)
         self.navigationController?.pushViewController(nextVC, animated: true)
