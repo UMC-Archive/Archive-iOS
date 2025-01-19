@@ -67,6 +67,7 @@ class ArtistView: UIView {
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
         view.register(MusicVideoCell.self, forCellWithReuseIdentifier: MusicVideoCell.id)
+        view.register(CircleCell.self, forCellWithReuseIdentifier: CircleCell.id)
     }
     
     override init(frame: CGRect) {
@@ -160,6 +161,8 @@ class ArtistView: UIView {
                 self?.createBannerSection()
             case 2: //아티스트 뮤직 비디오
                 self?.createMusicVideoSection()
+            case 3: //다른 비슷한 아티스트
+                self?.createCircleSection()
             default:
                 self?.createVerticalSection()
             }
@@ -208,6 +211,24 @@ class ArtistView: UIView {
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.4), heightDimension: .absolute(114))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        
+        let header = createHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
+    // 다른 비슷한 아티스트
+    private func createCircleSection() -> NSCollectionLayoutSection{
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.33), heightDimension: .absolute(134))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)
