@@ -11,6 +11,8 @@ class ArtistView: UIView {
     private let scrollView = UIScrollView().then { view in
         view.showsVerticalScrollIndicator = false
         view.showsHorizontalScrollIndicator = false
+        view.contentInsetAdjustmentBehavior = .never
+
     }
     
     private let contentView = UIView()
@@ -112,6 +114,7 @@ class ArtistView: UIView {
     private func setUI() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
+            make.top.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in

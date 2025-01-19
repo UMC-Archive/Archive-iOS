@@ -25,7 +25,7 @@ class CDView: UIView {
     }
     
     // 앨범 이미지
-    private lazy var albumImageView = UIImageView().then { view in
+    public lazy var albumImageView = UIImageView().then { view in
         view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
         view.layer.cornerRadius = imageWidthHeight / 2

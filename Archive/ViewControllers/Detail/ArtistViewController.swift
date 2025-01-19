@@ -23,12 +23,42 @@ class ArtistViewController: UIViewController {
         setSnapshot()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = false
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        self.navigationController?.navigationBar.isHidden = true
+    }
+    
+    
+    
     private func setNavigationBar(){
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         self.navigationController?.navigationBar.shadowImage = UIImage()
         self.navigationController?.navigationBar.isTranslucent = true
         self.navigationController?.view.backgroundColor = UIColor.clear
+        
+        // 뒤로 가기
+        let popButton = UIBarButtonItem(image: .init(systemName: "chevron.left"), style: .plain, target: self, action: #selector(tapPopButton))
+        self.navigationItem.leftBarButtonItem = popButton
+        
+        // 좋이요
+        let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(tapHeartButton))
+        self.navigationItem.rightBarButtonItem = heartButton
+        self.navigationController?.navigationBar.tintColor = .white
+    }
+    
+    @objc private func tapPopButton() {
+        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func tapHeartButton() {
+        // 좋아요 API 연결
+        print("tapHeartButton")
     }
     
     private func setDataSource() {
