@@ -54,7 +54,7 @@ class HeaderView: UICollectionReusableView {
         detailButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(titleLabel.snp.trailing)
-            make.trailing.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(20)
             make.width.equalTo(12)
             make.height.equalTo(20)
         }
