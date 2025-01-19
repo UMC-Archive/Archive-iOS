@@ -87,4 +87,10 @@ class MusicVideoCell: UICollectionViewCell {
             make.horizontalEdges.bottom.equalToSuperview()
         }
     }
+    
+    public func config(data: MusicVideoModel) {
+        imageView.kf.setImage(with: URL(string: data.imageURL))
+        titleLabel.text = data.title
+        artistLabel.text = data.artist
+    }
 }

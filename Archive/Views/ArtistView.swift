@@ -158,6 +158,8 @@ class ArtistView: UIView {
                 self?.createVerticalSection()
             case 1: // 앨범 둘러보기
                 self?.createBannerSection()
+            case 2: //아티스트 뮤직 비디오
+                self?.createMusicVideoSection()
             default:
                 self?.createVerticalSection()
             }
@@ -188,6 +190,24 @@ class ArtistView: UIView {
         item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 14)
         
         let groupSize = NSCollectionLayoutSize(widthDimension: .absolute(140), heightDimension: .absolute(186))
+        let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
+        
+        let section = NSCollectionLayoutSection(group: group)
+        section.orthogonalScrollingBehavior = .continuous
+        
+        let header = createHeader()
+        section.boundarySupplementaryItems = [header]
+        
+        return section
+    }
+    
+    // 뮤직 미디오 섹션
+    private func createMusicVideoSection() -> NSCollectionLayoutSection{
+        let itemSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .fractionalHeight(1.0))
+        let item = NSCollectionLayoutItem(layoutSize: itemSize)
+        item.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 15)
+        
+        let groupSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(0.4), heightDimension: .absolute(114))
         let group = NSCollectionLayoutGroup.horizontal(layoutSize: groupSize, subitems: [item])
         
         let section = NSCollectionLayoutSection(group: group)

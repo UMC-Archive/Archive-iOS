@@ -22,6 +22,8 @@ class DetailView: UIView {
             self.header = headerTitle
         case .Vertical(let headerTitle):
             self.header = headerTitle
+        case .MusicVideoCell(let headerTitle):
+            self.header = headerTitle
         }
         super.init(frame: .zero)
         

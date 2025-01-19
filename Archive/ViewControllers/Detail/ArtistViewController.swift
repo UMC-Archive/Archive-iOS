@@ -34,6 +34,10 @@ class ArtistViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: item)
                 return cell
+            case .MusicVideo(let item):  // 아티스트 뮤직 비디오
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MusicVideoCell.id, for: indexPath)
+                (cell as? MusicVideoCell)?.config(data: item)
+                return cell
             default:
                 return UICollectionViewCell()
             }
@@ -55,6 +59,8 @@ class ArtistViewController: UIViewController {
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
             case .Vertical(let headerTitle):
                 (headerView as? HeaderView)?.config(headerTitle: headerTitle)
+            case .MusicVideoCell(let headerTitle):
+                (headerView as? HeaderView)?.config(headerTitle: headerTitle)
             default:
                 return UICollectionReusableView()
             }
@@ -72,14 +78,18 @@ class ArtistViewController: UIViewController {
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         let popularMusicSection = Section.Vertical(.ArtistPopularMusic) // 아티스트 인기곡
         let sameArtistAnotherAlbumSection = Section.Banner(.SameArtistAnotherAlbum) // 앨범 둘러보기
+        let musicVideoSection = Section.MusicVideoCell(.MusicVideo) // 뮤직 비디오
         
-        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection])
+        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, musicVideoSection])
         
         let popularMusicItem = artistData.popularMusicList.map{Item.ArtistPopularMusic($0)}
         snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
         
         let anotherAlbumItem = artistData.albumList.map{Item.SameArtistAnotherAlbum($0)}
         snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
+        
+        let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
+        snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
         dataSource?.apply(snapshot)
     }

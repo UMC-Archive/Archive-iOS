@@ -19,6 +19,7 @@ enum HeaderTitle: String {
     case HiddenMusic = "숨겨진 명곡"               // 탐색뷰
     case ArtistPopularMusic = "아티스트 인기곡"    // 아티스트뷰
     case SameArtistAnotherAlbum = "앨범 둘러보기"  // 아티스트뷰
+    case MusicVideo = "아티스트 뮤직비디오"           // 아티스트뷰
 }
 
 enum Section: Hashable {
@@ -26,6 +27,7 @@ enum Section: Hashable {
     case PointOfView(HeaderTitle) // 홈 - 탐색했던 시점
     case Banner(HeaderTitle) // 홈 - 빠른 선곡 / 최근 들은 노래
     case Vertical(HeaderTitle) // 홈 - 당신을 위한 추천곡 / 최근에 추가한 노래
+    case MusicVideoCell(HeaderTitle) // 아티스트 뮤직 비디오
 }
 
 enum Item: Hashable {
@@ -40,4 +42,5 @@ enum Item: Hashable {
     case HiddenMusic(MusicDummyModel)                // 숨겨진 명곡
     case ArtistPopularMusic(MusicDummyModel)        // 아티스트 인기곡
     case SameArtistAnotherAlbum(AlbumDummyModel)     // 앨범 둘러보기
+    case MusicVideo(MusicVideoModel)                // 아티스트 뮤직비디오
 }
