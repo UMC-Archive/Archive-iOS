@@ -66,6 +66,7 @@ class ArtistView: UIView {
         
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
+        view.register(MusicVideoCell.self, forCellWithReuseIdentifier: MusicVideoCell.id)
     }
     
     override init(frame: CGRect) {
