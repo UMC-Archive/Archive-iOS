@@ -11,7 +11,7 @@ class VerticalCell: UICollectionViewCell {
     static let id = "VerticalCell"
     
     // 앨범 이미지 뷰
-    private let imageView = AlbumImageView()
+    public let imageView = AlbumImageView()
     
     // Album & SongTitle
     private let titleLabel = UILabel().then { lbl in

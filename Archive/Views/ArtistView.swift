@@ -114,7 +114,6 @@ class ArtistView: UIView {
     private func setUI() {
         scrollView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
-            make.top.equalToSuperview()
         }
         
         contentView.snp.makeConstraints { make in
