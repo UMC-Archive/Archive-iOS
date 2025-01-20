@@ -11,8 +11,9 @@ class AlbumView: UIView {
     
     private let scrollView = UIScrollView().then { view in
         view.isScrollEnabled = true
+        view.showsVerticalScrollIndicator = false
+        view.showsHorizontalScrollIndicator = false
         view.contentInsetAdjustmentBehavior = .never
-
     }
     
     private let contentView = UIView()
@@ -20,20 +21,6 @@ class AlbumView: UIView {
     // CD 뷰
     private let albumCDView = CDView(imageWidthHeight: 422, holeWidthHeight: 65.43)
     
-    // 뒤로가기 버튼
-    public let popButton = UIButton().then { btn in
-        btn.setImage(.init(systemName: "chevron.left"), for: .normal)
-        btn.tintColor = .white
-    }
-    
-    // 좋아요 버튼
-    public let heartButton = UIButton().then { btn in
-        var config = UIButton.Configuration.plain()
-        config.image = UIImage(systemName: "heart")
-        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
-        btn.configuration = config
-        btn.tintColor = .white
-    }
     
     // 앨범 타이틀
     private let titleLabel = UILabel().then { lbl in
@@ -47,6 +34,7 @@ class AlbumView: UIView {
         lbl.font = .customFont(font: .SFPro, ofSize: 14, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
+        lbl.isUserInteractionEnabled = true
     }
     
     // 본문 내용
@@ -68,7 +56,7 @@ class AlbumView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
+        self.backgroundColor = .black
         setSubView()
         setUI()
     }
@@ -80,8 +68,6 @@ class AlbumView: UIView {
     private func setSubView() {
         [
             albumCDView,
-            popButton,
-            heartButton,
             titleLabel,
             artistLabel,
             contentLabel,
@@ -105,21 +91,8 @@ class AlbumView: UIView {
         }
         
         albumCDView.snp.makeConstraints { make in
-            make.centerY.equalTo(popButton)
+            make.centerY.equalToSuperview().multipliedBy(0.1)
             make.centerX.equalToSuperview()
-        }
-        
-        popButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().inset(50)
-            make.leading.equalToSuperview().inset(20)
-            make.width.equalTo(12)
-            make.height.equalTo(20)
-        }
-        
-        heartButton.snp.makeConstraints { make in
-            make.centerY.equalTo(popButton)
-            make.trailing.equalToSuperview().inset(20)
-            make.width.height.equalTo(30)
         }
         
         titleLabel.snp.makeConstraints { make in
