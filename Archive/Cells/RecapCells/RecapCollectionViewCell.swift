@@ -20,10 +20,9 @@ class RecapCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let CDImage = UIImageView().then{
-        $0.layer.cornerRadius = 129
-        $0.clipsToBounds = true
-    }
+    // CDView
+    private let cdView = CDView(imageWidthHeight: 258, holeWidthHeight: 40)
+    
     private let song = UILabel().then{
         $0.text = "Song Title"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
@@ -38,26 +37,27 @@ class RecapCollectionViewCell: UICollectionViewCell {
     }
     
     private func setComponent(){
-        addSubview(CDImage)
+        addSubview(cdView)
         addSubview(song)
         addSubview(artist)
         
-        CDImage.snp.makeConstraints{
+        cdView.snp.makeConstraints{
             $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.height.width.equalTo(258)
+            $0.centerX.equalToSuperview()
         }
         song.snp.makeConstraints{
-            $0.top.equalTo(CDImage.snp.bottom).offset(12)
-            $0.centerX.equalTo(CDImage)
+            $0.top.equalTo(cdView.snp.bottom).offset(12)
+            $0.centerX.equalTo(cdView)
         }
         artist.snp.makeConstraints{
             $0.top.equalTo(song.snp.bottom).offset(2)
-            $0.centerX.equalTo(CDImage)
+            $0.centerX.equalTo(cdView)
         }
     }
     
-    public func config(image: UIImage){
-        CDImage.image = image
+    public func config(data: MusicDummyModel){
+        cdView.config(albumImageURL: data.albumURL)
+        song.text = data.musicTitle
+        artist.text = data.artist
     }
 }
