@@ -21,6 +21,61 @@ class ExploreViewController: UIViewController {
         
         setDataSource()
         setSnapShot()
+        setDelegate()
+        setRecapIndex()
+    }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        let contentHeight = calculateScrollViewHeight()
+        print("contentHeight: \(contentHeight)")
+        exploreView.contentView.snp.updateConstraints { make in
+//            make.height.equalTo(contentHeight + 97)
+            make.height.equalTo(1300)
+        }
+        
+        exploreView.layoutIfNeeded()
+    }
+    
+    private func calculateCollectionViewHeight() -> CGFloat {
+        // 각 섹션의 높이 정의
+        let verticalSectionHeight: CGFloat = 275 + (10 * 3) + 45 // 그룹 높이 + 간격 + 헤더
+        let bannerSectionHeight: CGFloat = 186 + 45 // 그룹 높이 + 헤더
+        let interSectionSpacing: CGFloat = 40 // 섹션 간 간격
+
+        // 섹션 높이 합계
+        let totalCollectionViewHeight = (verticalSectionHeight * 2) + bannerSectionHeight + (interSectionSpacing * 2)
+        return totalCollectionViewHeight
+    }
+    
+    private func calculateScrollViewHeight() -> CGFloat {
+        // collectionView 전체 높이 계산
+        let collectionViewHeight = calculateCollectionViewHeight()
+
+        // recapCollectionView 높이
+        let recapCollectionViewHeight: CGFloat = 333
+
+        // recapCollectionView와 collectionView 사이 간격
+        let gapBetweenRecapAndCollectionView: CGFloat = 17
+
+        // scrollView 전체 높이
+        let totalHeight = recapCollectionViewHeight + gapBetweenRecapAndCollectionView + collectionViewHeight
+        return totalHeight
+    }
+
+
+    
+    private func setRecapIndex(){
+        // 뷰가 로드된 직후 1번 인덱스로 이동
+        DispatchQueue.main.async {
+            let recapIndexPath = IndexPath(item: 1, section: 0)
+            self.exploreView.recapCollectionView.scrollToItem(at: recapIndexPath, at: .centeredHorizontally, animated: false)
+        }
+    }
+    
+    private func setDelegate() {
+        exploreView.recapCollectionView.dataSource = self
     }
     
     private func setDataSource() {
@@ -91,5 +146,28 @@ class ExploreViewController: UIViewController {
         snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+}
+
+
+extension ExploreViewController: UICollectionViewDataSource {
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        switch collectionView {
+        case exploreView.recapCollectionView:
+            return 3
+        default:
+            return 0
+        }
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        switch collectionView {
+        case exploreView.recapCollectionView:
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
+            (cell as? RecapCollectionViewCell)?.config(data: musicData[indexPath.row])
+            return cell
+        default:
+            return UICollectionViewCell()
+        }
     }
 }

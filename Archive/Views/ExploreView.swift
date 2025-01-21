@@ -10,6 +10,7 @@ import UIKit
 class ExploreView: UIView {
     private let topView = TopView(type: .explore)
     
+    
     // 탐색 시기 그룹
     private let timeGroupView = UIView()
     
@@ -27,11 +28,31 @@ class ExploreView: UIView {
         btn.tintColor = .white_70
     }
     
-    // CD View 추가 필요!!!!!!
+    public let scrollView = UIScrollView().then { view in
+        view.showsHorizontalScrollIndicator = false
+        view.showsVerticalScrollIndicator = false
+        view.contentInsetAdjustmentBehavior = .never
+        view.scrollIndicatorInsets = .zero
+    }
+    
+    public let contentView = UIView()
+    
+    // CD Recap CollectionView
+    public let recapCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout().then {
+        $0.itemSize = CGSize(width: 258, height: 333)
+        $0.scrollDirection = .horizontal
+    }).then {
+        $0.backgroundColor = UIColor.black_100
+        $0.showsHorizontalScrollIndicator = false
+        $0.isScrollEnabled = true
+        $0.contentInsetAdjustmentBehavior = .never
+        $0.register(RecapCollectionViewCell.self, forCellWithReuseIdentifier: "recapCollectionViewIdentifier")
+    }
     
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
+        view.isScrollEnabled = false
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
         view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
@@ -39,7 +60,7 @@ class ExploreView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .black
+        self.backgroundColor = .black_100
         
         setSubView()
         setUI()
@@ -56,12 +77,16 @@ class ExploreView: UIView {
         ].forEach{timeGroupView.addSubview($0)}
         
         [
+            recapCollectionView,
+            collectionView
+        ].forEach{contentView.addSubview($0)}
+        
+        scrollView.addSubview(contentView)
+        
+        [
             topView,
             timeGroupView,
-            
-            // CDView 추가해야 함!!!!
-            
-            collectionView
+            scrollView
         ].forEach{self.addSubview($0)}
     }
     
@@ -93,9 +118,30 @@ class ExploreView: UIView {
             make.width.height.equalTo(14)
         }
         
+        // scrollView
+        scrollView.snp.makeConstraints { make in
+            make.top.equalTo(timeGroupView.snp.bottom).offset(25)
+            make.horizontalEdges.bottom.equalToSuperview()
+        }
+        
+        // contentView
+        contentView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+            make.width.equalToSuperview()
+            make.height.equalTo(0) //ExploreViewController에서 updateConstraints를 위함
+        }
+        
+        // recap
+        recapCollectionView.snp.makeConstraints { make in
+            make.top.equalToSuperview()
+            make.width.equalTo(537)
+            make.height.equalTo(333)
+            make.centerX.equalToSuperview()
+        }
+        
         // collectionView
         collectionView.snp.makeConstraints { make in
-            make.top.equalTo(timeGroupView.snp.bottom).offset(20) // CDView로 바꿔야 함
+            make.top.equalTo(recapCollectionView.snp.bottom).offset(17)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.bottom.equalToSuperview()
         }
