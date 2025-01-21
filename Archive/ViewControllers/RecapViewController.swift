@@ -13,6 +13,7 @@ class RecapViewController: UIViewController {
     let cellCount = 3
     var previousIndex = 0
     
+    
     let gradient = CAGradientLayer()
     
     private let rootView = RecapView()
@@ -22,7 +23,7 @@ class RecapViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = rootView
-        
+        self.navigationController?.navigationBar.isHidden = true
         
         
         
@@ -36,15 +37,36 @@ class RecapViewController: UIViewController {
         
         buildGradient()
         setDelegateAndDataSource()
+        controlTapped()
         
         self.view.layoutIfNeeded()
         
     }
+    
+    private func controlTapped(){
+        rootView.navigationView.popButton.addTarget(self, action: #selector(recapButtonTapped), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(headerButtonTapped))
+        rootView.headerButton.isUserInteractionEnabled = true // 제스처 인식 활성화
+        rootView.headerButton.addGestureRecognizer(tapGesture)
+        
+    }
+    @objc func recapButtonTapped(){
+        
+        self.navigationController?.popViewController(animated: true)
+    }
+    
+    @objc private func headerButtonTapped() {
+        let viewController = RecapCollectionViewViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     private func setDelegateAndDataSource() {
         rootView.recapCollectionView.dataSource = self
         rootView.recapCollectionView.delegate = self
         rootView.genreCollectionView.dataSource = self
         rootView.genreCollectionView.delegate = self
+        rootView.collectionView.dataSource = self
     }
     
     override func viewDidLayoutSubviews() {
@@ -79,6 +101,8 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             return 3
         case rootView.genreCollectionView :
             return 5
+        case rootView.collectionView :
+            return MusicDummyModel.dummy().count
         default :
             fatalError("Unknown collection view")
         }
@@ -111,7 +135,13 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
                 cell.config(image: dummy[indexPath.row].AlbumImage)
             }
             return cell
-            
+        case rootView.collectionView:
+            guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {
+                fatalError("Failed to dequeue CollectionViewCell")
+            }
+            let dummy = MusicDummyModel.dummy()
+            cell.config(albumURL: dummy[indexPath.row].albumURL, musicTitle: dummy[indexPath.row].musicTitle, artist: dummy[indexPath.row].artist, year: String(dummy[indexPath.row].year))
+            return cell
         default:
             fatalError("Unknown collection view")
         }

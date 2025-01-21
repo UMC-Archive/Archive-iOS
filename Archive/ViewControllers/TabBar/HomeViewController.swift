@@ -19,6 +19,11 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
+
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("homeView has disappeared")
     }
     
     override func viewWillAppear(_ animated: Bool) {
