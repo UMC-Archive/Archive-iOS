@@ -62,7 +62,6 @@ class AlbumTrackView: UIView {
         super.init(frame: frame)
         
         self.layer.cornerRadius = 20
-        self.backgroundColor = UIColor(hex: "D68577")
         setSubView()
         setUI()
     }
@@ -140,10 +139,31 @@ class AlbumTrackView: UIView {
     }
     
     public func config(data: AlbumTrack){
-        trackImageView.kf.setImage(with: URL(string: data.albumImageURL))
+        
+        trackImageView.kf.setImage(with: URL(string: data.albumImageURL)) { [weak self] result in
+            switch result {
+            case .success:
+                // 이미지 설정 완료 후 평균 색상을 계산
+                self?.setBackgroundColorBasedOnImageColor()
+
+            case .failure(let error):
+                print("Error loading image: \(error)")
+                self?.backgroundColor = .black
+            }
+        }
         trackTitleLabel.text = data.title
         artistImageView.kf.setImage(with: URL(string: data.artistImageURL))
         trackArtist.text = data.artist
         trackDetailLabel.text = "\(data.year) • \(data.count)곡 • \(data.totalMinute)분"
+        
+
+    }
+    
+    private func setBackgroundColorBasedOnImageColor() {
+        // 배경색 지정 (이미지 평균 색)
+        let avgColor = trackImageView.avgImageColor()
+        self.backgroundColor = avgColor ?? .black
+        print("\(String(describing: avgColor?.cgColor))")
+//        UIColor(hex: "D68577")
     }
 }
