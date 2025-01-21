@@ -17,6 +17,9 @@ enum HeaderTitle: String {
     case AnotherAlbum = "이 아티스트의 다른 앨범"    //  앨범뷰
     case RecommendAlbum = "당신을 위한 앨범 추천"    // 앨범뷰, 탐색뷰
     case HiddenMusic = "숨겨진 명곡"               // 탐색뷰
+    case recap = "Recap 결산"
+    case listenRecord = "청취기록"
+    case profile = "프로필 수정"
 }
 
 enum Section: Hashable {

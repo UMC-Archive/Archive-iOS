@@ -26,6 +26,7 @@ class LibraryMainView : UIView {
         static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 206) : CGSize(width: 160, height: 206)
       }
     
+    
     private let libraryLabel = UILabel().then{
         $0.text = "보관함"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 28, rawValue: 700)
@@ -127,7 +128,7 @@ class LibraryMainView : UIView {
     
     public let artistCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical
-        $0.itemSize = constant.albumCollectionViewIconSize
+        $0.itemSize = constant.playlistCollectionViewIconSize
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
     }).then{
         $0.backgroundColor = .black

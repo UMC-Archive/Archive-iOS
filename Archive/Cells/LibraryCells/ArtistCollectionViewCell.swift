@@ -35,6 +35,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         $0.alignment = .leading
     }
     
+    
     private let artistNameLabel = UILabel().then{
         $0.text = "아티스트 이름"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)

@@ -16,12 +16,16 @@ class LibraryMainViewController: UIViewController {
         super.viewDidLoad()
         self.view = rootView
         rootView.backgroundColor = .black
+        
         datasourceSetting()
         hideAllCollectionViews()
         setupActions()
         showCollectionView(for: segmentIndexNum)
     }
-    
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("ㅣㅣㅣView has disappeared")
+    }
     private func datasourceSetting() {
         rootView.playlistCollectionView.dataSource = self
         rootView.songCollectionView.dataSource = self
