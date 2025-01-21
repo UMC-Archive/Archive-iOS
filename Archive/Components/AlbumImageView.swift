@@ -22,5 +22,6 @@ class AlbumImageView: UIImageView{
         self.layer.cornerRadius = 10
         self.clipsToBounds = true
         self.contentMode = .scaleAspectFit
+        self.isUserInteractionEnabled = true
     }
 }

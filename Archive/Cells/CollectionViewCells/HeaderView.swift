@@ -54,7 +54,7 @@ class HeaderView: UICollectionReusableView {
         detailButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.leading.equalTo(titleLabel.snp.trailing)
-            make.trailing.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(20)
             make.width.equalTo(12)
             make.height.equalTo(20)
         }
@@ -65,7 +65,7 @@ class HeaderView: UICollectionReusableView {
         
         // 배너일 경우 디테일 버튼 히든 처리
         switch headerTitle {
-        case .Archive:
+        case .Archive, .MusicVideo, .SimilarArtist:
             detailButton.isHidden = true
         default:
             detailButton.isHidden = false

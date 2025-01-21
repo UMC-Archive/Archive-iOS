@@ -1,35 +1,44 @@
 //
-//  BannerCell.swift
+//  MusicVideoCell.swift
 //  Archive
 //
-//  Created by 이수현 on 1/14/25.
+//  Created by 이수현 on 1/19/25.
 //
 
 import UIKit
 
-class BannerCell: UICollectionViewCell {
-    static let id = "BannerCell"
+class MusicVideoCell: UICollectionViewCell {
+    static let id = "MusicVideoSection"
     
-    // 앨범 이미지 뷰
-    public let imageView = AlbumImageView()
+    // 이미지 뷰
+    private let imageView = UIImageView().then { view in
+        view.contentMode = .scaleAspectFill
+        view.clipsToBounds = true
+        view.layer.cornerRadius = 5
+    }
     
-    // Album & SongTitle
+    // 재생 버틑
+    private let playImageView = UIImageView().then { view in
+        view.image = .init(systemName: "play.fill")
+        view.tintColor = .black_100
+    }
+    
+    // title
     private let titleLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         lbl.textColor = .white
         lbl.numberOfLines = 1
     }
     
-    public let artistLabel = UILabel().then { lbl in
+    // 아티스트
+    private let artistLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
-        lbl.isUserInteractionEnabled = true
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        
         setSubView()
         setUI()
     }
@@ -40,49 +49,47 @@ class BannerCell: UICollectionViewCell {
     
     override func prepareForReuse() {
         super.prepareForReuse()
+        
         imageView.image = nil
-        titleLabel.text = ""
-        artistLabel.text = ""
-        self.gestureRecognizers = nil
+        titleLabel.text = nil
+        artistLabel.text = nil
     }
     
     private func setSubView() {
         [
             imageView,
+            playImageView,
             titleLabel,
             artistLabel
         ].forEach{self.addSubview($0)}
     }
     
     private func setUI(){
-        // 이미지 뷰
         imageView.snp.makeConstraints { make in
             make.top.horizontalEdges.equalToSuperview()
-            make.height.equalTo(imageView.snp.width)
+            make.height.equalTo(70)
         }
         
-        // 타이틀
+        playImageView.snp.makeConstraints { make in
+            make.center.equalTo(imageView)
+            make.width.equalTo(18)
+            make.height.equalTo(22)
+        }
+        
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(6)
-            make.horizontalEdges.equalToSuperview().inset(3)
+            make.horizontalEdges.equalToSuperview()
         }
         
-        // 아티스트
         artistLabel.snp.makeConstraints { make in
-            make.top.equalTo(titleLabel.snp.bottom).offset(2)
-            make.horizontalEdges.equalToSuperview().inset(3)
+            make.top.equalTo(titleLabel.snp.bottom).offset(6)
+            make.horizontalEdges.bottom.equalToSuperview()
         }
     }
     
-    public func configMusic(data: MusicDummyModel){
-        imageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = data.musicTitle
-        artistLabel.text = data.artist
-    }
-    
-    public func configAlbum(data: AlbumDummyModel) {
-        imageView.kf.setImage(with: URL(string: data.albumImageURL))
-        titleLabel.text = data.albumTitle
+    public func config(data: MusicVideoModel) {
+        imageView.kf.setImage(with: URL(string: data.imageURL))
+        titleLabel.text = data.title
         artistLabel.text = data.artist
     }
 }

@@ -93,6 +93,10 @@ extension UIColor {
     static let white_70 = UIColor.white.withAlphaComponent(0.7)
     static let white_35 = UIColor.white.withAlphaComponent(0.35)
     static let white_10 = UIColor.white.withAlphaComponent(0.1)
+    
+    // Login
+    static let alertRed = UIColor(hex: "#FF483B")
+    static let alertRedGreen = UIColor(hex: "#2BD918")
 }
 // Example
 // let buttonColor = .lightOrange // Hex: #FFFDF3

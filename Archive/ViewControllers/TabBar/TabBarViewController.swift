@@ -32,5 +32,10 @@ class TabBarViewController: UITabBarController {
         self.tabBar.isTranslucent = false   // 탭 바의 배경 불투명으로 설정
         self.tabBar.backgroundColor = UIColor.black_100
         self.view.backgroundColor = UIColor.black_100
+        let tabBarAppearance = UITabBarAppearance()
+        tabBarAppearance.configureWithTransparentBackground()
+        tabBar.standardAppearance = tabBarAppearance
+        tabBar.scrollEdgeAppearance = tabBarAppearance
+
     }
 }
