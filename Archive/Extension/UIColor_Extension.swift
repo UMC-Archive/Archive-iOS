@@ -101,3 +101,25 @@ extension UIColor {
 // Example
 // let buttonColor = .lightOrange // Hex: #FFFDF3
 // let backgroundColor = UIColor.Orange // Hex: #FFD880
+
+
+extension UIColor {
+    /// 보색 반환
+    var complementaryColor: UIColor {
+        var red: CGFloat = 0
+        var green: CGFloat = 0
+        var blue: CGFloat = 0
+        var alpha: CGFloat = 1.0
+        
+        // UIColor를 RGBA 값으로 변환
+        self.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        
+        // RGB 값을 반전
+        let invertedRed = 1.0 - red
+        let invertedGreen = 1.0 - green
+        let invertedBlue = 1.0 - blue
+        
+        // 보색 반환
+        return UIColor(red: invertedRed, green: invertedGreen, blue: invertedBlue, alpha: alpha)
+    }
+}
