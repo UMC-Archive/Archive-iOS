@@ -74,6 +74,7 @@ class ArtistView: UIView {
     // 컬렉션뷰
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
         view.backgroundColor = .clear
+        view.isScrollEnabled = false
         view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
         
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
@@ -85,7 +86,7 @@ class ArtistView: UIView {
     override init(frame: CGRect) {
         super.init(frame: frame)
         
-        self.backgroundColor = .black
+        self.backgroundColor = .black_100
         setSubView()
         setUI()
     }

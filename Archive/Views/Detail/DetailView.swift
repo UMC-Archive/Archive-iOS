@@ -29,13 +29,13 @@ class DetailView: UIView {
         }
         super.init(frame: .zero)
         
-        self.backgroundColor = .black
+        self.backgroundColor = .black_100
         setSubView()
         setUI()
     }
     
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
-        view.backgroundColor = .black
+        view.backgroundColor = .black_100
         
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
