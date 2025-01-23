@@ -183,7 +183,9 @@ class HomeViewController: UIViewController {
 //                    self.goToNextView()
                 }
             case .failure(let error):
-//                Toaster.shared.makeToast("\(error.errorDescription!)", .short)
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
                 print("실패: \(error.description)")
             }
         }
