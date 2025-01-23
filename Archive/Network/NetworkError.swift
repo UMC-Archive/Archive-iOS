@@ -12,8 +12,8 @@ public enum NetworkError: Error {
     case dataNil                        // 데이터 없음
     case invalidResponse                // 유효하지 않은 응답
     case failToDecode(String)           // 디코딩 에러
-    case serverError(Int)               // 서버 에러
-    case networkError(String)           // 네트워크 에러 (인테넛 연결, 요청 시간 초과, 네트워크 오류)
+    case serverError(String)               // 서버 에러
+    case networkError(message: String)           // 네트워크 에러 (인테넛 연결, 요청 시간 초과, 네트워크 오류)
     case requestFailed(String)          // 요청 실패
     case parameterEncodingError(String) // 파라미터 인코딩 에러
     case encodingError(String)          // 인코딩 실패
@@ -32,8 +32,8 @@ extension NetworkError {
             "응답 값이 유효하지 않습니다."
         case .failToDecode(let message):
             "디코딩 에러: \(message)"
-        case .serverError(let statusCode):
-            "\(statusCode) 서버 에러"
+        case .serverError(let message):
+            "서버 에러: \(message)"
         case .networkError(let message):
             "네트워크 에러: \(message)"
         case .requestFailed(let message):
@@ -49,6 +49,6 @@ extension NetworkError {
 }
 
 // 서버 응답 메시지 디코딩
-//public struct ErrorResponse: Decodable {
-//    let message: String
-//}
+public struct ErrorResponse: Decodable {
+    let message: String
+}
