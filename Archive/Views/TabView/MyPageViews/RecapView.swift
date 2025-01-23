@@ -8,10 +8,19 @@
 import UIKit
 
 class RecapView: UIView {
+    
+    public let navigationView = NavigationBar(title: .recap)
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+       
+        self.backgroundColor = .black_100
+        scrollView.backgroundColor = .clear
+        contentView.backgroundColor = .clear
         setupView()
         setConstraint()
+        
     }
     
     required init?(coder: NSCoder) {
@@ -20,16 +29,12 @@ class RecapView: UIView {
     
     // ScrollView 정의
     public var scrollView = UIScrollView().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-        $0.showsVerticalScrollIndicator = false
-        $0.showsHorizontalScrollIndicator = false
-        $0.backgroundColor = UIColor.black_100
+        $0.isScrollEnabled = true
+        $0.contentInsetAdjustmentBehavior = .never
     }
     
     // ScrollView의 ContentView 정의
-    public var contentView = UIView().then {
-        $0.translatesAutoresizingMaskIntoConstraints = false
-    }
+    public var contentView = UIView()
     
     public var genreInfoLabel = UILabel().then{
         $0.text = "2024 상반기 유저 닉네임님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
@@ -47,7 +52,7 @@ class RecapView: UIView {
         $0.isScrollEnabled = false
         $0.contentInsetAdjustmentBehavior = .never
         $0.register(GenreRecommendedCollectionViewCell.self, forCellWithReuseIdentifier: "genreRecommendedCollectionViewIdentifier")
-        $0.backgroundColor = .clear
+        $0.backgroundColor = .black_100
     }
     private let genreCollectionViewBackgound = UIImageView().then {
         $0.image = UIImage(named: "GenreCollectionViewBackground")
@@ -112,73 +117,89 @@ class RecapView: UIView {
         $0.textColor = .white
         $0.numberOfLines = 2
     }
+    private let headerView = UILabel().then{
+        $0.text = "recap 결산"
+        $0.font = UIFont.customFont(font: .SFPro, ofSize: 21, rawValue: 700)
+        $0.textColor = .white
+    }
+    public let headerButton = UIButton().then{
+        $0.setImage(UIImage(named: "rightArrow"), for: .normal)
+    }
     
-//    public let RecapCompletionCollectionView = UICollectionView(frame: .zero, collectionViewLayout:
-//                                                                    UICollectionViewFlowLayout().then{
-//        $0.scrollDirection = .vertical
-//        $0.itemSize = CGSize(width: 317, height: 50)
-//        $0.minimumInteritemSpacing = 16 * UIScreen.main.screenHeight / 667
-//    }).then{
-//        $0.backgroundColor = .black
-//        $0.isScrollEnabled = true
-//        $0.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: "albumCollectionViewIdentifier")
-//    }
+    public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
+        $0.itemSize = CGSize(width: 317, height: 50)
+        $0.minimumLineSpacing = 10
+        $0.scrollDirection = .horizontal
+    }).then{
+        $0.register(MusicVerticalCell.self, forCellWithReuseIdentifier: "MusicVerticalCell")
+        $0.backgroundColor = UIColor.black_100
+        $0.isScrollEnabled = true
+    }
     
     // View 구성
     private func setupView() {
 
+
         [
-            scrollView,
             
-        ].forEach {
-           addSubview($0)
-        }
-        
-        scrollView.addSubview(contentView)
-        
-        [
             genreInfoLabel,
             CDBackgroundView,
             genreCollectionViewBackgound,
             genreCollectionView,
             genreTasteLabel,
             genreTasteLabel2,
-            recapCollectionView,
             CDView,
             CDHoleView,
-            CDInfoLabel
+            CDInfoLabel,
+            recapCollectionView,
+            headerView,
+            headerButton,
+            collectionView,
         ].forEach {
             contentView.addSubview($0)
         }
 
         
+        [
+            navigationView,
+            scrollView,
+            
+            
+        ].forEach {
+           addSubview($0)
+        }
         
+        scrollView.addSubview(contentView)
 
     }
     
     // 제약 조건 설정
     private func setConstraint() {
-        // scrollView 제약 조건
-        scrollView.snp.makeConstraints {
-            $0.edges.equalToSuperview()
-        }
         
-        // contentView 제약 조건
+        navigationView.snp.makeConstraints{
+            $0.top.equalToSuperview().offset(46)
+            $0.leading.equalToSuperview().offset(20)
+            $0.height.equalTo(30)
+        }
+                
+        scrollView.snp.makeConstraints {
+            $0.top.equalTo(navigationView.snp.bottom) // scrollView는 navigationView 아래에 위치
+            $0.leading.trailing.bottom.equalToSuperview()
+        }
+                
+                
         contentView.snp.makeConstraints {
             $0.edges.equalToSuperview()
-            $0.width.equalToSuperview() // 가로 스크롤 방지
-            $0.bottom.equalTo(recapCollectionView.snp.bottom).offset(50) // 마지막 요소의 아래로 확장
+            $0.width.equalTo(scrollView) // 가로 스크롤 방지
+            $0.bottom.equalTo(collectionView.snp.bottom)
         }
-        
-        
-        
         
         
         // CDView 제약 조건
         CDView.snp.makeConstraints {
-            $0.top.equalTo(contentView.snp.top).offset(71)
             $0.height.width.equalTo(258)
             $0.centerX.equalToSuperview()
+            $0.centerY.equalTo(CDBackgroundView)
         }
         
         // CDHoleView 제약 조건
@@ -187,7 +208,8 @@ class RecapView: UIView {
             $0.height.width.equalTo(40)
         }
         CDBackgroundView.snp.makeConstraints{
-            $0.centerX.centerY.equalTo(CDView)
+            $0.top.equalToSuperview().offset(26)
+            $0.centerX.equalTo(CDView)
             $0.width.height.equalTo(312)
         }
         
@@ -204,7 +226,7 @@ class RecapView: UIView {
         // genreCollectionView 제약 조건
         genreCollectionView.snp.makeConstraints {
             $0.top.equalTo(genreInfoLabel.snp.bottom).offset(40)
-            $0.width.equalTo(423)
+            $0.width.equalTo(269)
             $0.height.equalTo(120)
             $0.centerX.equalToSuperview()
         }
@@ -227,7 +249,23 @@ class RecapView: UIView {
             $0.width.equalTo(537)
             $0.height.equalTo(333)
             $0.centerX.equalToSuperview()
+//            $0.bottom.equalToSuperview()
         }
-        
+        headerView.snp.makeConstraints{
+            $0.top.equalTo( recapCollectionView.snp.bottom).offset(42)
+            $0.leading.equalToSuperview().offset(20)
+            $0.height.equalTo(25)
+        }
+        headerButton.snp.makeConstraints{
+            $0.centerY.equalTo(headerView.snp.centerY)
+            $0.trailing.equalToSuperview().offset(-20)
+            $0.size.equalTo(CGSize(width: 12, height: 20))
+        }
+        collectionView.snp.makeConstraints{
+            $0.top.equalTo(headerView.snp.bottom).offset(20)
+            $0.leading.equalTo(headerView)
+            $0.width.equalToSuperview()
+            $0.height.equalTo(317)
+        }
     }
 }

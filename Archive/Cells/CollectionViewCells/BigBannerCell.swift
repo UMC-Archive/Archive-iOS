@@ -34,12 +34,6 @@ class BigBannerCell: UICollectionViewCell {
         lbl.textColor = .white
     }
     
-    // 앨범 서브 타이틀
-//    private let albumSubTitleLabel = UILabel().then { lbl in
-//        lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
-//        lbl.textColor = .white
-//    }
-    
     // 아티스트
     public let artistLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
@@ -74,7 +68,6 @@ class BigBannerCell: UICollectionViewCell {
         super.prepareForReuse()
         CDImageView.albumImageView.image = nil
         albumTitleLabel.text = ""
-//        albumSubTitleLabel.text = ""
         yearLabel.text = ""
         artistLabel.text = ""
     }
@@ -83,13 +76,10 @@ class BigBannerCell: UICollectionViewCell {
         [
             CDCaseImageView,
             CDImageView
-//            albumImageView,
-//            CDHole
         ].forEach{CDGrorupView.addSubview($0)}
         
         [
             albumTitleLabel,
-//            albumSubTitleLabel,
             artistLabel,
             yearLabel
         ].forEach{infoGroupView.addSubview($0)}
@@ -123,7 +113,7 @@ class BigBannerCell: UICollectionViewCell {
         // 정보 그룹
         infoGroupView.snp.makeConstraints { make in
             make.top.equalTo(CDGrorupView.snp.bottom)
-            make.horizontalEdges.bottom.equalToSuperview()
+            make.horizontalEdges.bottom.equalToSuperview().inset(1)
         }
         
         // 앨범 타이틀
@@ -131,13 +121,7 @@ class BigBannerCell: UICollectionViewCell {
             make.top.equalToSuperview().offset(8)
             make.horizontalEdges.equalToSuperview().inset(14)
         }
-        
-        // 앨범 서브 타이틀
-//        albumSubTitleLabel.snp.makeConstraints { make in
-//            make.top.equalTo(albumTitleLabel.snp.bottom)
-//            make.horizontalEdges.equalToSuperview()
-//        }
-        
+    
         // 아티스트
         artistLabel.snp.makeConstraints { make in
             make.top.equalTo(albumTitleLabel.snp.bottom).offset(2)
@@ -155,36 +139,60 @@ class BigBannerCell: UICollectionViewCell {
     public func setBorder() {
         // 상단에만 테두리를 제거하고, 양옆과 아래쪽에 테두리를 추가
         let borderLayer = CAShapeLayer()
+        infoGroupView.layer.addSublayer(borderLayer)
         
         // 상단에만 테두리 없이 그릴 수 있도록 경로 설정
         let path = UIBezierPath()
         path.move(to: CGPoint(x: 0, y: 0)) // 왼쪽 상단
-        path.addLine(to: CGPoint(x: 0, y: infoGroupView.frame.size.height)) // 왼쪽 아래
-        path.addLine(to: CGPoint(x: infoGroupView.frame.size.width, y: infoGroupView.frame.size.height)) // 오른쪽 아래
-        path.addLine(to: CGPoint(x: infoGroupView.frame.size.width, y: 0)) // 오른쪽 위
+        path.addLine(to: CGPoint(x: 0, y: infoGroupView.frame.size.height - 10)) // 왼쪽 아래로 이동
+        
+        
+        // 왼쪽 아래 둥근 테두리
+        var center = CGPoint(x: 10, y: infoGroupView.frame.size.height - 10) // 원의 center
+        path.addArc(withCenter: center, radius: 10, startAngle: CGFloat.pi, endAngle: CGFloat.pi / 2, clockwise: false)
+           
+        // 아래 테두리
+        path.addLine(to: CGPoint(x: infoGroupView.frame.size.width - 10, y: infoGroupView.frame.size.height)) // 오른쪽 아래로 이동
+        
+        // 오른쪽 아래 둥근 테두리
+        center = CGPoint(x: infoGroupView.frame.size.width - 10, y: infoGroupView.frame.size.height - 10) // 원의 center
+        path.addArc(withCenter: center, radius: 10, startAngle: CGFloat.pi / 2, endAngle: 0, clockwise: false)
+        
+        // 오른쪽 테두리
+        path.addLine(to: CGPoint(x: infoGroupView.frame.size.width, y: 0)) // 오른쪽 위로 이동
         
         borderLayer.path = path.cgPath
         borderLayer.fillColor = UIColor.clear.cgColor
         borderLayer.strokeColor = UIColor.white.cgColor
-        borderLayer.frame = infoGroupView.bounds
         borderLayer.lineWidth = 1
+        borderLayer.frame = infoGroupView.bounds
+
+        // 그라데이션을 위한 레이어 추가
+//        setGradientForBorder(borderLayer)
+    }
+
+    public func setGradientForBorder(_ borderLayer: CAShapeLayer) {
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = borderLayer.bounds
         
-        infoGroupView.layer.addSublayer(borderLayer)
+        // 그라데이션 색상 설정 (상단은 투명, 하단은 흰색)
+        gradientLayer.colors = [
+            UIColor.clear.cgColor,  // 상단 투명
+            UIColor.white.cgColor   // 하단 흰색
+        ]
         
-        // 상단의 cornerRadius만 제거하고, 바텀 양 끝에 cornerRadius를 적용
-        let maskPath = UIBezierPath(roundedRect: infoGroupView.bounds, byRoundingCorners: [.bottomLeft, .bottomRight], cornerRadii: CGSize(width: 10, height: 10))
-        let maskLayer = CAShapeLayer()
-        maskLayer.path = maskPath.cgPath
-        infoGroupView.layer.mask = maskLayer
+        // 그라데이션 방향 설정 (위에서 아래로)
+        gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+        gradientLayer.endPoint = CGPoint(x: 0, y: 1)
+        
+        // 그라데이션 레이어를 테두리 레이어에 추가
+        borderLayer.addSublayer(gradientLayer)
     }
     
     public func config(album: MusicDummyModel) {
-//        albumImageView.kf.setImage(with: URL(string: album.albumURL))
+        CDImageView.config(albumImageURL: album.albumURL)
         albumTitleLabel.text = album.albumTitle
-//        albumSubTitleLabel.text = album.albumSubTitle
         artistLabel.text = album.artist
         yearLabel.text = "⦁ \(album.year)"
-        CDImageView.config(albumImageURL: album.albumURL)
-
     }
 }

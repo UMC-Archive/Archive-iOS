@@ -19,6 +19,11 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
+
+    }
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        print("homeView has disappeared")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -43,16 +48,29 @@ class HomeViewController: UIViewController {
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 if let bannerCell = cell as? BannerCell {
-                     bannerCell.configMusic(data: item)
-                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-                     bannerCell.artistLabel.addGestureRecognizer(tapGesture)
+                    
+                    bannerCell.configMusic(data: item)
+                    
+                    // 앨범 탭 제스처
+                    let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
+                    bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                    
+                    // 아티스트 탭 제스처
+                    let tapArtistGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                  }
                 return cell
             case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 if let verticalCell = cell as? VerticalCell {
                     verticalCell.config(data: item)
-                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    
+                    // 앨범 탭 제스처
+                    let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
+                    verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                    
+                    // 아티스트 탭 제스처
+                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
                     verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
                  }
                 return cell
@@ -88,6 +106,12 @@ class HomeViewController: UIViewController {
             return headerView
         }
         
+    }
+    
+    // 앨범 버튼
+    @objc private func TapAlbumImageGesture() {
+        let nextVC = AlbumViewController()
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 아티스트 버튼

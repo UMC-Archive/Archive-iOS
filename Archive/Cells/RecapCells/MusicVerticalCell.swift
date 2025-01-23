@@ -7,11 +7,11 @@
 
 import UIKit
 
-class VerticalCell: UICollectionViewCell {
-    static let id = "VerticalCell"
+class MusicVerticalCell: UICollectionViewCell {
+    static let id = "MusicVerticalCell"
     
     // 앨범 이미지 뷰
-    public let imageView = AlbumImageView()
+    private let imageView = AlbumImageView()
     
     // Album & SongTitle
     private let titleLabel = UILabel().then { lbl in
@@ -21,11 +21,10 @@ class VerticalCell: UICollectionViewCell {
     }
     
     // 아티스트 ⦁ year
-    public let artistYearLabel = UILabel().then { lbl in
+    private let artistYearLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
-        lbl.isUserInteractionEnabled = true
     }
     
     // 더보기 버튼
@@ -50,7 +49,6 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.text = ""
         artistYearLabel.text = ""
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
-        gestureRecognizers = nil
     }
     
     private func setSubView() {
@@ -94,9 +92,15 @@ class VerticalCell: UICollectionViewCell {
         }
     }
     
-    public func config(data: MusicDummyModel){
-        imageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = data.musicTitle
-        artistYearLabel.text = "\(data.artist) ⦁ \(data.year)"
+    public func config(albumURL: String, musicTitle: String, artist: String, year: String) {
+        // 이미지 설정
+        imageView.kf.setImage(with: URL(string: albumURL))
+        
+        // 제목 설정
+        titleLabel.text = musicTitle
+        
+        // 아티스트 및 연도 설정
+        artistYearLabel.text = "\(artist) ⦁ \(year)"
     }
+
 }
