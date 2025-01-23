@@ -4,8 +4,9 @@
 //
 //  Created by 이수현 on 1/7/25.
 //
-
+import SpotifyiOS
 import UIKit
+import Foundation
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
@@ -16,7 +17,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let windowScene = (scene as? UIWindowScene) else { return }
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
-
         window?.backgroundColor = UIColor.black_100
         window?.rootViewController = TabBarViewController()
         window?.makeKeyAndVisible()

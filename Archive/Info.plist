@@ -2,6 +2,7 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+
 	<key>UIAppFonts</key>
 	<array>
 		<string>SF-Pro-Text-Semibold.otf</string>
@@ -10,6 +11,7 @@
 		<string>SF-Pro-Text-Medium.otf</string>
 		<string>SF-Pro-Text-Bold.otf</string>
 	</array>
+
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -27,5 +29,10 @@
 			</array>
 		</dict>
 	</dict>
+
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+		<string>spotify</string>
+	</array>
 </dict>
 </plist>
