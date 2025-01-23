@@ -66,8 +66,9 @@ class ProfileChangeView : UIView {
             $0.edges.equalToSuperview()
         }
         navigationView.snp.makeConstraints{
-            $0.top.equalTo(safeAreaLayoutGuide).offset(46)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalToSuperview().offset(19)
+            $0.height.equalTo(30)
         }
         profileImage.snp.makeConstraints{
             $0.top.equalTo(navigationView.snp.bottom).offset(99)

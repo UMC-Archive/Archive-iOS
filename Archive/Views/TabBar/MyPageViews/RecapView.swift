@@ -118,7 +118,7 @@ class RecapView: UIView {
         $0.numberOfLines = 2
     }
     private let headerView = UILabel().then{
-        $0.text = "recap 결산"
+        $0.text = "Recap 결산"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 21, rawValue: 700)
         $0.textColor = .white
     }
