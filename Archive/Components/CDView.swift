@@ -29,7 +29,7 @@ class CDView: UIView {
         view.contentMode = .scaleAspectFit
         view.clipsToBounds = true
         view.layer.cornerRadius = imageWidthHeight / 2
-        view.layer.borderWidth = 2
+        view.layer.borderWidth = 3
         view.layer.borderColor = UIColor(hex: "929292")?.withAlphaComponent(0.5).cgColor
     }
     

@@ -8,6 +8,7 @@
 import UIKit
 
 class RecapViewController: UIViewController {
+    private let dummyData = MusicDummyModel.dummy()
     let cellSize = CGSize(width: 258, height: 258)
     var minItemSpacing: CGFloat = 1
     let cellCount = 3
@@ -114,14 +115,16 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             guard let cell = rootView.recapCollectionView.dequeueReusableCell(withReuseIdentifier: "recapCollectionViewIdentifier", for: indexPath) as? RecapCollectionViewCell else {
                 fatalError("Failed to dequeue RecapCollectionViewCell")
             }
-            let dummy = RecapModel.dummy()
-            if indexPath.row == 0{
-                cell.config(image: dummy[1].CDImage)
-            }else if indexPath.row == 1{
-                cell.config(image: dummy[0].CDImage)
-            }else{
-                cell.config(image: dummy[indexPath.row].CDImage)
-            }
+//            let dummy = RecapModel.dummy()
+            cell.config(data: dummyData[indexPath.row])
+//            if indexPath.row == 0{
+////                cell.config(image: dummy[1].CDImage)
+//                cell.config(data: dummyData[indexPath.row])
+//            }else if indexPath.row == 1{
+////                cell.config(image: dummy[0].CDImage)
+//            }else{
+////                cell.config(image: dummy[indexPath.row].CDImage)
+//            }
             return cell
         case rootView.genreCollectionView:
             guard let cell = rootView.genreCollectionView.dequeueReusableCell(withReuseIdentifier: "genreRecommendedCollectionViewIdentifier", for: indexPath)as? GenreRecommendedCollectionViewCell else {
