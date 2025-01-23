@@ -56,7 +56,7 @@ class AlbumView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .black
+        self.backgroundColor = .black_100
         setSubView()
         setUI()
     }
