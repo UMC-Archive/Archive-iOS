@@ -8,6 +8,7 @@
 import UIKit
 
 class HomeViewController: UIViewController {
+    private let musicService = MusicService() // 예시
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
@@ -19,6 +20,7 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
+        postMusicInfo(artist: "IU", music: "Love poem") // 예시
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -163,5 +165,27 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    
+    // 음악 정보 가져오기 API
+    func postMusicInfo(artist: String, music: String) {
+        musicService.musicInfo(artist: artist, music: music){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("성공")
+                print(response.title)
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+//                Toaster.shared.makeToast("\(error.errorDescription!)", .short)
+                print("실패: \(error.description)")
+            }
+        }
     }
 }

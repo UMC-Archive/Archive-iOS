@@ -16,6 +16,11 @@ extension NetworkManager {
         completion: @escaping (Result<T, NetworkError>) -> Void
     ) {
         provider.request(target) { result in
+            do {
+                print(try result.get().request?.url?.absoluteString)
+            } catch {
+                print("error")
+            }
             switch result {
             case .success(let response):
                 print(response.statusCode)
