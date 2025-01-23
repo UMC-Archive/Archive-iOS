@@ -7,9 +7,10 @@
 
 import UIKit
 
-public struct API {
-    // Example
-//    public static let baseURL = "https://54.180.3.147.nip.io"
-//    public static let reviewURL = "\(baseURL)/review"
-//    public static let coffeeURL = "\(baseURL)/coffee"
+public struct Domain {
+    public static let baseURL = "http://umc.musicarchive.kro.kr/"   // 기본 주소
+    public static let usersURL = "\(baseURL)/users"                 // 유저
+    public static let libraryURL = "\(baseURL)/library"             // 라이브러리
+    public static let musicURL = "\(baseURL)/music"                 // 음악
+    public static let albumURL = "\(baseURL)/album"                 // 앨범
 }
