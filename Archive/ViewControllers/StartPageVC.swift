@@ -21,7 +21,7 @@ class StartPageVC : UIViewController {
     
     @objc private func handleEmailSignup() {
           // Spotify 로그인 시작
-          SpotifyAuthManager.shared.startAuthentication(from: self)
+//          SpotifyAuthManager.shared.startAuthentication(from: self)
       }
     
 }

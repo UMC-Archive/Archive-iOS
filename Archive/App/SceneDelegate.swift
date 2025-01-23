@@ -4,7 +4,7 @@
 //
 //  Created by 이수현 on 1/7/25.
 //
-import SpotifyiOS
+
 import UIKit
 import Foundation
 
