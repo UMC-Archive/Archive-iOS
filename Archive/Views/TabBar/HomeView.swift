@@ -144,7 +144,7 @@ class HomeView: UIView {
         let group = NSCollectionLayoutGroup.vertical(layoutSize: groupSize, repeatingSubitem: item, count: 4)
         
         let section = NSCollectionLayoutSection(group: group)
-        section.orthogonalScrollingBehavior = .continuous
+        section.orthogonalScrollingBehavior = .groupPaging
         
         let header = createHeader()
         section.boundarySupplementaryItems = [header]

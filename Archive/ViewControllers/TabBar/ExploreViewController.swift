@@ -29,15 +29,14 @@ class ExploreViewController: UIViewController {
         super.viewDidLayoutSubviews()
 
         let contentHeight = calculateScrollViewHeight()
-        print("contentHeight: \(contentHeight)")
         exploreView.contentView.snp.updateConstraints { make in
-//            make.height.equalTo(contentHeight + 97)
-            make.height.equalTo(1300)
+            make.height.equalTo(contentHeight)
         }
         
         exploreView.layoutIfNeeded()
     }
     
+    // 컬렉션 뷰 높이 구하는 함수
     private func calculateCollectionViewHeight() -> CGFloat {
         // 각 섹션의 높이 정의
         let verticalSectionHeight: CGFloat = 275 + (10 * 3) + 45 // 그룹 높이 + 간격 + 헤더
@@ -49,6 +48,7 @@ class ExploreViewController: UIViewController {
         return totalCollectionViewHeight
     }
     
+    // 스크롤 뷰의 높이 구하는 ㅇ함수
     private func calculateScrollViewHeight() -> CGFloat {
         // collectionView 전체 높이 계산
         let collectionViewHeight = calculateCollectionViewHeight()
