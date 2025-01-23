@@ -138,7 +138,7 @@ class AlbumViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("postMusicAlbum 성공 : \(response.title)")
+                print("postMusicAlbum 성공 : \(String(describing: response?.title))")
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")

@@ -27,12 +27,17 @@ public final class MusicService: NetworkManager {
     
     
     // 노래 정보 가져오기
-    public func musicInfo(artist: String, music: String, completion: @escaping (Result<MusicInfoResponseDTO, NetworkError>) -> Void) {
-        request(target: .musicInfo(artist: artist, music: music), decodingType: MusicInfoResponseDTO.self, completion: completion)
+    public func musicInfo(artist: String, music: String, completion: @escaping (Result<MusicInfoResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .musicInfo(artist: artist, music: music), decodingType: MusicInfoResponseDTO.self, completion: completion)
     }
     
     // 앨범 정보 가져오기
-    public func album(artist: String, album: String, completion: @escaping (Result<MusicAlbumReponseDTO, NetworkError>) -> Void) {
-        request(target: .musicAlbum(artist: artist, album: album), decodingType: MusicAlbumReponseDTO.self, completion: completion)
+    public func album(artist: String, album: String, completion: @escaping (Result<AlbumInfoReponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .albumInfo(artist: artist, album: album), decodingType: AlbumInfoReponseDTO.self, completion: completion)
+    }
+    
+    // 아티스트 정보 가져오기
+    public func artist(artist: String, completion: @escaping (Result<ArtistInfoReponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .artistInfo(artist: artist), decodingType: ArtistInfoReponseDTO.self, completion: completion)
     }
 }

@@ -178,7 +178,7 @@ class HomeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("성공")
-                print(response.title)
+                print(response?.title)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")

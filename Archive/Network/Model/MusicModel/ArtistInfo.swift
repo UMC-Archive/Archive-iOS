@@ -1,5 +1,5 @@
 //
-//  MusicAlbum.swift
+//  ArtistInfo.swift
 //  Archive
 //
 //  Created by 이수현 on 1/23/25.
@@ -7,12 +7,9 @@
 
 import Foundation
 
-
-public struct MusicAlbumReponseDTO: Decodable {
+public struct ArtistInfoReponseDTO: Decodable {
     let id: String
-    let title: String
-    let description: String
-    let releaseTime: String
+    let name: String
     let image: String
     let createdAt: String
     let updatedAt: String
