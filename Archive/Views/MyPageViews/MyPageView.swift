@@ -151,7 +151,7 @@ class MyPageView: UIView {
         scrollView.addSubview(contentView)
         
         topView.snp.makeConstraints{
-            $0.top.equalTo(safeAreaLayoutGuide).offset(46)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(safeAreaLayoutGuide).offset(20)
             $0.horizontalEdges.equalToSuperview().inset(20)
         }
