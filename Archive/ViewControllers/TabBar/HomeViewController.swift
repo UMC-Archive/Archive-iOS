@@ -9,6 +9,8 @@ import UIKit
 
 class HomeViewController: UIViewController {
     private let musicService = MusicService() // 예시
+    
+    
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()

@@ -132,22 +132,23 @@ class AlbumViewController: UIViewController {
     }
     
     // 앨범 정보 가져오기 API
-    func postMusicAlbum(artist: String, album: String) {
-        musicService.album(artist: artist, album: album){ [weak self] result in
+    func postMusicAlbum(artist: String, album: String) { // musicService의 album 함수의 파라미터로 artist, album이 필요하기 때문에 받아옴
+        // musicService의 album 함수 사용
+        musicService.album(artist: artist, album: album){ [weak self] result in // 반환값 result의 타입은 Result<AlbumInfoReponseDTO?, NetworkError>
             guard let self = self else { return }
             
             switch result {
-            case .success(let response):
+            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
                 print("postMusicAlbum 성공 : \(String(describing: response?.title))")
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
 //                    self.goToNextView()
                 }
-            case .failure(let error):
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
                 print("실패: \(error.description)")
             }
         }
