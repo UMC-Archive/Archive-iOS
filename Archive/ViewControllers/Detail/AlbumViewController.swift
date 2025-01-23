@@ -8,6 +8,8 @@
 import UIKit
 
 class AlbumViewController: UIViewController {
+    private let musicService = MusicService() // 예시
+    
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
@@ -22,6 +24,9 @@ class AlbumViewController: UIViewController {
         setSnapshot()
         setProtocol()
         updateTrackViewHeight()
+        
+        // 앨범 정보 API
+        postMusicAlbum(artist: "IU", album: "Love poem")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -124,6 +129,28 @@ class AlbumViewController: UIViewController {
         snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    // 앨범 정보 가져오기 API
+    func postMusicAlbum(artist: String, album: String) {
+        musicService.album(artist: artist, album: album){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("postMusicAlbum 성공 : \(response.title)")
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
     }
 }
 

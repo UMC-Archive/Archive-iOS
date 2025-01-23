@@ -20,7 +20,9 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
-        postMusicInfo(artist: "IU", music: "Love poem") // 예시
+        
+        // 음악 정보 가져오기 API
+//        postMusicInfo(artist: "IU", music: "Love poem") // 예시
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -190,4 +192,6 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    
+
 }

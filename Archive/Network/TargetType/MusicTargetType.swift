@@ -11,7 +11,7 @@ import Moya
 enum MusicTargetType {
     case musicInfo(artist: String, music: String)           // 노래 정보 가져오기
 //    case musicPlay // 음악 재생시 기록
-//    case musicAlbum // 앨범 정보 가져오기
+    case musicAlbum(artist: String, album: String) // 앨범 정보 가져오기
 //    case musicArtist // 아티스트 정보 가져오기
 //    case musicHidden // 숨겨진 명곡
 }
@@ -19,13 +19,7 @@ enum MusicTargetType {
 
 extension MusicTargetType: TargetType {
     var baseURL: URL {
-        var domain = ""
-        switch self {
-        case .musicInfo:
-            domain = Domain.musicURL
-        }
-        
-        guard let url = URL(string: domain) else {
+        guard let url = URL(string: Domain.musicURL) else {
             fatalError("Error: Invalid URL")
         }
         return url
@@ -35,12 +29,14 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo:
             return ""
+        case .musicAlbum:
+            return "album"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .musicInfo:
+        case .musicInfo, .musicAlbum:
             return .post
         }
     }
@@ -49,6 +45,8 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo(let artist, let music):
             return .requestParameters(parameters: ["artist_name" : artist, "music_name" : music], encoding: URLEncoding.queryString)
+        case .musicAlbum(artist: let artist, album: let album):
+            return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         }
     }
     

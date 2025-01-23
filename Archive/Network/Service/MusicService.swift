@@ -30,4 +30,9 @@ public final class MusicService: NetworkManager {
     public func musicInfo(artist: String, music: String, completion: @escaping (Result<MusicInfoResponseDTO, NetworkError>) -> Void) {
         request(target: .musicInfo(artist: artist, music: music), decodingType: MusicInfoResponseDTO.self, completion: completion)
     }
+    
+    // 앨범 정보 가져오기
+    public func album(artist: String, album: String, completion: @escaping (Result<MusicAlbumReponseDTO, NetworkError>) -> Void) {
+        request(target: .musicAlbum(artist: artist, album: album), decodingType: MusicAlbumReponseDTO.self, completion: completion)
+    }
 }
