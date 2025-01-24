@@ -25,6 +25,9 @@ class HomeViewController: UIViewController {
         
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
+        
+        // 숨겨진 명곡 조회 API
+        getHiddenMusic(date: "1980-01-01")
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -195,5 +198,27 @@ class HomeViewController: UIViewController {
         }
     }
     
+    // 숨겨진 명곡 조회 API
+    func getHiddenMusic(date: String) {
+        musicService.hiddenMusic(date: date){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("성공")
+                print(response?.musics[0].title)
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
 
 }
