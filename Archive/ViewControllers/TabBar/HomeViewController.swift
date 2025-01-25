@@ -9,6 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController {
     private let musicService = MusicService() // 예시
+    private let signUpService = SignUpService()
     
     
     private let homeView = HomeView()
@@ -27,7 +28,10 @@ class HomeViewController: UIViewController {
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
         
         // 숨겨진 명곡 조회 API
-        getHiddenMusic(date: "1980-01-01")
+//        getHiddenMusic(date: "1980-01-01")
+        
+        // 이메일 인증 번호 전송 API
+        getSendVerificationCode(email: "tngus0673@naver.com")
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -221,4 +225,26 @@ class HomeViewController: UIViewController {
         }
     }
 
+    // 이메일 인증 번호 전송 API
+    func getSendVerificationCode(email: String) {
+        signUpService.sendVerificationCode(email: email){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("성공")
+                print(response)
+                Task{
+                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+                    //                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
 }

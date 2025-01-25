@@ -31,9 +31,9 @@ extension MusicTargetType: TargetType {
             return ""
         case .albumInfo:
             return "album"
-        case .artistInfo(artist: let artist):
+        case .artistInfo:
             return "artist"
-        case .musicHidden(date: let date):
+        case .musicHidden:
             return "hidden"
         }
     }

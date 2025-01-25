@@ -13,4 +13,5 @@ public struct Domain {
     public static let libraryURL = "\(baseURL)/library"             // 라이브러리
     public static let musicURL = "\(baseURL)/music"                 // 음악
     public static let albumURL = "\(baseURL)/album"                 // 앨범
+    public static let signupURL = "\(baseURL)/signup"               // 회원가입
 }
