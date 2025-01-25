@@ -10,6 +10,7 @@ import Moya
 
 public enum UserTargetType {
     case sendVerificationCode(email: String) // 이메일 인증번호 전송
+    case checkVerificationCode(parameter: CheckVerificationCodeRequestDTO) // 이메일 인증번호 확인
 }
 
 extension UserTargetType: TargetType {
@@ -24,6 +25,8 @@ extension UserTargetType: TargetType {
         switch self {
         case .sendVerificationCode:
             return "signup/email/send-verification-code"
+        case .checkVerificationCode:
+            return "signup/email/check-verification-code"
         }
     }
     
@@ -31,6 +34,8 @@ extension UserTargetType: TargetType {
         switch self {
         case .sendVerificationCode:
             return .get
+        case .checkVerificationCode:
+            return .post
         }
     }
     
@@ -38,6 +43,8 @@ extension UserTargetType: TargetType {
         switch self {
         case .sendVerificationCode(let email):
                 .requestParameters(parameters: ["email" : email], encoding: URLEncoding.queryString)
+        case .checkVerificationCode(let parameter):
+                .requestJSONEncodable(parameter)
         }
     }
     

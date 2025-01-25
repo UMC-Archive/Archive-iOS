@@ -160,6 +160,11 @@ extension NetworkManager {
 
             // 3. 응답 디코딩
             let apiResponse = try JSONDecoder().decode(ApiResponse<T>.self, from: response.data)
+            
+            // 3.5 Response 코드 확인
+            guard apiResponse.code == "200" else {
+                return .failure(.serverError(apiResponse.message))
+            }
 
             // 4. result 처리
             return .success(apiResponse.result) // ✅ result가 옵셔널이라면 nil 반환 가능

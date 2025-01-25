@@ -33,7 +33,7 @@ extension NetworkError {
         case .failToDecode(let message):
             "디코딩 에러: \(message)"
         case .serverError(let message):
-            "서버 에러: \(message)"
+            "\(message)"
         case .networkError(let message):
             "네트워크 에러: \(message)"
         case .requestFailed(let message):

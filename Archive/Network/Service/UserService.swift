@@ -30,4 +30,9 @@ public final class UserService: NetworkManager {
         requestOptional(target: .sendVerificationCode(email: email), decodingType: String.self, completion: completion)
     }
     
+    // 이메일 인증 번호 확인 API
+    public func checkVerificationCode(parameter: CheckVerificationCodeRequestDTO, completion: @escaping (Result<Bool?, NetworkError>) -> Void) {
+        requestOptional(target: .checkVerificationCode(parameter: parameter), decodingType: Bool.self, completion: completion)
+    }
+    
 }

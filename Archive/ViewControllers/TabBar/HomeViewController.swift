@@ -186,7 +186,7 @@ class HomeViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("성공")
+                print("postMusicInfo() 성공")
                 print(response?.title)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
@@ -209,7 +209,7 @@ class HomeViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("성공")
+                print("getHiddenMusic() 성공")
                 print(response?.musics[0].title)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
@@ -231,8 +231,37 @@ class HomeViewController: UIViewController {
             guard let self = self else { return }
             
             switch result {
+            case .success(let response): // response == cipherCode
+                print("getSendVerificationCode() 성공")
+                print(response)
+                if let cipherCode = response {
+                    // cipherCode 키체인 저장 후 인증 확인 API에 사용
+                }
+                
+                Task{
+                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+                    //                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 이메일 인증 번호 확인 API
+    func postCheckVerificationCode(cipherCode: String, code: String) {
+        let param = CheckVerificationCodeRequestDTO(cipherCode: cipherCode, code: code)
+        userService.checkVerificationCode(parameter: param){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
             case .success(let response):
-                print("성공")
+                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
+                print("postCheckVerificationCode() 성공")
                 print(response)
                 Task{
                     //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
