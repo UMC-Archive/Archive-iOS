@@ -9,7 +9,7 @@ import UIKit
 
 class HomeViewController: UIViewController {
     private let musicService = MusicService() // 예시
-    private let signUpService = SignUpService()
+    private let userService = UserService()
     
     
     private let homeView = HomeView()
@@ -227,7 +227,7 @@ class HomeViewController: UIViewController {
 
     // 이메일 인증 번호 전송 API
     func getSendVerificationCode(email: String) {
-        signUpService.sendVerificationCode(email: email){ [weak self] result in
+        userService.sendVerificationCode(email: email){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
