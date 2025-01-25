@@ -24,6 +24,12 @@ class DatePickerWeekView : UIView {
     private let blur = UIImageView().then{
         $0.image = UIImage(named: "PickerViewBlurLeft")
     }
+    public let backButton = UIButton().then{
+        $0.setImage(UIImage(named: "leftArrow"), for: .normal)
+    }
+    public let XButton = UIButton().then{
+        $0.setImage(UIImage(named: "XButton"), for: .normal)
+    }
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout:  CarouseLayoutVertical().then{
         $0.itemSize = CGSize(width: 91, height: 43)
         $0.scrollDirection = .vertical
@@ -45,13 +51,15 @@ class DatePickerWeekView : UIView {
         $0.textColor = UIColor.white_35
     }
     public let button = UIButton().then{
-        $0.setTitle("이전", for: .normal)
+        $0.setTitle("다음", for: .normal)
         $0.backgroundColor = .black_100
     }
     
     
     private func setConstraint(){
         [
+            backButton,
+            XButton,
             blur,
             collectionView,
             year,
@@ -59,6 +67,16 @@ class DatePickerWeekView : UIView {
             button
         ].forEach{
             addSubview($0)
+        }
+        backButton.snp.makeConstraints{
+            $0.size.equalTo(CGSize(width: 12, height: 20))
+            $0.top.equalTo(safeAreaLayoutGuide).offset(26)
+            $0.leading.equalToSuperview().offset(20)
+        }
+        XButton.snp.makeConstraints{
+            $0.size.equalTo(CGSize(width: 28, height: 28))
+            $0.centerY.equalTo(backButton.snp.centerY)
+            $0.trailing.equalToSuperview().offset(-20)
         }
         blur.snp.makeConstraints{
             $0.centerY.equalToSuperview()

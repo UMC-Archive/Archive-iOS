@@ -10,4 +10,7 @@ import Foundation
 public enum KeychainServiceType : String {
     case userId = "userId"
     case nickname = "nickname"
+    case year = "year"
+    case month = "month"
+    case week = "week"
 }
