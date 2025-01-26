@@ -15,6 +15,7 @@ public struct MusicInfoResponseDTO: Decodable {
     let releaseTime: String
     let lyrics: String
     let image: String
+    let musicUrl: String
     let createdAt: String
     let updatedAt: String
 }

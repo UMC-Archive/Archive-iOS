@@ -25,7 +25,7 @@ class HomeViewController: UIViewController {
         setSnapShot()
         
         // 음악 정보 가져오기 API
-//        postMusicInfo(artist: "IU", music: "Love poem") // 예시
+        postMusicInfo(artist: "IU", music: "Love poem") // 예시
         
         // 숨겨진 명곡 조회 API
 //        getHiddenMusic(date: "1980-01-01")
@@ -187,7 +187,7 @@ class HomeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("postMusicInfo() 성공")
-                print(response?.title)
+                print(response?.musicUrl)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
