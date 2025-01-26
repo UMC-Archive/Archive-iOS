@@ -31,7 +31,7 @@ class HomeViewController: UIViewController {
 //        getHiddenMusic(date: "1980-01-01")
         
         // 이메일 인증 번호 전송 API
-        getSendVerificationCode(email: "tngus0673@naver.com")
+//        getSendVerificationCode(email: "tngus0673@naver.com")
 
     }
     override func viewDidDisappear(_ animated: Bool) {
