@@ -51,7 +51,7 @@ class ArtistViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = popButton
         
         // 좋이요
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(tapHeartButton))
+        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
         self.navigationItem.rightBarButtonItem = heartButton
         self.navigationController?.navigationBar.tintColor = .white
     }

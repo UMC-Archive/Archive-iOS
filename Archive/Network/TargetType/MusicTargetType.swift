@@ -10,10 +10,10 @@ import Moya
 
 enum MusicTargetType {
     case musicInfo(artist: String, music: String)           // 노래 정보 가져오기
-//    case musicPlay // 음악 재생시 기록
     case albumInfo(artist: String, album: String) // 앨범 정보 가져오기
     case artistInfo(artist: String) // 아티스트 정보 가져오기
     case musicHidden(date: String) // 숨겨진 명곡
+    case genreInfo // 장르 정보 가져오기
 }
 
 
@@ -35,6 +35,8 @@ extension MusicTargetType: TargetType {
             return "artist"
         case .musicHidden:
             return "hidden"
+        case .genreInfo:
+            return "/genre/info"
         }
     }
     
@@ -42,7 +44,7 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo:
             return .post
-        case .musicHidden:
+        case .musicHidden, .genreInfo:
             return .get
         }
     }
@@ -57,6 +59,8 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist], encoding: URLEncoding.queryString)
         case .musicHidden(date: let date):
             return .requestParameters(parameters: ["date" : date], encoding: URLEncoding.queryString)
+        case .genreInfo:
+            return .requestPlain
         }
     }
     
