@@ -59,40 +59,53 @@ extension UserTargetType: TargetType {
                 
                 // 이미지 추가
                 let imagePart = MultipartFormData(provider: .data(imageData),
-                                                  name: "profileImage",
+                                                  name: "image",
                                                   fileName: "\(image.hashValue).jpg",
                                                   mimeType: "image/jpeg"
                 )
                 formData.append(imagePart)
+            
+            // Request body(createLetterRequestDTO)를 JSON으로 인코딩
+            do {
+                let jsonData = try JSONEncoder().encode(parameter)
+                let requestPart = MultipartFormData(
+                    provider: .data(jsonData),
+                    name: "data"
+                )
+                formData.append(requestPart)
+            } catch {
+                print("Failed to encode request body: \(error)")
+                return .requestPlain
+            }
                 
             // 일반 텍스트 필드 추가
-            let textFields: [String: String] = [
-                "nickname": parameter.nickname,
-                "email": parameter.email,
-                "password": parameter.password,
-                "status": parameter.status,
-                "socialType": parameter.socialType,
-                "inactiveDate": parameter.inactiveDate
-            ]
-
-            for (key, value) in textFields {
-                if let data = value.data(using: .utf8) {
-                    formData.append(MultipartFormData(provider: .data(data), name: key))
-                }
-            }
-
-            // 배열 필드 추가
-            for artist in parameter.artists {
-                if let data = "\(artist)".data(using: .utf8) {
-                    formData.append(MultipartFormData(provider: .data(data), name: "artists"))
-                }
-            }
-
-            for genre in parameter.genres {
-                if let data = "\(genre)".data(using: .utf8) {
-                    formData.append(MultipartFormData(provider: .data(data), name: "genres"))
-                }
-            }
+//            let textFields: [String: String] = [
+//                "nickname": parameter.nickname,
+//                "email": parameter.email,
+//                "password": parameter.password,
+//                "status": parameter.status,
+//                "socialType": parameter.socialType,
+//                "inactiveDate": parameter.inactiveDate
+//            ]
+//
+//            for (key, value) in textFields {
+//                if let data = value.data(using: .utf8) {
+//                    formData.append(MultipartFormData(provider: .data(data), name: key))
+//                }
+//            }
+//
+//            // 배열 필드 추가
+//            for artist in parameter.artists {
+//                if let data = "\(artist)".data(using: .utf8) {
+//                    formData.append(MultipartFormData(provider: .data(data), name: "artists"))
+//                }
+//            }
+//
+//            for genre in parameter.genres {
+//                if let data = "\(genre)".data(using: .utf8) {
+//                    formData.append(MultipartFormData(provider: .data(data), name: "genres"))
+//                }
+//            }
 
             return .uploadMultipart(formData)
         }

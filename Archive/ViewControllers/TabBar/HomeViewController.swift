@@ -39,10 +39,10 @@ class HomeViewController: UIViewController {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         let inactiveDate = dateFormatter.string(from: date)
         
-        let parameter = SignUpRequestDTO(nickname: "example", email: "example@naver.com", password: "example", status: "active", socialType: "local", inactiveDate: inactiveDate, artists: [1], genres: [1])
-//        postSignUp(image: .cdSample, parameter: parameter)
+        let parameter = SignUpRequestDTO(nickname: "example", email: "aasdlkkc123sl123l@naver.com", password: "example", status: "active", socialType: "local", inactiveDate: inactiveDate, artists: [1], genres: [1])
+        postSignUp(image: .cdSample, parameter: parameter)
         
-        getGenreInfo()
+//        getGenreInfo()
 
     }
     override func viewDidDisappear(_ animated: Bool) {

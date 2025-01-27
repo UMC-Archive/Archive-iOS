@@ -36,7 +36,7 @@ public final class UserService: NetworkManager {
     }
 
     // 회원가입 API
-    public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<Void, NetworkError>) -> Void) {
-        requestStatusCode(target: .signUp(image: image, parameter: parameter), completion: completion)
+    public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<SignUpResponseDTO, NetworkError>) -> Void) {
+        request(target: .signUp(image: image, parameter: parameter), decodingType: SignUpResponseDTO.self, completion: completion)
     }
 }

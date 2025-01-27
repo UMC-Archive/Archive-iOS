@@ -170,7 +170,7 @@ extension NetworkManager {
             return .success(apiResponse.result) // ✅ result가 옵셔널이라면 nil 반환 가능
 
         } catch {
-            return .failure(.failToDecode(response.description)) // 디코딩 에러 처리
+            return .failure(.failToDecode(response.debugDescription)) // 디코딩 에러 처리
         }
     }
     
