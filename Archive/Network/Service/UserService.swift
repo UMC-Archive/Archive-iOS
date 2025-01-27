@@ -5,7 +5,7 @@
 //  Created by 이수현 on 1/25/25.
 //
 
-import Foundation
+import UIKit
 import Moya
 
 public final class UserService: NetworkManager {
@@ -34,5 +34,9 @@ public final class UserService: NetworkManager {
     public func checkVerificationCode(parameter: CheckVerificationCodeRequestDTO, completion: @escaping (Result<Bool?, NetworkError>) -> Void) {
         requestOptional(target: .checkVerificationCode(parameter: parameter), decodingType: Bool.self, completion: completion)
     }
-    
+
+    // 회원가입 API
+    public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        requestStatusCode(target: .signUp(image: image, parameter: parameter), completion: completion)
+    }
 }

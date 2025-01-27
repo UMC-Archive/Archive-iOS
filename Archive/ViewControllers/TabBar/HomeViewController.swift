@@ -25,13 +25,22 @@ class HomeViewController: UIViewController {
         setSnapShot()
         
         // 음악 정보 가져오기 API
-        postMusicInfo(artist: "IU", music: "Love poem") // 예시
+//        postMusicInfo(artist: "IU", music: "Love poem") // 예시
         
         // 숨겨진 명곡 조회 API
 //        getHiddenMusic(date: "1980-01-01")
         
         // 이메일 인증 번호 전송 API
 //        getSendVerificationCode(email: "tngus0673@naver.com")
+        
+        // 회원가입 API
+        let date = Date()
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = "yyyy-MM-dd"
+        let inactiveDate = dateFormatter.string(from: date)
+        
+        let parameter = SignUpRequestDTO(nickname: "example", email: "example@naver.com", password: "example", status: "active", socialType: "local", inactiveDate: inactiveDate, artists: [1], genres: [1])
+        postSignUp(image: .cdSample, parameter: parameter)
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -262,6 +271,30 @@ class HomeViewController: UIViewController {
             case .success(let response):
                 // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
                 print("postCheckVerificationCode() 성공")
+                print(response)
+                Task{
+                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+                    //                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 회원가입 API
+    func postSignUp(image: UIImage, parameter: SignUpRequestDTO) {
+        userService.signUp(image: image, parameter: parameter){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
+                print("postSignUp() 성공")
                 print(response)
                 Task{
                     //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
