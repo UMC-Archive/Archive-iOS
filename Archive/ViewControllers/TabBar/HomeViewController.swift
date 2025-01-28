@@ -43,6 +43,7 @@ class HomeViewController: UIViewController {
         postSignUp(image: .cdSample, parameter: parameter)
         
 //        getGenreInfo()
+        buttonTapped()
 
     }
     override func viewDidDisappear(_ animated: Bool) {
@@ -52,6 +53,13 @@ class HomeViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
+    }
+    private func buttonTapped(){
+        homeView.topView.exploreIconButton.addTarget(self, action: #selector(exploreIconTapped), for: .touchUpInside)
+    }
+    @objc func exploreIconTapped(){
+        let viewController = DatePickerViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     
     private func setDataSource() {

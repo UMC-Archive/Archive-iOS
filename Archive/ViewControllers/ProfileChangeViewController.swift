@@ -18,9 +18,11 @@ class ProfileChangeViewController : UIViewController {
     }
     private func controlTapped(){
         rootView.navigationView.popButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        rootView.button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
     }
     @objc func backButtonTapped(){
-        
         self.navigationController?.popViewController(animated: true)
+        print("1")
     }
 }
