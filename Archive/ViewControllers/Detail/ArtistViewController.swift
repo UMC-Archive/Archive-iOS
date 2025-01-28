@@ -8,6 +8,9 @@
 import UIKit
 
 class ArtistViewController: UIViewController {
+    private let musicService = MusicService() // 예시
+    
+    
     private let artistView = ArtistView()
     private let artistData = ArtistDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
@@ -21,6 +24,8 @@ class ArtistViewController: UIViewController {
         setAction()
         setDataSource()
         setSnapshot()
+        
+        postArtistInfo(artist: "IU")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,7 +51,7 @@ class ArtistViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = popButton
         
         // 좋이요
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(tapHeartButton))
+        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
         self.navigationItem.rightBarButtonItem = heartButton
         self.navigationController?.navigationBar.tintColor = .white
     }
@@ -155,6 +160,29 @@ class ArtistViewController: UIViewController {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.artistView.descriptionLabel.numberOfLines = newNumberOfLines
             self?.artistView.layoutIfNeeded() // 애니메이션 반영
+        }
+    }
+    
+    
+    // 아티스트 정보 가져오기 API
+    func postArtistInfo(artist: String){
+        musicService.artist(artist: artist){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("postArtistInfo 성공 : \(String(describing: response?.name))")
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
         }
     }
 

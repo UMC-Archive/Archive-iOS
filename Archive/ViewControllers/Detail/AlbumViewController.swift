@@ -8,6 +8,8 @@
 import UIKit
 
 class AlbumViewController: UIViewController {
+    private let musicService = MusicService() // 예시
+    
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
@@ -22,6 +24,9 @@ class AlbumViewController: UIViewController {
         setSnapshot()
         setProtocol()
         updateTrackViewHeight()
+        
+        // 앨범 정보 API
+        postMusicAlbum(artist: "IU", album: "Love poem")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -41,7 +46,7 @@ class AlbumViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = popButton
         
         // 좋이요
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(tapHeartButton))
+        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
         self.navigationItem.rightBarButtonItem = heartButton
         self.navigationController?.navigationBar.tintColor = .white
     }
@@ -124,6 +129,29 @@ class AlbumViewController: UIViewController {
         snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    // 앨범 정보 가져오기 API
+    func postMusicAlbum(artist: String, album: String) { // musicService의 album 함수의 파라미터로 artist, album이 필요하기 때문에 받아옴
+        // musicService의 album 함수 사용
+        musicService.album(artist: artist, album: album){ [weak self] result in // 반환값 result의 타입은 Result<AlbumInfoReponseDTO?, NetworkError>
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+                print("postMusicAlbum 성공 : \(String(describing: response?.title))")
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
     }
 }
 
