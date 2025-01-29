@@ -30,7 +30,6 @@ class LibraryMainViewController: UIViewController {
         rootView.playlistCollectionView.dataSource = self
         rootView.songCollectionView.dataSource = self
         rootView.albumCollectionView.dataSource = self
-        rootView.genreCollectionView.dataSource = self
         rootView.artistCollectionView.dataSource = self
     }
     
@@ -40,7 +39,7 @@ class LibraryMainViewController: UIViewController {
     
     @objc private func segmentChanged() {
         segmentIndexNum = rootView.librarySegmentControl.selectedSegmentIndex
-        let underbarWidth = rootView.librarySegmentControl.frame.width / 5
+        let underbarWidth = rootView.librarySegmentControl.frame.width / 4
         let newLeading = CGFloat(segmentIndexNum) * underbarWidth
         
         
@@ -61,7 +60,6 @@ class LibraryMainViewController: UIViewController {
         rootView.playlistCollectionView.isHidden = true
         rootView.songCollectionView.isHidden = true
         rootView.albumCollectionView.isHidden = true
-        rootView.genreCollectionView.isHidden = true
         rootView.artistCollectionView.isHidden = true
     }
     
@@ -74,8 +72,6 @@ class LibraryMainViewController: UIViewController {
            case 2:
                rootView.albumCollectionView.isHidden = false
            case 3:
-               rootView.genreCollectionView.isHidden = false
-           case 4:
                rootView.artistCollectionView.isHidden = false
            default:
                break
@@ -97,8 +93,6 @@ extension LibraryMainViewController: UICollectionViewDataSource {
         case rootView.albumCollectionView:
             return AlbumModel.dummy().count
             
-        case rootView.genreCollectionView:
-            return GenreModel.dummy().count
             
         case rootView.artistCollectionView:
             return ArtistModel.dummy().count
@@ -148,22 +142,6 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             cell.config(
                 image: dummy[indexPath.row].albumImage,
                 albumName: dummy[indexPath.row].albumName
-            )
-            return cell
-            
-        case rootView.genreCollectionView:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: GenreCollectionViewCell.genreCollectionViewIdentifier,
-                for: indexPath
-            ) as? GenreCollectionViewCell else {
-                fatalError("Failed to dequeue genreCollectionViewCell")
-            }
-            let dummy = GenreModel.dummy()
-            cell.config(
-                image: dummy[indexPath.row].albumImage,
-                songName: dummy[indexPath.row].songName,
-                artist: dummy[indexPath.row].artist,
-                year: dummy[indexPath.row].year
             )
             return cell
             
