@@ -15,14 +15,13 @@ public final class MusicService: NetworkManager {
     
     init(provider: MoyaProvider<MusicTargetType>? = nil) {
         // 플러그인 추가
-//        let plugins: [PluginType] = [
-//            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
-//        ]
+        let plugins: [PluginType] = [
+            BearerTokenPlugin(),
+            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
+        ]
         
         // provider 초기화
-//        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
-        
-        self.provider = MoyaProvider<MusicTargetType>()
+        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
     }
     
     
@@ -42,8 +41,8 @@ public final class MusicService: NetworkManager {
     }
     
     // 숨겨진 명곡 조회
-    public func hiddenMusic(date: String, completion: @escaping(Result<HiddenMusicResponseDTO?, NetworkError>) -> Void){
-        requestOptional(target: .musicHidden(date: date), decodingType: HiddenMusicResponseDTO.self, completion: completion)
+    public func hiddenMusic(completion: @escaping(Result<[HiddenMusicResponseDTO]?, NetworkError>) -> Void){
+        requestOptional(target: .musicHidden, decodingType: [HiddenMusicResponseDTO].self, completion: completion)
     }
     
     // 장르 정보 조회

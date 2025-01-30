@@ -99,4 +99,10 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.text = data.musicTitle
         artistYearLabel.text = "\(data.artist) ⦁ \(data.year)"
     }
+    
+    public func configHiddenMusic(music: HiddenMusicResponse, artist: String){
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime)"
+    }
 }
