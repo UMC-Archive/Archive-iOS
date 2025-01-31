@@ -44,7 +44,7 @@ enum Item: Hashable {
     case RecentlyAddMusicItem(MusicDummyModel)       // 최근에 추가한 노래
     case AnotherAlbum(AlbumDummyModel)               // 이 아티스트의 다른 앨범
     case RecommendAlbum(AlbumDummyModel)             // 당신을 위한 앨범 추천
-    case HiddenMusic(MusicDummyModel)                // 숨겨진 명곡
+    case HiddenMusic(HiddenMusicResponse, String)                // 숨겨진 명곡
     case ArtistPopularMusic(MusicDummyModel)        // 아티스트 인기곡
     case SameArtistAnotherAlbum(AlbumDummyModel)     // 앨범 둘러보기
     case MusicVideo(MusicVideoModel)                // 아티스트 뮤직비디오

@@ -15,14 +15,13 @@ public final class UserService: NetworkManager {
     
     init(provider: MoyaProvider<UserTargetType>? = nil) {
         // 플러그인 추가
-        //        let plugins: [PluginType] = [
-        //            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
-        //        ]
+        let plugins: [PluginType] = [
+            BearerTokenPlugin(),
+            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
+        ]
         
         // provider 초기화
-        //        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
-        
-        self.provider = MoyaProvider<UserTargetType>()
+        self.provider = provider ?? MoyaProvider<UserTargetType>(plugins: plugins)
     }
     
     // 이메일 인증 번호 전송 API
