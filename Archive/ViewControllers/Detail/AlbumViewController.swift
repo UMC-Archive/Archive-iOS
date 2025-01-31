@@ -9,16 +9,18 @@ import UIKit
 
 class AlbumViewController: UIViewController {
     private let musicService = MusicService() // 예시
+    private let artist = "IU"
     
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
+    private var albumData: AlbumInfoReponseDTO?
+
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = albumView
-        
-        albumView.config(data: data)
+    
         setNavigationBar()
         setDataSource()
         setSnapshot()
@@ -26,7 +28,7 @@ class AlbumViewController: UIViewController {
         updateTrackViewHeight()
         
         // 앨범 정보 API
-        postMusicAlbum(artist: "IU", album: "Love poem")
+        postMusicAlbum(artist: artist, album: "Love poem")
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -139,12 +141,9 @@ class AlbumViewController: UIViewController {
             
             switch result {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
-                print("postMusicAlbum 성공 : \(String(describing: response?.title))")
-                Task{
-//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-//                    self.goToNextView()
-                }
+                guard let data = response else { return }
+                albumView.config(data: data, artist: artist, description: "asd")
+                
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
