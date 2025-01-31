@@ -54,8 +54,19 @@ class DatePickerWeekViewController : UIViewController {
                 print("마지막 선택된 데이터: \(data)")
                 KeychainService.shared.save(account: .userInfo, service: .week, value: data ?? "1st")
             }
+            async {
+                // 탭 전환
+                tabBarController?.selectedViewController = tabBarController?.viewControllers?[1]
+                
+                // 약간의 지연 후 내비게이션 스택 초기화
+                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                    self.navigationController?.popToRootViewController(animated: true)
+                }
+            }
+
+            
         }
-        
+         
     }
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)

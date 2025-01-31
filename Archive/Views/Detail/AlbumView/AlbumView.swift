@@ -153,12 +153,12 @@ class AlbumView: UIView {
         return section
     }
     
-    public func config(data: AlbumCurationDummyModel) {
-        albumCDView.config(albumImageURL: data.albumImageURL)
+    public func config(data: AlbumInfoReponseDTO, artist: String, description: String?) {
+        albumCDView.config(albumImageURL: data.image)
         titleLabel.text = data.title
-        artistLabel.text = data.artist
-        contentLabel.text = data.content
+        artistLabel.text = artist
+        contentLabel.text = description
         
-        trackView.config(data: data.albumTrack)
+//        trackView.config(data: data.albumTrack)
     }
 }

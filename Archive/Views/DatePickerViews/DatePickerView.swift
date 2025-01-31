@@ -98,8 +98,8 @@ class DatePickerView : UIView {
             $0.centerY.equalToSuperview()
         }
         button.snp.makeConstraints{
-            $0.bottom.equalToSuperview().offset(-30)
-            $0.size.equalTo(CGSize(width: 335, height: 70))
+            $0.bottom.equalToSuperview()
+            $0.size.equalTo(CGSize(width: 335, height: 100))
             $0.centerX.equalToSuperview()
         }
     }

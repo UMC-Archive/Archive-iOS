@@ -35,9 +35,19 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .albumInfo(artist: artist, album: album), decodingType: AlbumInfoReponseDTO.self, completion: completion)
     }
     
+    // 앨범 큐레이션
+    public func albumCuration(albumId: String, completion: @escaping (Result<AlbumCurationReponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .albumCuration(albumId: albumId), decodingType: AlbumCurationReponseDTO.self, completion: completion)
+    }
+    
     // 아티스트 정보 가져오기
     public func artist(artist: String, completion: @escaping (Result<ArtistInfoReponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .artistInfo(artist: artist), decodingType: ArtistInfoReponseDTO.self, completion: completion)
+    }
+    
+    // 아티스트 큐레이션
+    public func artistCuration(artistId: String, completion: @escaping (Result<ArtistCurationResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .artistCuration(artistId: artistId), decodingType: ArtistCurationResponseDTO.self, completion: completion)
     }
     
     // 숨겨진 명곡 조회
@@ -49,4 +59,6 @@ public final class MusicService: NetworkManager {
     public func genreInfo(completion: @escaping(Result<[GenreInfoResponseDTO], NetworkError>) -> Void) {
         request(target: .genreInfo, decodingType: [GenreInfoResponseDTO].self, completion: completion)
     }
+    
+
 }

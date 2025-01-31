@@ -11,7 +11,6 @@ import Foundation
 public struct AlbumInfoReponseDTO: Decodable {
     let id: String
     let title: String
-    let description: String // Description API 분리
     let releaseTime: String
     let image: String
     let createdAt: String
