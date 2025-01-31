@@ -15,7 +15,8 @@ class ExploreViewController: UIViewController {
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic : [(HiddenMusicResponse, String)]?
+    private var hiddenMusic: [(HiddenMusicResponse, String)]?
+    private var recommendMusic: [(RecommendMusic, String)]?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -166,6 +167,26 @@ class ExploreViewController: UIViewController {
         dataSource?.apply(snapshot)
     }
     
+    // 당신을 위한 추천곡 API
+    func getRecommendMusic() {
+        musicService.recommendMusic(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                guard let response = response else {return}
+                print("recommendMusic() 성공")
+                print(response)
+                self.recommendMusic = response.map{($0.music, $0.artist)}
+                exploreView.collectionView.reloadData()
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
     
     // 숨겨진 명곡 조회 API
     func getHiddenMusic() {
