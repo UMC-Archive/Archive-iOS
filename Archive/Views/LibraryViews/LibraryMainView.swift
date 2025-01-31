@@ -36,7 +36,7 @@ class LibraryMainView : UIView {
     private let mypageIcon = UIImageView().then{
         $0.image = UIImage(named: "myPageIcon")
     }
-    private let exploreIcon = UIImageView().then{
+    public let exploreIcon = UIImageView().then{
         $0.image = UIImage(named: "exploreIcon")
     }
     private let searchIcon = UIImageView().then{
