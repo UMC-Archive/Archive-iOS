@@ -38,7 +38,7 @@ class HomeViewController: UIViewController {
         let inactiveDate = dateFormatter.string(from: date)
         
         let parameter = SignUpRequestDTO(nickname: "example", email: "aasdlkkc123sl123l@naver.com", password: "example", status: "active", socialType: "local", inactiveDate: inactiveDate, artists: [1], genres: [1])
-        postSignUp(image: .cdSample, parameter: parameter)
+//        postSignUp(image: .cdSample, parameter: parameter)
         
 //        getGenreInfo()
         buttonTapped()
