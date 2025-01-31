@@ -12,7 +12,7 @@ import Moya
 // 라이브러리 : Moya, KeychainSwift 사용
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjQiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczODMzNTM0NiwiZXhwIjoxNzM4MzM2NTQ2fQ.YfuIKNuF0a3XsJO6_W9fUr11maFB1wEZ7bQPkRlv1ZM"
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjQiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczODMzNjc3NywiZXhwIjoxNzM4MzM3OTc3fQ.O5xsgMRzf16dZojlXGyfb0xADjF1fgY2kJJckoD9ULo"
 //        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
     }
     

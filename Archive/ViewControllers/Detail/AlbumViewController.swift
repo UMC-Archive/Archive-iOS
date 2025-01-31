@@ -9,7 +9,8 @@ import UIKit
 
 class AlbumViewController: UIViewController {
     private let musicService = MusicService() // 예시
-    private let artist = "IU"
+    private let artist: String
+    private let album: String
     
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
@@ -17,10 +18,21 @@ class AlbumViewController: UIViewController {
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
+    init(artist: String = "IU", album: String = "Love poem") {
+        self.artist = artist
+        self.album = album
+        
+        super.init(nibName: nil, bundle: nil)
+
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = albumView
-    
         setNavigationBar()
         setDataSource()
         setSnapshot()
@@ -28,7 +40,7 @@ class AlbumViewController: UIViewController {
         updateTrackViewHeight()
         
         // 앨범 정보 API
-        postMusicAlbum(artist: artist, album: "Love poem")
+        postAlbumInfo(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -134,7 +146,7 @@ class AlbumViewController: UIViewController {
     }
     
     // 앨범 정보 가져오기 API
-    func postMusicAlbum(artist: String, album: String) { // musicService의 album 함수의 파라미터로 artist, album이 필요하기 때문에 받아옴
+    func postAlbumInfo(artist: String, album: String) { // musicService의 album 함수의 파라미터로 artist, album이 필요하기 때문에 받아옴
         // musicService의 album 함수 사용
         musicService.album(artist: artist, album: album){ [weak self] result in // 반환값 result의 타입은 Result<AlbumInfoReponseDTO?, NetworkError>
             guard let self = self else { return }
@@ -142,7 +154,29 @@ class AlbumViewController: UIViewController {
             switch result {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
                 guard let data = response else { return }
-                albumView.config(data: data, artist: artist, description: "asd")
+                albumData = data
+                postAlbumCuration(albumId: data.id)
+//
+//                albumView.config(data: data, artist: artist, description: "asd")
+                
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 앨범 큐레이션 API
+    func postAlbumCuration(albumId: String) {
+        musicService.albumCuration(albumId: albumId){ [weak self] result in // 반환값 result의 타입은 Result<String?, NetworkError>
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+                guard let response = response, let data = self.albumData else { return }
+                albumView.config(data: data, artist: artist, description: response.description)
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
