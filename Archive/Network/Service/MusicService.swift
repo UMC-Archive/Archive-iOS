@@ -45,6 +45,11 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .artistInfo(artist: artist), decodingType: ArtistInfoReponseDTO.self, completion: completion)
     }
     
+    // 아티스트 큐레이션
+    public func artistCuration(artistId: String, completion: @escaping (Result<ArtistCurationResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .artistCuration(artistId: artistId), decodingType: ArtistCurationResponseDTO.self, completion: completion)
+    }
+    
     // 숨겨진 명곡 조회
     public func hiddenMusic(completion: @escaping(Result<[HiddenMusicResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .musicHidden, decodingType: [HiddenMusicResponseDTO].self, completion: completion)

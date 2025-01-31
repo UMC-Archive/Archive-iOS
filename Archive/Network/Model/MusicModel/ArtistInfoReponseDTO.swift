@@ -11,7 +11,6 @@ public struct ArtistInfoReponseDTO: Decodable {
     let id: String
     let name: String
     let image: String
-    let description: String // Description API 분리
     let createdAt: String
     let updatedAt: String
 }

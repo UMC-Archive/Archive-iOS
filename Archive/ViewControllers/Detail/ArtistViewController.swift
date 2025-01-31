@@ -8,13 +8,22 @@
 import UIKit
 
 class ArtistViewController: UIViewController {
-    private let musicService = MusicService() // 예시
-    
-    
+    private let musicService = MusicService()
     private let artistView = ArtistView()
     private let artistData = ArtistDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let gradientLayer = CAGradientLayer()
+    private let artist: String
+    private var data: ArtistInfoReponseDTO?
+    
+    init(artist: String = "빅뱅") {
+        self.artist = artist
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +34,7 @@ class ArtistViewController: UIViewController {
         setDataSource()
         setSnapshot()
         
-        postArtistInfo(artist: "IU")
+        postArtistInfo(artist: artist)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -171,12 +180,29 @@ class ArtistViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("postArtistInfo 성공 : \(String(describing: response?.name))")
-                Task{
-//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-//                    self.goToNextView()
-                }
+                guard let response = response else {return}
+                self.data = response
+                postArtistCuration(artistId: response.id)
+
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 아티스트 큐레이션 API
+    func postArtistCuration(artistId: String){
+        musicService.artistCuration(artistId: artistId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                guard let response = response, let artistData = data else {return}
+                artistView.config(artistInfo: artistData, curation: response)
+
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
