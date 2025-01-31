@@ -10,19 +10,30 @@ import UIKit
 class ExploreViewController: UIViewController {
     private let exploreView = ExploreView()
     private var dataSource : UICollectionViewDiffableDataSource<Section, Item>?
+    
+    private let musicService = MusicService()
+    
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
+    private var hiddenMusic : [(HiddenMusicResponse, String)]?
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        setDataSource()
+        setSnapShot()
+        setDelegate()
+        setRecapIndex()
+        
+        // 숨겨진 명곡 조회 API
+        getHiddenMusic()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
         
         view = exploreView
-        
-        setDataSource()
-        setSnapShot()
-        setDelegate()
-        setRecapIndex()
     }
     
     override func viewDidLayoutSubviews() {
@@ -81,9 +92,13 @@ class ExploreViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: exploreView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case .RecommendMusicItem(let item), .HiddenMusic(let item): // 당신을 위한 추천곡, 숨겨진 명곡
+            case .RecommendMusicItem(let item): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: item)
+                return cell
+            case .HiddenMusic(let item): // 숨겨진 명곡
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+//                (cell as? VerticalCell)?.configHiddenMusic(data: item)
                 return cell
             case .RecommendAlbum(let item): // 당신을 위한 앨범 추천
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -139,13 +154,38 @@ class ExploreViewController: UIViewController {
 
         let recommendMusicItem = musicData.map{Item.RecommendMusicItem($0)} // 추천곡
         let recommendAlbumItem = albumData.map{Item.RecommendAlbum($0)} // 앨범 추천
-        let hiddenMusicItem = musicData.map{Item.HiddenMusic($0)}   // 숨겨진 명곡
+    
+        guard let hiddenMusic = hiddenMusic else { return }
+        let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1)}
+        // 숨겨진 명곡
         
         snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
         snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    
+    // 숨겨진 명곡 조회 API
+    func getHiddenMusic() {
+        musicService.hiddenMusic(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                guard let response = response else {return}
+                print("getHiddenMusic() 성공")
+                print(response)
+                self.hiddenMusic = response.map{($0.music, $0.artist)}
+                exploreView.collectionView.reloadData()
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
     }
 }
 

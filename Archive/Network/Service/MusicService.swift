@@ -15,14 +15,13 @@ public final class MusicService: NetworkManager {
     
     init(provider: MoyaProvider<MusicTargetType>? = nil) {
         // 플러그인 추가
-//        let plugins: [PluginType] = [
-//            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
-//        ]
+        let plugins: [PluginType] = [
+            BearerTokenPlugin(),
+            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
+        ]
         
         // provider 초기화
-//        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
-        
-        self.provider = MoyaProvider<MusicTargetType>()
+        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
     }
     
     
@@ -36,18 +35,30 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .albumInfo(artist: artist, album: album), decodingType: AlbumInfoReponseDTO.self, completion: completion)
     }
     
+    // 앨범 큐레이션
+    public func albumCuration(albumId: String, completion: @escaping (Result<AlbumCurationReponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .albumCuration(albumId: albumId), decodingType: AlbumCurationReponseDTO.self, completion: completion)
+    }
+    
     // 아티스트 정보 가져오기
     public func artist(artist: String, completion: @escaping (Result<ArtistInfoReponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .artistInfo(artist: artist), decodingType: ArtistInfoReponseDTO.self, completion: completion)
     }
     
+    // 아티스트 큐레이션
+    public func artistCuration(artistId: String, completion: @escaping (Result<ArtistCurationResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .artistCuration(artistId: artistId), decodingType: ArtistCurationResponseDTO.self, completion: completion)
+    }
+    
     // 숨겨진 명곡 조회
-    public func hiddenMusic(date: String, completion: @escaping(Result<HiddenMusicResponseDTO?, NetworkError>) -> Void){
-        requestOptional(target: .musicHidden(date: date), decodingType: HiddenMusicResponseDTO.self, completion: completion)
+    public func hiddenMusic(completion: @escaping(Result<[HiddenMusicResponseDTO]?, NetworkError>) -> Void){
+        requestOptional(target: .musicHidden, decodingType: [HiddenMusicResponseDTO].self, completion: completion)
     }
     
     // 장르 정보 조회
     public func genreInfo(completion: @escaping(Result<[GenreInfoResponseDTO], NetworkError>) -> Void) {
         request(target: .genreInfo, decodingType: [GenreInfoResponseDTO].self, completion: completion)
     }
+    
+
 }
