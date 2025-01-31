@@ -16,7 +16,7 @@ class LibraryMainViewController: UIViewController {
         super.viewDidLoad()
         self.view = rootView
         rootView.backgroundColor = .black
-        
+        self.navigationController?.navigationBar.isHidden = true
         datasourceSetting()
         hideAllCollectionViews()
         setupActions()
@@ -35,7 +35,16 @@ class LibraryMainViewController: UIViewController {
     
     private func setupActions() {
         rootView.librarySegmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(exploreIconTapped))
+        rootView.exploreIcon.isUserInteractionEnabled = true // 제스처 인식 활성화
+        rootView.exploreIcon.addGestureRecognizer(tapGesture)
     }
+    @objc func exploreIconTapped(){
+        let viewController = DatePickerViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     
     @objc private func segmentChanged() {
         segmentIndexNum = rootView.librarySegmentControl.selectedSegmentIndex
