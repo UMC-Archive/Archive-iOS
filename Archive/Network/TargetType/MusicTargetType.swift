@@ -45,7 +45,7 @@ extension MusicTargetType: TargetType {
         case .artistCuration(artistId: let artistId):
             return "artist/\(artistId)/curation"
         case .recommendMusicExplore:
-            return "music/year/nomination"
+            return "year/nomination"
         }
     }
     

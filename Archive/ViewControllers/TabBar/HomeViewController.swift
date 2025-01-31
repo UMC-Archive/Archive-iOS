@@ -16,6 +16,7 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
+    private var recommendMusic: [(RecommendMusic, String)]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,9 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
+        
+        // 추천 음악 API
+        getRecommendMusic()
         
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
@@ -67,9 +71,9 @@ class HomeViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
                 if let bigBannerCell = cell as? BigBannerCell {
                     bigBannerCell.config(album: item)
-                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
                     bigBannerCell.artistLabel.addGestureRecognizer(tapGesture)
-                 }
+                }
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
@@ -88,12 +92,12 @@ class HomeViewController: UIViewController {
                     // 아티스트 탭 제스처
                     let tapArtistGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
                     bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
-                 }
+                }
                 return cell
-            case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
+            case .RecommendMusicItem(let (music, artist)): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 if let verticalCell = cell as? VerticalCell {
-                    verticalCell.config(data: item)
+                    verticalCell.configRecommendMusic(music: music, artist: artist)
                     
                     // 앨범 탭 제스처
                     let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
@@ -102,8 +106,22 @@ class HomeViewController: UIViewController {
                     // 아티스트 탭 제스처
                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
                     verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
-                 }
+                }
                 return cell
+            case .RecentlyAddMusicItem(let item): //  최근 추가 노래
+               let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+               if let verticalCell = cell as? VerticalCell {
+                   verticalCell.config(data: item)
+                   
+                   // 앨범 탭 제스처
+                   let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
+                   verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                   
+                   // 아티스트 탭 제스처
+                   let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                   verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
+                }
+               return cell
             default:
                 return UICollectionViewCell()
             }
@@ -183,8 +201,11 @@ class HomeViewController: UIViewController {
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
-        let recommendItem = musicData.map{Item.RecommendMusicItem($0)}
-        snapshot.appendItems(recommendItem, toSection: recommendSection)
+        // 추천곡
+        if let recommendMusic = recommendMusic {
+            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}
+            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        }
         
         let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
         snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
@@ -193,6 +214,30 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    // 당신을 위한 추천곡 API
+    func getRecommendMusic() {
+        musicService.recommendMusic(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                Task {
+                    guard let response = response else {return}
+                    print("recommendMusic() 성공")
+                    self.recommendMusic = response.map{($0.music, $0.artist)}
+                    self.setDataSource()
+                    self.setSnapShot()
+                }
+
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
     }
     
     

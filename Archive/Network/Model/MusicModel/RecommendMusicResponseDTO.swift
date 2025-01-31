@@ -12,7 +12,7 @@ public struct RecommendMusicResponseDTO: Decodable {
     let artist: String
 }
 
-public struct RecommendMusic: Decodable {
+public struct RecommendMusic: Decodable, Hashable {
     let id: String
     let albumId: String
     let title: String

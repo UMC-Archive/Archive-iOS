@@ -18,8 +18,8 @@ class DetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         self.view = detailView
-        setDataSource()
-        setSnapshot()
+//        setDataSource()
+//        setSnapshot()
         setAction()
     }
 
@@ -45,41 +45,41 @@ class DetailViewController: UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     
-    private func setDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: detailView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
-            
-            switch itemIdentifier {
-            case .FastSelectionItem(let data), .RecentlyListendMusicItem(let data):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configMusic(data: data)
-                return cell
-            case .RecommendMusicItem(let data), .RecentlyAddMusicItem(let data):
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.config(data: data)
-                return cell
-            default:
-                return UICollectionViewCell()
-            }
-            
-        })
-    }
-    
-    private func setSnapshot() {
-        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
-        snapshot.appendSections([section])
-        var sectionData : [Item]?
-        
-        switch section {
-        case .Banner:
-            sectionData = musicData.map{Item.FastSelectionItem($0)}
-            
-        case .Vertical:
-            sectionData = musicData.map{Item.RecommendMusicItem($0)}
-        default:
-            return
-        }
-        guard let sectionData = sectionData else {return}
-        snapshot.appendItems(sectionData, toSection: section)
-        self.dataSource?.apply(snapshot)
-    }
+//    private func setDataSource() {
+//        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: detailView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
+//            
+//            switch itemIdentifier {
+//            case .FastSelectionItem(let data), .RecentlyListendMusicItem(let data):
+//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+//                (cell as? BannerCell)?.configMusic(data: data)
+//                return cell
+//            case .RecommendMusicItem(let data), .RecentlyAddMusicItem(let data):
+//                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+//                (cell as? VerticalCell)?.config(data: data)
+//                return cell
+//            default:
+//                return UICollectionViewCell()
+//            }
+//            
+//        })
+//    }
+//    
+//    private func setSnapshot() {
+//        var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
+//        snapshot.appendSections([section])
+//        var sectionData : [Item]?
+//        
+//        switch section {
+//        case .Banner:
+//            sectionData = musicData.map{Item.FastSelectionItem($0)}
+//            
+//        case .Vertical:
+//            sectionData = musicData.map{Item.RecommendMusicItem($0)}
+//        default:
+//            return
+//        }
+//        guard let sectionData = sectionData else {return}
+//        snapshot.appendItems(sectionData, toSection: section)
+//        self.dataSource?.apply(snapshot)
+//    }
 }

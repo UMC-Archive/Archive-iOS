@@ -21,13 +21,16 @@ class ExploreViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setDataSource()
         setSnapShot()
+        setDataSource()
         setDelegate()
         setRecapIndex()
         
         // 숨겨진 명곡 조회 API
         getHiddenMusic()
+        
+        // 추천 음악 API
+//        getRecommendMusic()
     }
     
     override func viewDidLoad() {
@@ -93,9 +96,9 @@ class ExploreViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: exploreView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case .RecommendMusicItem(let item): // 당신을 위한 추천곡
+            case .RecommendMusicItem(let (music, artist)): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.config(data: item)
+                (cell as? VerticalCell)?.configRecommendMusic(music: music, artist: artist)
                 return cell
             case .HiddenMusic(let (music, artist)): // 숨겨진 명곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -141,6 +144,7 @@ class ExploreViewController: UIViewController {
     }
     
     private func setSnapShot() {
+
         // 스냅샷 생성
         var snapshot = NSDiffableDataSourceSnapshot<Section, Item>()
         
@@ -153,18 +157,25 @@ class ExploreViewController: UIViewController {
         // 섹션 추가
         snapshot.appendSections([recommendMusicSection, recommendAlbumSection, hiddenMusicSection])
 
-        let recommendMusicItem = musicData.map{Item.RecommendMusicItem($0)} // 추천곡
-        let recommendAlbumItem = albumData.map{Item.RecommendAlbum($0)} // 앨범 추천
-    
-        guard let hiddenMusic = hiddenMusic else { return }
-        let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1)}
+        // 추천곡
+        if let recommendMusic = recommendMusic {
+            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}// 추천곡
+            snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
+        }
+       
         // 숨겨진 명곡
+        if let hiddenMusic = hiddenMusic {
+            let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1)}
+            snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
+        }
         
-        snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
+        let recommendAlbumItem = albumData.map{Item.RecommendAlbum($0)} // 앨범 추천
+        
         snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
+        
         
         dataSource?.apply(snapshot)
+        view.layoutIfNeeded()
     }
     
     // 당신을 위한 추천곡 API
@@ -174,11 +185,14 @@ class ExploreViewController: UIViewController {
             
             switch result {
             case .success(let response):
+                
                 guard let response = response else {return}
                 print("recommendMusic() 성공")
-                print(response)
                 self.recommendMusic = response.map{($0.music, $0.artist)}
-                exploreView.collectionView.reloadData()
+                self.setSnapShot()
+                self.setDataSource()
+                
+
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
