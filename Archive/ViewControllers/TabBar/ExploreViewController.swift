@@ -97,9 +97,9 @@ class ExploreViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: item)
                 return cell
-            case .HiddenMusic(let item): // 숨겨진 명곡
+            case .HiddenMusic(let (music, artist)): // 숨겨진 명곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-//                (cell as? VerticalCell)?.configHiddenMusic(data: item)
+                (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
                 return cell
             case .RecommendAlbum(let item): // 당신을 위한 앨범 추천
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -192,14 +192,13 @@ class ExploreViewController: UIViewController {
     func getHiddenMusic() {
         musicService.hiddenMusic(){ [weak self] result in
             guard let self = self else { return }
-            
             switch result {
             case .success(let response):
                 guard let response = response else {return}
                 print("getHiddenMusic() 성공")
-                print(response)
                 self.hiddenMusic = response.map{($0.music, $0.artist)}
-                exploreView.collectionView.reloadData()
+                setDataSource()
+                setSnapShot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
