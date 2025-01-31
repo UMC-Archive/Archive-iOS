@@ -17,11 +17,30 @@ public struct HiddenMusicResponse: Decodable, Hashable {
     let albumId: String
     let title: String
     let releaseTime: String
-    let lyrics: String
+//    let lyrics: String
     let image: String
     let music: String
-    let createdAt: String
-    let updatedAt: String
+//    let createdAt: String
+//    let updatedAt: String
+    
+    enum CodingKeys: CodingKey {
+        case id
+        case albumId
+        case title
+        case releaseTime
+        case image
+        case music
+    }
+    
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.albumId = try container.decode(String.self, forKey: .albumId)
+        self.title = try container.decode(String.self, forKey: .title)
+        self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
+        self.image = try container.decode(String.self, forKey: .image)
+        self.music = try container.decode(String.self, forKey: .music)
+    }
 }
 
 /*
