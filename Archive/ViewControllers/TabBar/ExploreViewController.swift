@@ -12,11 +12,13 @@ class ExploreViewController: UIViewController {
     private var dataSource : UICollectionViewDiffableDataSource<Section, Item>?
     
     private let musicService = MusicService()
+    private let albumService = AlbumService()
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
     private var hiddenMusic: [(HiddenMusicResponse, String)]?
     private var recommendMusic: [(RecommendMusic, String)]?
+    private var recommendAlbumData: [(RecommendAlbum, String)]?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -38,6 +40,9 @@ class ExploreViewController: UIViewController {
         
         // 추천 음악 API
         getRecommendMusic()
+        
+        // 당신을 위한 앨범 추천 API
+        getRecommendAlbum()
     }
     
     override func viewDidLayoutSubviews() {
@@ -104,9 +109,9 @@ class ExploreViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
                 return cell
-            case .RecommendAlbum(let item): // 당신을 위한 앨범 추천
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: item)
+                (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -175,9 +180,11 @@ class ExploreViewController: UIViewController {
             snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
         }
         
-        let recommendAlbumItem = albumData.map{Item.RecommendAlbum($0)} // 앨범 추천
-        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        
+        // 당신을 위한 추천 앨범
+        if let recommendAlbumData = recommendAlbumData {
+            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
+        }
         
         dataSource?.apply(snapshot)
     }
@@ -199,6 +206,26 @@ class ExploreViewController: UIViewController {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 당신을 위한 앨범 추천 API
+    func getRecommendAlbum() {
+        albumService.recommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
+            guard let self = self else { return }
+            switch result {
+            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+                guard let response = response else {return}
+                print("getRecommendAlbum")
+                self.recommendAlbumData = response.map{($0.album, $0.artist)}
+                setDataSource()
+                setSnapShot()
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
                 print("실패: \(error.description)")
             }
         }

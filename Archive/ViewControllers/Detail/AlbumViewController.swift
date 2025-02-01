@@ -8,13 +8,16 @@
 import UIKit
 
 class AlbumViewController: UIViewController {
-    private let musicService = MusicService() // 예시
+    private let musicService = MusicService()
+    private let albumService = AlbumService()
+    
     private let artist: String
     private let album: String
     
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
+    private var recommendAlbumData: [(RecommendAlbum, String)]?
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
@@ -91,9 +94,13 @@ class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: albumView.collectionView){ collectionView, indexPath, ItemIdentifier in
             switch ItemIdentifier {
-            case .AnotherAlbum(let item), .RecommendAlbum(let item):
+            case .AnotherAlbum(let item):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: item)
+                return cell
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -137,11 +144,14 @@ class AlbumViewController: UIViewController {
         snapshot.appendSections([anotherAlbumSection, recommendAlbumSection])
         
         let anotherAlbumItem = data.anotherAlbum.map{Item.AnotherAlbum($0)}
-        let recommendAlbumItem = data.recommendAlbum.map{Item.RecommendAlbum($0)}
+        
+        // 당신을 위한 추천 앨범
+        if let recommendAlbumData = recommendAlbumData {
+            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
+        }
         
         snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
-        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        
         dataSource?.apply(snapshot)
     }
     
@@ -178,6 +188,25 @@ class AlbumViewController: UIViewController {
                 guard let response = response, let data = self.albumData else { return }
                 albumView.config(data: data, artist: artist, description: response.description)
                 
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 당신을 위한 앨범 추천 API
+    func getRecommendAlbum() {
+        albumService.recommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
+            guard let self = self else { return }
+            switch result {
+            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+                guard let response = response else {return}
+                self.recommendAlbumData = response.map{($0.album, $0.artist)}
+                setDataSource()
+                setSnapshot()
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성

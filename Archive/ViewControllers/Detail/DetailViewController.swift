@@ -73,9 +73,9 @@ class DetailViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
                 return cell
-            case .RecommendAlbum(let item): // 당신을 위한 앨범 추천
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: item)
+                (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
