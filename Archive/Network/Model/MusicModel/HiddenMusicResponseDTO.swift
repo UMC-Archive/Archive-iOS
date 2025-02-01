@@ -9,6 +9,7 @@ import Foundation
 
 public struct HiddenMusicResponseDTO: Decodable {
     let music: HiddenMusicResponse
+    let album: ExploreRecommendAlbum
     let artist: String
 }
 
@@ -39,21 +40,3 @@ public struct HiddenMusicResponse: Decodable, Hashable {
         self.music = try container.decode(String.self, forKey: .music)
     }
 }
-
-/*
- "result": [
-    {
-      "music": {
-        "id": 1,
-        "albumId": 1,
-        "title": "Celebrity",
-        "releaseTime": "2021-03-25",
-        "lyrics": "세상의 모서리 구부정하게 커버린 골칫거리 outsider (ah ah)",
-        "image": "https://example.com/music_image.jpg",
-        "musicUrl": "https://example.com/preview_music.m4a",
-        "createdAt": "2025-01-01",
-        "updatedAt": "2025-01-01"
-      },
-      "artist": "IU"
-    }
- */

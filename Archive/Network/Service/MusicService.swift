@@ -61,7 +61,7 @@ public final class MusicService: NetworkManager {
     }
     
     // 당신을 위한 추천곡(탐색 뷰)
-    public func recommendMusic(completion: @escaping(Result<[RecommendMusicResponseDTO]?, NetworkError>) -> Void) {
-        requestOptional(target: .recommendMusicExplore, decodingType: [RecommendMusicResponseDTO].self, completion: completion)
+    public func recommendMusic(completion: @escaping(Result<[ExploreRecommendMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .ExploreRecommendMusic, decodingType: [ExploreRecommendMusicResponseDTO].self, completion: completion)
     }
 }

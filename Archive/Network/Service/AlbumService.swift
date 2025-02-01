@@ -25,7 +25,7 @@ public final class AlbumService: NetworkManager {
     }
     
     // 당신을 위한 앨범 추천 조회
-    public func recommendAlbum(completion: @escaping (Result<[RecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
-        requestOptional(target: .yearRecommendAlbum, decodingType: [RecommendAlbumResponseDTO].self, completion: completion)
+    public func recommendAlbum(completion: @escaping (Result<[ExploreRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .ExploreRecommendAlbum, decodingType: [ExploreRecommendAlbumResponseDTO].self, completion: completion)
     }
 }

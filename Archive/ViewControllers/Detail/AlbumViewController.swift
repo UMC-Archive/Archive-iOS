@@ -17,11 +17,9 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
-    private var recommendAlbumData: [(RecommendAlbum, String)]?
-
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
-    init(artist: String = "IU", album: String = "Love poem") {
+    init(artist: String = "IU", album: String = "Love Poem") {
         self.artist = artist
         self.album = album
         
@@ -41,6 +39,8 @@ class AlbumViewController: UIViewController {
         setSnapshot()
         setProtocol()
         updateTrackViewHeight()
+        
+        albumView.configTrack(data: self.data.albumTrack)
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
@@ -94,13 +94,13 @@ class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: albumView.collectionView){ collectionView, indexPath, ItemIdentifier in
             switch ItemIdentifier {
-            case .AnotherAlbum(let item):
+            case .AnotherAlbum(let data):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: item)
+                (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
-            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
+            case .RecommendAlbum(let data): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
+                (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -144,14 +144,13 @@ class AlbumViewController: UIViewController {
         snapshot.appendSections([anotherAlbumSection, recommendAlbumSection])
         
         let anotherAlbumItem = data.anotherAlbum.map{Item.AnotherAlbum($0)}
+        snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
         
         // 당신을 위한 추천 앨범
-        if let recommendAlbumData = recommendAlbumData {
-            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
-            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        }
+        let recommendAlbumItem = data.recommendAlbum.map{Item.RecommendAlbum($0)}
+        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         
-        snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
+        
         dataSource?.apply(snapshot)
     }
     
@@ -188,25 +187,6 @@ class AlbumViewController: UIViewController {
                 guard let response = response, let data = self.albumData else { return }
                 albumView.config(data: data, artist: artist, description: response.description)
                 
-            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
-            }
-        }
-    }
-    
-    // 당신을 위한 앨범 추천 API
-    func getRecommendAlbum() {
-        albumService.recommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
-            guard let self = self else { return }
-            switch result {
-            case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
-                guard let response = response else {return}
-                self.recommendAlbumData = response.map{($0.album, $0.artist)}
-                setDataSource()
-                setSnapshot()
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성

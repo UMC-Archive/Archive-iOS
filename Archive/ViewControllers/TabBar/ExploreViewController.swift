@@ -16,9 +16,9 @@ class ExploreViewController: UIViewController {
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic: [(HiddenMusicResponse, String)]?
-    private var recommendMusic: [(RecommendMusic, String)]?
-    private var recommendAlbumData: [(RecommendAlbum, String)]?
+    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]?
+    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]?
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -99,19 +99,58 @@ class ExploreViewController: UIViewController {
     }
     
     private func setDataSource() {
-        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: exploreView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
+        dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: exploreView.collectionView, cellProvider: {[weak self] collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case let .RecommendMusicItem(music, artist): // 당신을 위한 추천곡
+            case let .ExploreRecommendMusic(music, album, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.configRecommendMusic(music: music, artist: artist)
+                guard let verticalCell = cell as? VerticalCell else {return cell}
+                verticalCell.configRecommendMusic(music: music, artist: artist)
+                
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                tapAlbumGesture.artist = artist
+                tapAlbumGesture.album = album.title
+                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = artist
+                verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
-            case let .HiddenMusic(music, artist): // 숨겨진 명곡
+            case let .HiddenMusic(music, album, artist): // 숨겨진 명곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
+                guard let verticalCell = cell as? VerticalCell else {return cell}
+                verticalCell.configHiddenMusic(music: music, artist: artist)
+                
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                tapAlbumGesture.artist = artist
+                tapAlbumGesture.album = album.title
+                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = artist
+                verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
-            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
+            case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
+                guard let bannerCell = cell as? BannerCell else {return cell}
+                bannerCell.configRecommendAlbum(album: album, artist: artist)
+                
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                tapAlbumGesture.artist = artist
+                tapAlbumGesture.album = album.title
+                bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = artist
+                bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
             default:
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -148,6 +187,20 @@ class ExploreViewController: UIViewController {
         
     }
     
+    // 앨범 버튼
+    @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else { return }
+        let nextVC = AlbumViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    // 아티스트 버튼
+    @objc private func TapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let artist = sender.artist else { return }
+        let nextVC = ArtistViewController(artist: artist)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
     // 자세히 보기 버튼
     private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
@@ -170,19 +223,19 @@ class ExploreViewController: UIViewController {
 
         // 추천곡
         if let recommendMusic = recommendMusic {
-            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}// 추천곡
+            let recommendMusicItem = recommendMusic.map{Item.ExploreRecommendMusic($0.0, $0.1, $0.2)}// 추천곡
             snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
         }
        
         // 숨겨진 명곡
         if let hiddenMusic = hiddenMusic {
-            let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1)}
+            let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1, $0.2)}
             snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
         }
         
         // 당신을 위한 추천 앨범
         if let recommendAlbumData = recommendAlbumData {
-            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            let recommendAlbumItem = recommendAlbumData.map{Item.ExploreRecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         }
         
@@ -198,7 +251,7 @@ class ExploreViewController: UIViewController {
             case .success(let response):
                 guard let response = response else {return}
                 print("recommendMusic() 성공")
-                self.recommendMusic = response.map{($0.music, $0.artist)}
+                self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapShot()
                 
@@ -239,7 +292,7 @@ class ExploreViewController: UIViewController {
             case .success(let response):
                 guard let response = response else {return}
                 print("getHiddenMusic() 성공")
-                self.hiddenMusic = response.map{($0.music, $0.artist)}
+                self.hiddenMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
