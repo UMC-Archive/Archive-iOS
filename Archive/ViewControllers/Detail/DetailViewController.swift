@@ -69,7 +69,7 @@ class DetailViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
-            case let .ExploreRecommendMusic(music, artist): // 당신을 위한 노래 추천 (탐색뷰)
+            case let .ExploreRecommendMusic(music, _, artist): // 당신을 위한 노래 추천 (탐색뷰)
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configRecommendMusic(music: music, artist: artist)
                 return cell
@@ -81,7 +81,7 @@ class DetailViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: data)
                 return cell
-            case let .HiddenMusic(music, artist): // 숨겨진 명곡
+            case let .HiddenMusic(music, _, artist): // 숨겨진 명곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
                 return cell
