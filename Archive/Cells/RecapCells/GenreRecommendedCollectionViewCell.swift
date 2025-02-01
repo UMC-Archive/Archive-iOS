@@ -22,6 +22,7 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
     
     private let AlbumImage = UIImageView().then{
         $0.layer.cornerRadius = 10
+        $0.clipsToBounds = true
     }
     
     private func setComponent(){

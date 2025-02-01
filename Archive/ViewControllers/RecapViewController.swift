@@ -132,11 +132,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             }
             let dummy = GenreRecommendedModel.dummy()
             
-            if indexPath.row == 2 {
-                cell.config(image: dummy[1].AlbumImage)
-            }else{
-                cell.config(image: dummy[indexPath.row].AlbumImage)
-            }
+            cell.config(image: dummy[indexPath.row].AlbumImage)
             return cell
         case rootView.collectionView:
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {

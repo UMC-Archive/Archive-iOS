@@ -14,11 +14,12 @@ struct GenreRecommendedModel {
 extension GenreRecommendedModel {
     static func dummy() -> [GenreRecommendedModel]{
         return [//구분을 위해 빨강 추가
-            GenreRecommendedModel(AlbumImage: .test1),
-            GenreRecommendedModel(AlbumImage: .albumRecommendedSample),
-            GenreRecommendedModel(AlbumImage: .albumRecommendedSample),
-            GenreRecommendedModel(AlbumImage: .albumRecommendedSample),
-            GenreRecommendedModel(AlbumImage: .albumRecommendedSample),
+            GenreRecommendedModel(AlbumImage: .indiePattern),
+            GenreRecommendedModel(AlbumImage: .popPattern),
+            GenreRecommendedModel(AlbumImage: .funkPattern),
+            GenreRecommendedModel(AlbumImage: .electronicPattern),
+            GenreRecommendedModel(AlbumImage: .balladPattern)
+            
             
             
         ]

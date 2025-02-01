@@ -89,8 +89,9 @@ class ArtistCollectionViewCell: UICollectionViewCell {
 
     }
     
-    public func config(image: UIImage, artistName: String){
-        artistImage.image = image
+    public func config(image: String, artistName: String){
+        let imageUrl = URL(string: image)
+        artistImage.kf.setImage(with: imageUrl)
         artistNameLabel.text = artistName
     }
 }

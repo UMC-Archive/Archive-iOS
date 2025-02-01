@@ -50,4 +50,5 @@ public final class MusicService: NetworkManager {
     public func genreInfo(completion: @escaping(Result<[GenreInfoResponseDTO], NetworkError>) -> Void) {
         request(target: .genreInfo, decodingType: [GenreInfoResponseDTO].self, completion: completion)
     }
+    
 }

@@ -226,7 +226,7 @@ class RecapView: UIView {
         // genreCollectionView 제약 조건
         genreCollectionView.snp.makeConstraints {
             $0.top.equalTo(genreInfoLabel.snp.bottom).offset(40)
-            $0.width.equalTo(269)
+            $0.width.equalTo(300)
             $0.height.equalTo(120)
             $0.centerX.equalToSuperview()
         }
