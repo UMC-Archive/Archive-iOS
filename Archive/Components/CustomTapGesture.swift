@@ -8,5 +8,6 @@
 import UIKit
 
 class CustomTapGesture: UITapGestureRecognizer {
-    var text: String? = nil
+    var artist: String? = nil
+    var album: String? = nil
 }
