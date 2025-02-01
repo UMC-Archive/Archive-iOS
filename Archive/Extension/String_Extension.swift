@@ -8,6 +8,7 @@
 import Foundation
 
 extension String {
+    // 2025-02-01T05:35:02 -> 2025만 출력
     func prefixBeforeDash() -> String {
         return self.components(separatedBy: "-").first ?? ""
     }

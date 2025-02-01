@@ -94,7 +94,7 @@ class HomeViewController: UIViewController {
                     bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 }
                 return cell
-            case .RecommendMusicItem(let (music, artist)): // 추천곡
+            case let .RecommendMusicItem(music, artist): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 if let verticalCell = cell as? VerticalCell {
                     verticalCell.configRecommendMusic(music: music, artist: artist)
