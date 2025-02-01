@@ -66,11 +66,7 @@ class HomeViewController: UIViewController {
             switch itemIdentifier {
             case .ArchiveItem(let item): // 아카이브
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
-                if let bigBannerCell = cell as? BigBannerCell {
-                    bigBannerCell.config(album: item)
-//                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-//                    bigBannerCell.artistLabel.addGestureRecognizer(tapGesture)
-                }
+                (cell as? BigBannerCell)?.config(album: item)
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
@@ -78,54 +74,54 @@ class HomeViewController: UIViewController {
                 return cell
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                if let bannerCell = cell as? BannerCell {
-                    bannerCell.configMusic(data: item)
+                guard let bannerCell = cell as? BannerCell else {return cell}
+                
+                bannerCell.configMusic(data: item)
                     
-                    // 앨범 탭 제스처
-                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                    tapAlbumGesture.artist = item.artist
-                    tapAlbumGesture.album = item.albumTitle
-                    bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
-                    
-                    // 아티스트 탭 제스처
-                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                    tapArtistGesture.artist = item.artist
-                    bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
-                }
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                tapAlbumGesture.artist = item.artist
+                tapAlbumGesture.album = item.albumTitle
+                bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = item.artist
+                bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
             case .RecommendMusic(let data): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                if let verticalCell = cell as? VerticalCell {
-                    verticalCell.config(data: data)
-                    
-                    // 앨범 탭 제스처
-                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                    tapAlbumGesture.artist = data.artist
-                    tapAlbumGesture.album = data.albumTitle
-                    verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
-                    
-                    // 아티스트 탭 제스처
-                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                    tapArtistGesture.artist = data.artist
-                    verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
-                }
+                guard let verticalCell = cell as? VerticalCell else {return cell}
+                verticalCell.config(data: data)
+                
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                tapAlbumGesture.artist = data.artist
+                tapAlbumGesture.album = data.albumTitle
+                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = data.artist
+                verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-               if let verticalCell = cell as? VerticalCell {
-                   verticalCell.config(data: item)
-                   
-                   // 앨범 탭 제스처
-                   let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                   tapAlbumGesture.artist = item.artist
-                   tapAlbumGesture.album = item.albumTitle
-                   verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
-                   
-                   // 아티스트 탭 제스처
-                   let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                   tapArtistGesture.artist = item.artist
-                   verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
-                }
+                guard let verticalCell = cell as? VerticalCell else {return cell}
+               verticalCell.config(data: item)
+               
+               // 앨범 탭 제스처
+               let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+               tapAlbumGesture.artist = item.artist
+               tapAlbumGesture.album = item.albumTitle
+               verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+               
+               // 아티스트 탭 제스처
+               let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+               tapArtistGesture.artist = item.artist
+               verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                return cell
             default:
                 return UICollectionViewCell()
