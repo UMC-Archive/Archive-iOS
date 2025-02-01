@@ -82,7 +82,6 @@ class HomeViewController: UIViewController {
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 if let bannerCell = cell as? BannerCell {
-                    
                     bannerCell.configMusic(data: item)
                     
                     // 앨범 탭 제스처
@@ -90,7 +89,8 @@ class HomeViewController: UIViewController {
                     bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
                     
                     // 아티스트 탭 제스처
-                    let tapArtistGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                    tapArtistGesture.text = item.artist
                     bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 }
                 return cell
@@ -104,8 +104,9 @@ class HomeViewController: UIViewController {
                     verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
                     
                     // 아티스트 탭 제스처
-                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-                    verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                    tapArtistGesture.text = artist
+                    verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                 }
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
@@ -118,8 +119,9 @@ class HomeViewController: UIViewController {
                    verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
                    
                    // 아티스트 탭 제스처
-                   let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-                   verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
+                   let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                   tapArtistGesture.text = item.artist
+                   verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                 }
                return cell
             default:
@@ -170,8 +172,9 @@ class HomeViewController: UIViewController {
     }
     
     // 아티스트 버튼
-    @objc private func TapArtistLabelGesture() {
-        let nextVC = ArtistViewController()
+    @objc private func TapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let artist = sender.text else { return }
+        let nextVC = ArtistViewController(artist: artist)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
