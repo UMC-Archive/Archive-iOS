@@ -46,16 +46,19 @@ class ExploreView: UIView {
         $0.showsHorizontalScrollIndicator = false
         $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
-        $0.register(RecapCollectionViewCell.self, forCellWithReuseIdentifier: "recapCollectionViewIdentifier")
+        $0.register(RecapCollectionViewCell.self, forCellWithReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier)
     }
     
     public lazy var collectionView = UICollectionView(frame: .zero, collectionViewLayout: self.createLayout()).then { view in
         view.backgroundColor = .clear
         view.showsVerticalScrollIndicator = false
         view.isScrollEnabled = false
+        
+        // 헤더 등록
+        view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
+                      
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
-        view.register(HeaderView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: HeaderView.id)
     }
     
     override init(frame: CGRect) {

@@ -103,6 +103,12 @@ class VerticalCell: UICollectionViewCell {
     public func configHiddenMusic(music: HiddenMusicResponse, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
-        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime)"
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
+    public func configRecommendMusic(music: RecommendMusic, artist: String){
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
 }

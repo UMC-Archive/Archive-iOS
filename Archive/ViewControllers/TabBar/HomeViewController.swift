@@ -16,6 +16,7 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
+    private var recommendMusic: [(RecommendMusic, String)]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,6 +24,9 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
+        
+        // 추천 음악 API
+        getRecommendMusic()
         
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
@@ -67,9 +71,9 @@ class HomeViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
                 if let bigBannerCell = cell as? BigBannerCell {
                     bigBannerCell.config(album: item)
-                     let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-                    bigBannerCell.artistLabel.addGestureRecognizer(tapGesture)
-                 }
+//                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+//                    bigBannerCell.artistLabel.addGestureRecognizer(tapGesture)
+                }
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
@@ -78,47 +82,76 @@ class HomeViewController: UIViewController {
             case .FastSelectionItem(let item), .RecentlyListendMusicItem(let item):// 빠른 선곡 / 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 if let bannerCell = cell as? BannerCell {
-                    
                     bannerCell.configMusic(data: item)
                     
                     // 앨범 탭 제스처
-                    let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
+                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                    tapAlbumGesture.artist = item.artist
+                    tapAlbumGesture.album = item.albumTitle
                     bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
                     
                     // 아티스트 탭 제스처
-                    let tapArtistGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                    tapArtistGesture.artist = item.artist
                     bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
-                 }
+                }
                 return cell
-            case .RecommendMusicItem(let item), .RecentlyAddMusicItem(let item): // 추천곡 / 최근 추가 노래
+            case let .RecommendMusicItem(music, artist): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 if let verticalCell = cell as? VerticalCell {
-                    verticalCell.config(data: item)
+                    verticalCell.configRecommendMusic(music: music, artist: artist)
                     
                     // 앨범 탭 제스처
-                    let tapAlbumGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapAlbumImageGesture))
+                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                    tapAlbumGesture.artist = artist
+                    tapAlbumGesture.album = music.title
                     verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
                     
                     // 아티스트 탭 제스처
-                    let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self?.TapArtistLabelGesture))
-                    verticalCell.artistYearLabel.addGestureRecognizer(tapGesture)
-                 }
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                    tapArtistGesture.artist = artist
+                    verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                }
                 return cell
+            case .RecentlyAddMusicItem(let item): //  최근 추가 노래
+               let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+               if let verticalCell = cell as? VerticalCell {
+                   verticalCell.config(data: item)
+                   
+                   // 앨범 탭 제스처
+                   let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                   tapAlbumGesture.artist = item.artist
+                   tapAlbumGesture.album = item.albumTitle
+                   verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                   
+                   // 아티스트 탭 제스처
+                   let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                   tapArtistGesture.artist = item.artist
+                   verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                }
+               return cell
             default:
                 return UICollectionViewCell()
             }
         })
         
         dataSource?.supplementaryViewProvider = {[weak self] collectionView, kind, indexPath in
-            guard let self = self else {return UICollectionReusableView() }
-            let section = self.dataSource?.sectionIdentifier(for: indexPath.section)
+            guard let self = self,
+                    let section = self.dataSource?.sectionIdentifier(for: indexPath.section),
+                    let item = dataSource?.snapshot(for: section)
+            else {
+                return UICollectionReusableView()
+            }
             
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
-            // 버튼에 UIAction 추가
-            (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
-                guard let self = self, let section = section else { return }
-                self.handleDetailButtonTap(for: section)
-            }), for: .touchUpInside)
+            
+            // 버튼에 UIAction 추가, 탐색 시점 섹션 제외
+            if section != .PointOfView(.PointOfView) {
+                (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
+                    guard let self = self else {return}
+                    self.handleDetailButtonTap(for: section, item: item)
+                }), for: .touchUpInside)
+            }
 
             switch section {
             case .BigBanner(let headerTitle):
@@ -139,20 +172,22 @@ class HomeViewController: UIViewController {
     }
     
     // 앨범 버튼
-    @objc private func TapAlbumImageGesture() {
-        let nextVC = AlbumViewController()
+    @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else { return }
+        let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 아티스트 버튼
-    @objc private func TapArtistLabelGesture() {
-        let nextVC = ArtistViewController()
+    @objc private func TapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let artist = sender.artist else { return }
+        let nextVC = ArtistViewController(artist: artist)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 자세히 보기 버튼
-    private func handleDetailButtonTap(for section: Section) {
-        let nextVC = DetailViewController(section: section)
+    private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
+        let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
@@ -183,8 +218,11 @@ class HomeViewController: UIViewController {
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
-        let recommendItem = musicData.map{Item.RecommendMusicItem($0)}
-        snapshot.appendItems(recommendItem, toSection: recommendSection)
+        // 추천곡
+        if let recommendMusic = recommendMusic {
+            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}
+            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        }
         
         let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
         snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
@@ -193,6 +231,30 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    // 당신을 위한 추천곡 API
+    func getRecommendMusic() {
+        musicService.recommendMusic(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                Task {
+                    guard let response = response else {return}
+                    print("recommendMusic() 성공")
+                    self.recommendMusic = response.map{($0.music, $0.artist)}
+                    self.setDataSource()
+                    self.setSnapShot()
+                }
+
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
     }
     
     
