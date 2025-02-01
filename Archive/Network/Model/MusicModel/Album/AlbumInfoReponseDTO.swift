@@ -9,10 +9,8 @@ import Foundation
 
 
 public struct AlbumInfoReponseDTO: Decodable {
-    let id: String
     let title: String
     let releaseTime: String
     let image: String
-    let createdAt: String
-    let updatedAt: String
+    let artist: String
 }

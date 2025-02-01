@@ -89,8 +89,9 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
 
     }
     
-    public func config(image: UIImage, songName: String, artist: String, year: String){
-        songAlbumImage.image = image
+    public func config(imageUrl: String, songName: String, artist: String, year: String){
+        let imageUrl = URL(string: imageUrl)
+        songAlbumImage.kf.setImage(with: imageUrl)
         songLabel.text = songName
         
         songLabel.text = songName
