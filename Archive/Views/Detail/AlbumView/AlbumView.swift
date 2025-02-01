@@ -159,6 +159,10 @@ class AlbumView: UIView {
         artistLabel.text = artist
         contentLabel.text = description
         
-//        trackView.config(data: data.albumTrack)
+
+    }
+    
+    public func configTrack(data: AlbumTrack){
+        trackView.config(data: data)
     }
 }
