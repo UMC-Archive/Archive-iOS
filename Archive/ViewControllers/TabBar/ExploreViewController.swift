@@ -109,19 +109,24 @@ class ExploreViewController: UIViewController {
                 (cell as? BannerCell)?.configAlbum(data: item)
                 return cell
             default:
-                return UICollectionViewCell()
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                return cell
             }
         })
         
         dataSource?.supplementaryViewProvider = {[weak self] collectionView, kind, indexPath in
-            guard let self = self else {return UICollectionReusableView() }
-            let section = self.dataSource?.sectionIdentifier(for: indexPath.section)
+            guard let self = self,
+                  let section = self.dataSource?.sectionIdentifier(for: indexPath.section),
+                  let item = self.dataSource?.snapshot(for: section)
+            else {
+                return UICollectionReusableView()
+            }
             
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
             // 버튼에 UIAction 추가
             (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
-                guard let self = self, let section = section else { return }
-                self.handleDetailButtonTap(for: section)
+                guard let self = self else { return }
+                self.handleDetailButtonTap(for: section, item: item)
             }), for: .touchUpInside)
 
             switch section {
@@ -138,8 +143,9 @@ class ExploreViewController: UIViewController {
         
     }
     
-    private func handleDetailButtonTap(for section: Section) {
-        let nextVC = DetailViewController(section: section)
+    // 자세히 보기 버튼
+    private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
+        let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
@@ -170,7 +176,6 @@ class ExploreViewController: UIViewController {
         }
         
         let recommendAlbumItem = albumData.map{Item.RecommendAlbum($0)} // 앨범 추천
-        
         snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         
         

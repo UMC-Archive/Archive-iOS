@@ -17,11 +17,8 @@ public struct HiddenMusicResponse: Decodable, Hashable {
     let albumId: String
     let title: String
     let releaseTime: String
-//    let lyrics: String
     let image: String
     let music: String
-//    let createdAt: String
-//    let updatedAt: String
     
     enum CodingKeys: CodingKey {
         case id
