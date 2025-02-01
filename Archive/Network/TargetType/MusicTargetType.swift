@@ -11,9 +11,12 @@ import Moya
 enum MusicTargetType {
     case musicInfo(artist: String, music: String)           // 노래 정보 가져오기
     case albumInfo(artist: String, album: String) // 앨범 정보 가져오기
+    case albumCuration(albumId: String)     // 앨범 큐레이션
     case artistInfo(artist: String) // 아티스트 정보 가져오기
-    case musicHidden(date: String) // 숨겨진 명곡
+    case artistCuration(artistId: String)   // 아티스트 큐레이션
+    case musicHidden // 숨겨진 명곡
     case genreInfo // 장르 정보 가져오기
+    case recommendMusicExplore // 당신을 위한 추천곡(탐색뷰)
 }
 
 
@@ -37,14 +40,20 @@ extension MusicTargetType: TargetType {
             return "hidden"
         case .genreInfo:
             return "/genre/info"
+        case .albumCuration(albumId: let albumId):
+            return "album/\(albumId)/curation"
+        case .artistCuration(artistId: let artistId):
+            return "artist/\(artistId)/curation"
+        case .recommendMusicExplore:
+            return "year/nomination"
         }
     }
     
     var method: Moya.Method {
         switch self {
-        case .musicInfo, .albumInfo, .artistInfo:
+        case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .genreInfo:
+        case .musicHidden, .genreInfo, .recommendMusicExplore:
             return .get
         }
     }
@@ -57,9 +66,7 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .artistInfo(artist: let artist):
             return .requestParameters(parameters: ["artist_name" : artist], encoding: URLEncoding.queryString)
-        case .musicHidden(date: let date):
-            return .requestParameters(parameters: ["date" : date], encoding: URLEncoding.queryString)
-        case .genreInfo:
+        case .musicHidden, .genreInfo, .albumCuration, .artistCuration, .recommendMusicExplore:
             return .requestPlain
         }
     }
