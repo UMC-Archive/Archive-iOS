@@ -17,8 +17,8 @@ class ExploreViewController: UIViewController {
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
     private var hiddenMusic: [(HiddenMusicResponse, String)]?
-    private var recommendMusic: [(RecommendMusic, String)]?
-    private var recommendAlbumData: [(RecommendAlbum, String)]?
+    private var recommendMusic: [(ExploreRecommendMusic, String)]?
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -101,7 +101,7 @@ class ExploreViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: exploreView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case let .RecommendMusicItem(music, artist): // 당신을 위한 추천곡
+            case let .ExploreRecommendMusic(music, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configRecommendMusic(music: music, artist: artist)
                 return cell
@@ -109,7 +109,7 @@ class ExploreViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
                 return cell
-            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
+            case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
                 return cell
@@ -170,7 +170,7 @@ class ExploreViewController: UIViewController {
 
         // 추천곡
         if let recommendMusic = recommendMusic {
-            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}// 추천곡
+            let recommendMusicItem = recommendMusic.map{Item.ExploreRecommendMusic($0.0, $0.1)}// 추천곡
             snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
         }
        
@@ -182,7 +182,7 @@ class ExploreViewController: UIViewController {
         
         // 당신을 위한 추천 앨범
         if let recommendAlbumData = recommendAlbumData {
-            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            let recommendAlbumItem = recommendAlbumData.map{Item.ExploreRecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         }
         

@@ -17,7 +17,7 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
-    private var recommendAlbumData: [(RecommendAlbum, String)]?
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
 
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
@@ -98,7 +98,7 @@ class AlbumViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: item)
                 return cell
-            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
+            case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configRecommendAlbum(album: album, artist: artist)
                 return cell
@@ -147,7 +147,7 @@ class AlbumViewController: UIViewController {
         
         // 당신을 위한 추천 앨범
         if let recommendAlbumData = recommendAlbumData {
-            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            let recommendAlbumItem = recommendAlbumData.map{Item.ExploreRecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
         }
         

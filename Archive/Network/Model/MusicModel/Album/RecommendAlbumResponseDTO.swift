@@ -7,12 +7,12 @@
 
 import Foundation
 
-public struct RecommendAlbumResponseDTO: Decodable {
-    let album: RecommendAlbum
+public struct ExploreRecommendAlbumResponseDTO: Decodable {
+    let album: ExploreRecommendAlbum
     let artist: String
 }
 
-public struct RecommendAlbum: Decodable, Hashable {
+public struct ExploreRecommendAlbum: Decodable, Hashable {
     let id: String
     let title: String
     let releaseTime: String

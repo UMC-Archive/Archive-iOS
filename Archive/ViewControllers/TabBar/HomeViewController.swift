@@ -11,12 +11,11 @@ class HomeViewController: UIViewController {
     private let musicService = MusicService() // 예시
     private let userService = UserService()
     
-    
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
-    private var recommendMusic: [(RecommendMusic, String)]?
+//    private var recommendMusic: [(RecommendMusic, String)]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,8 +24,6 @@ class HomeViewController: UIViewController {
         setDataSource()
         setSnapShot()
         
-        // 추천 음악 API
-        getRecommendMusic()
         
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
@@ -96,20 +93,20 @@ class HomeViewController: UIViewController {
                     bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 }
                 return cell
-            case let .RecommendMusicItem(music, artist): // 추천곡
+            case .RecommendMusic(let data): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 if let verticalCell = cell as? VerticalCell {
-                    verticalCell.configRecommendMusic(music: music, artist: artist)
+                    verticalCell.config(data: data)
                     
                     // 앨범 탭 제스처
                     let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                    tapAlbumGesture.artist = artist
-                    tapAlbumGesture.album = music.title
+                    tapAlbumGesture.artist = data.artist
+                    tapAlbumGesture.album = data.albumTitle
                     verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
                     
                     // 아티스트 탭 제스처
                     let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                    tapArtistGesture.artist = artist
+                    tapArtistGesture.artist = data.artist
                     verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                 }
                 return cell
@@ -219,10 +216,8 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
         // 추천곡
-        if let recommendMusic = recommendMusic {
-            let recommendMusicItem = recommendMusic.map{Item.RecommendMusicItem($0.0, $0.1)}
-            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
-        }
+        let recommendMusicItem = musicData.map{Item.RecommendMusic($0)}
+        snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
         
         let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
         snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
@@ -231,30 +226,6 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
-    }
-    
-    // 당신을 위한 추천곡 API
-    func getRecommendMusic() {
-        musicService.recommendMusic(){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                Task {
-                    guard let response = response else {return}
-                    print("recommendMusic() 성공")
-                    self.recommendMusic = response.map{($0.music, $0.artist)}
-                    self.setDataSource()
-                    self.setSnapShot()
-                }
-
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
     }
     
     
