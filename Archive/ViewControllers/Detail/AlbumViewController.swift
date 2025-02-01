@@ -19,7 +19,7 @@ class AlbumViewController: UIViewController {
     private var albumData: AlbumInfoReponseDTO?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
-    init(artist: String, album: String) {
+    init(artist: String = "IU", album: String = "Love Poem") {
         self.artist = artist
         self.album = album
         
