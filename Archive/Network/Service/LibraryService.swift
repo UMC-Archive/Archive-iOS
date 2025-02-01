@@ -27,13 +27,13 @@ public final class LibraryService: NetworkManager {
     
     
     
-    public func libraryMusicInfo(completion: @escaping(Result<[LibraryMusicResponseDTO], NetworkError>) -> Void) {
-        request(target: .libraryMusicInfo, decodingType: [LibraryMusicResponseDTO].self, completion: completion)
+    public func libraryMusicInfo(completion: @escaping(Result<[LibraryMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .libraryMusicInfo, decodingType: [LibraryMusicResponseDTO].self, completion: completion)
     }
-    public func libraryArtistInfo(completion: @escaping(Result<[LibraryArtistResponseDTO], NetworkError>) -> Void) {
-        request(target: .libraryArtistInfo, decodingType: [LibraryArtistResponseDTO].self, completion: completion)
+    public func libraryArtistInfo(completion: @escaping(Result<[LibraryArtistResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .libraryArtistInfo, decodingType: [LibraryArtistResponseDTO].self, completion: completion)
     }
-    public func libraryAlbumInfo(completion: @escaping(Result<[LibraryAlbumResponseDTO], NetworkError>) -> Void) {
-        request(target: .libraryAlbumInfo, decodingType: [LibraryAlbumResponseDTO].self, completion: completion)
+    public func libraryAlbumInfo(completion: @escaping(Result<[LibraryAlbumResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .libraryAlbumInfo, decodingType: [LibraryAlbumResponseDTO].self, completion: completion)
     }
 }

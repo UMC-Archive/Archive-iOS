@@ -27,11 +27,15 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let albumImage = UIImageView() 
+    private let albumImage = UIImageView().then{
+        $0.layer.cornerRadius = 10
+        $0.clipsToBounds = true
+    }
     
     private let albumLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
+        
     }
     
     private let albumNameLabel = UILabel().then{

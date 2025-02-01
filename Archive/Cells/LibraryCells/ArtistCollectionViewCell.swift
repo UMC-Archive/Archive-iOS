@@ -28,11 +28,15 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let artistImage = UIImageView()
+    private let artistImage = UIImageView().then{
+        $0.layer.cornerRadius = 25
+        $0.clipsToBounds = true
+    }
     
     private let artistLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
+        
     }
     
     
