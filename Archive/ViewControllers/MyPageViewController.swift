@@ -50,6 +50,12 @@ class MyPageViewController: UIViewController {
         let tapGesture3 = UITapGestureRecognizer(target: self, action: #selector(arrowButtonTapped))
         rootView.arrowButton.isUserInteractionEnabled = true // 제스처 인식 활성화
         rootView.arrowButton.addGestureRecognizer(tapGesture3)
+        
+        rootView.topView.exploreIconButton.addTarget(self, action: #selector(exploreIconTapped), for: .touchUpInside)
+    }
+    @objc func exploreIconTapped(){
+        let viewController = DatePickerViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc func recapButtonTapped(){
         let viewController = RecapViewController()

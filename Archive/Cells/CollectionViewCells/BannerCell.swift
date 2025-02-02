@@ -85,4 +85,10 @@ class BannerCell: UICollectionViewCell {
         titleLabel.text = data.albumTitle
         artistLabel.text = data.artist
     }
+    
+    public func configRecommendAlbum(album: ExploreRecommendAlbum, artist: String) {
+        imageView.kf.setImage(with: URL(string: album.image))
+        titleLabel.text = album.title
+        artistLabel.text = artist
+    }
 }

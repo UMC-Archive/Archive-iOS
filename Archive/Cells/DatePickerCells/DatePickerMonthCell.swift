@@ -24,7 +24,7 @@ class DatePickerMonthCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let month = UILabel().then{
+    public let month = UILabel().then{
         $0.textColor = UIColor.white
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 36, rawValue: 700)
         $0.textAlignment = .center

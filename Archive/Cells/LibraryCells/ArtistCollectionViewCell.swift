@@ -28,11 +28,15 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let artistImage = UIImageView()
+    private let artistImage = UIImageView().then{
+        $0.layer.cornerRadius = 25
+        $0.clipsToBounds = true
+    }
     
     private let artistLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
+        
     }
     
     
@@ -89,8 +93,9 @@ class ArtistCollectionViewCell: UICollectionViewCell {
 
     }
     
-    public func config(image: UIImage, artistName: String){
-        artistImage.image = image
+    public func config(image: String, artistName: String){
+        let imageUrl = URL(string: image)
+        artistImage.kf.setImage(with: imageUrl)
         artistNameLabel.text = artistName
     }
 }

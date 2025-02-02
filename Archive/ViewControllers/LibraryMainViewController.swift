@@ -11,12 +11,16 @@ class LibraryMainViewController: UIViewController {
     let rootView = LibraryMainView()
     
     private var segmentIndexNum: Int = 0
+    private let libraryService = LibraryService()
+    private var musicResponse: [LibraryMusicResponseDTO]?
+    private var artistResponse : [LibraryArtistResponseDTO]?
+    private var albumResponse : [LibraryAlbumResponseDTO]?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view = rootView
         rootView.backgroundColor = .black
-        
+        self.navigationController?.navigationBar.isHidden = true
         datasourceSetting()
         hideAllCollectionViews()
         setupActions()
@@ -26,21 +30,35 @@ class LibraryMainViewController: UIViewController {
         super.viewDidDisappear(animated)
         print("ㅣㅣㅣView has disappeared")
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getArtistInfo()
+        getAlbumInfo()
+        getMusicInfo()
+    }
     private func datasourceSetting() {
         rootView.playlistCollectionView.dataSource = self
         rootView.songCollectionView.dataSource = self
         rootView.albumCollectionView.dataSource = self
-        rootView.genreCollectionView.dataSource = self
         rootView.artistCollectionView.dataSource = self
     }
     
     private func setupActions() {
         rootView.librarySegmentControl.addTarget(self, action: #selector(segmentChanged), for: .valueChanged)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(exploreIconTapped))
+        rootView.exploreIcon.isUserInteractionEnabled = true // 제스처 인식 활성화
+        rootView.exploreIcon.addGestureRecognizer(tapGesture)
     }
+    @objc func exploreIconTapped(){
+        let viewController = DatePickerViewController()
+        self.navigationController?.pushViewController(viewController, animated: true)
+    }
+    
     
     @objc private func segmentChanged() {
         segmentIndexNum = rootView.librarySegmentControl.selectedSegmentIndex
-        let underbarWidth = rootView.librarySegmentControl.frame.width / 5
+        let underbarWidth = rootView.librarySegmentControl.frame.width / 4
         let newLeading = CGFloat(segmentIndexNum) * underbarWidth
         
         
@@ -61,7 +79,6 @@ class LibraryMainViewController: UIViewController {
         rootView.playlistCollectionView.isHidden = true
         rootView.songCollectionView.isHidden = true
         rootView.albumCollectionView.isHidden = true
-        rootView.genreCollectionView.isHidden = true
         rootView.artistCollectionView.isHidden = true
     }
     
@@ -74,14 +91,73 @@ class LibraryMainViewController: UIViewController {
            case 2:
                rootView.albumCollectionView.isHidden = false
            case 3:
-               rootView.genreCollectionView.isHidden = false
-           case 4:
                rootView.artistCollectionView.isHidden = false
            default:
                break
            }
            rootView.layoutIfNeeded()
        }
+    func getMusicInfo(){
+        libraryService.libraryMusicInfo(){[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+                        // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+            case .success(let response): // response는 AlbumInfoReponseDTO 타입
+                print("libraryMusic 성공 ")
+                Task{
+                    self.musicResponse = response
+                    self.rootView.songCollectionView.reloadData()
+                }
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    func getArtistInfo(){
+        libraryService.libraryArtistInfo(){[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+                        // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+            case .success(let response): // response는 AlbumInfoReponseDTO 타입
+                print("libraryAtrist성공 ")
+                Task{
+                    self.artistResponse = response
+                    self.rootView.artistCollectionView.reloadData()
+                }
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    func getAlbumInfo(){
+        libraryService.libraryAlbumInfo(){[weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+                        // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
+            case .success(let response): // response는 AlbumInfoReponseDTO 타입
+                print("libraryAlbum성공 ")
+                           
+                Task{
+                    self.albumResponse = response
+                    self.rootView.albumCollectionView.reloadData()
+                }
+            case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
 }
 
 extension LibraryMainViewController: UICollectionViewDataSource {
@@ -92,16 +168,17 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             return PlayListDummy.dummy().count
             
         case rootView.songCollectionView:
-            return SongCollectionViewModel.dummy().count
+//            getMusicInfo()
+            return musicResponse?.count ?? 0
             
         case rootView.albumCollectionView:
-            return AlbumModel.dummy().count
+//            getAlbumInfo()
+            return albumResponse?.count ?? 0
             
-        case rootView.genreCollectionView:
-            return GenreModel.dummy().count
             
         case rootView.artistCollectionView:
-            return ArtistModel.dummy().count
+//            getArtistInfo()
+            return artistResponse?.count ?? 0
             
         default:
             return 0
@@ -128,13 +205,20 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             ) as? LibrarySongCollectionViewCell else {
                 fatalError("Failed to dequeue LibrarySongCollectionViewCell")
             }
-            let dummy = SongCollectionViewModel.dummy()
+//            let dummy = SongCollectionViewModel.dummy()
+//            cell.config(
+//                image: dummy[indexPath.row].albumImage,
+//                songName: dummy[indexPath.row].songName,
+//                artist: dummy[indexPath.row].artist,
+//                year: dummy[indexPath.row].year
+//            )
             cell.config(
-                image: dummy[indexPath.row].albumImage,
-                songName: dummy[indexPath.row].songName,
-                artist: dummy[indexPath.row].artist,
-                year: dummy[indexPath.row].year
+                imageUrl: musicResponse?[indexPath.row].image ?? "",
+                songName: musicResponse?[indexPath.row].title ?? "",
+                artist: musicResponse?[indexPath.row].artist ?? "",
+                year: String(musicResponse?[indexPath.row].releaseTime ?? 0 ) ?? ""
             )
+
             return cell
             
         case rootView.albumCollectionView:
@@ -144,26 +228,16 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             ) as? AlbumCollectionViewCell else {
                 fatalError("Failed to dequeue albumCollectionViewCell")
             }
-            let dummy = AlbumModel.dummy()
+//            let dummy = AlbumModel.dummy()
+//            cell.config(
+//                image: dummy[indexPath.row].albumImage,
+//                albumName: dummy[indexPath.row].albumName
+//            )
             cell.config(
-                image: dummy[indexPath.row].albumImage,
-                albumName: dummy[indexPath.row].albumName
-            )
-            return cell
-            
-        case rootView.genreCollectionView:
-            guard let cell = collectionView.dequeueReusableCell(
-                withReuseIdentifier: GenreCollectionViewCell.genreCollectionViewIdentifier,
-                for: indexPath
-            ) as? GenreCollectionViewCell else {
-                fatalError("Failed to dequeue genreCollectionViewCell")
-            }
-            let dummy = GenreModel.dummy()
-            cell.config(
-                image: dummy[indexPath.row].albumImage,
-                songName: dummy[indexPath.row].songName,
-                artist: dummy[indexPath.row].artist,
-                year: dummy[indexPath.row].year
+                image: albumResponse?[indexPath.row].image ?? "",
+                albumName: albumResponse?[indexPath.row].title ?? "",
+                artist: albumResponse?[indexPath.row].artist ?? ""
+                
             )
             return cell
             
@@ -175,9 +249,13 @@ extension LibraryMainViewController: UICollectionViewDataSource {
                 fatalError("Failed to dequeue genreCollectionViewCell")
             }
             let dummy = GenreModel.dummy()
+//            cell.config(
+//                image: dummy[indexPath.row].albumImage,
+//                artistName: dummy[indexPath.row].artist
+//            )
             cell.config(
-                image: dummy[indexPath.row].albumImage,
-                artistName: dummy[indexPath.row].artist
+                image: artistResponse?[indexPath.row].image ?? "",
+                artistName: artistResponse?[indexPath.row].name ?? ""
             )
             return cell
         default:

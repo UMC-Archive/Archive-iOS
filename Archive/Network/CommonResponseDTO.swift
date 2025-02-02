@@ -1,11 +1,4 @@
 //
-//  CommonRequestDTO.swift
-//  Archive
-//
-//  Created by 손현빈 on 2/1/25.
-//
-
-//
 //  CommonResponseDTO.swift
 //  Archive
 //

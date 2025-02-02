@@ -2,13 +2,6 @@
 //  NetworkError.swift
 //  Archive
 //
-//  Created by 손현빈 on 2/1/25.
-//
-
-//
-//  NetworkError.swift
-//  Archive
-//
 //  Created by 이수현 on 1/20/25.
 //
 

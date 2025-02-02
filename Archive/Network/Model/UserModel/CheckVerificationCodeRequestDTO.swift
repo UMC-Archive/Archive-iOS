@@ -2,13 +2,6 @@
 //  CheckVerificationCodeRequestDTO.swift
 //  Archive
 //
-//  Created by 손현빈 on 2/1/25.
-//
-
-//
-//  CheckVerificationCodeRequestDTO.swift
-//  Archive
-//
 //  Created by 이수현 on 1/25/25.
 //
 

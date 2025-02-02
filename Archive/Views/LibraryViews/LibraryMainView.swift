@@ -36,7 +36,7 @@ class LibraryMainView : UIView {
     private let mypageIcon = UIImageView().then{
         $0.image = UIImage(named: "myPageIcon")
     }
-    private let exploreIcon = UIImageView().then{
+    public let exploreIcon = UIImageView().then{
         $0.image = UIImage(named: "exploreIcon")
     }
     private let searchIcon = UIImageView().then{
@@ -44,7 +44,7 @@ class LibraryMainView : UIView {
     }
     
     //상단 세그먼트
-    public let librarySegmentControl = UISegmentedControl(items: ["재생목록", "노래", "앨범", "장르", "아티스트"]).then{
+    public let librarySegmentControl = UISegmentedControl(items: ["재생목록", "노래", "앨범", "아티스트"]).then{
         
         $0.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         $0.setBackgroundImage(UIImage(), for: .selected, barMetrics: .default)
@@ -116,15 +116,6 @@ class LibraryMainView : UIView {
         $0.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: "albumCollectionViewIdentifier")
     }
     
-    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
-        $0.scrollDirection = .vertical
-        $0.itemSize = constant.playlistCollectionViewIconSize
-        $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
-    }).then{
-        $0.backgroundColor = .black
-        $0.isScrollEnabled = true
-        $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
-    }
     
     public let artistCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical
@@ -148,7 +139,6 @@ class LibraryMainView : UIView {
             playlistCollectionView,
             songCollectionView,
             albumCollectionView,
-            genreCollectionView,
             artistCollectionView,
             exploreIcon,
             searchIcon
@@ -207,11 +197,6 @@ class LibraryMainView : UIView {
         }
         albumCollectionView.snp.makeConstraints{
             $0.size.equalTo(constant.albumCollectionViewSize)
-            $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-            $0.leading.equalTo(librarySegmentControl.snp.leading)
-        }
-        genreCollectionView.snp.makeConstraints{
-            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
             $0.leading.equalTo(librarySegmentControl.snp.leading)
         }

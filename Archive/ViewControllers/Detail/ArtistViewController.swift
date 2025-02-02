@@ -8,10 +8,24 @@
 import UIKit
 
 class ArtistViewController: UIViewController {
+    private let musicService = MusicService()
     private let artistView = ArtistView()
     private let artistData = ArtistDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let gradientLayer = CAGradientLayer()
+    private let artist: String
+    private let album: String
+    private var data: ArtistInfoReponseDTO?
+    
+    init(artist: String = "빅뱅", album: String = "MADE") {
+        self.artist = artist
+        self.album = album
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,6 +35,8 @@ class ArtistViewController: UIViewController {
         setAction()
         setDataSource()
         setSnapshot()
+        
+        postArtistInfo(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -46,7 +62,7 @@ class ArtistViewController: UIViewController {
         self.navigationItem.leftBarButtonItem = popButton
         
         // 좋이요
-        let heartButton = UIBarButtonItem(image: UIImage(systemName: "heart"), style: .done, target: self, action: #selector(tapHeartButton))
+        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
         self.navigationItem.rightBarButtonItem = heartButton
         self.navigationController?.navigationBar.tintColor = .white
     }
@@ -86,14 +102,15 @@ class ArtistViewController: UIViewController {
         })
         
         dataSource?.supplementaryViewProvider = {[weak self] collectionView, kind, indexPath in
-            guard let self = self else {return UICollectionReusableView() }
-            let section = self.dataSource?.sectionIdentifier(for: indexPath.section)
+            guard let self = self,
+                  let section = self.dataSource?.sectionIdentifier(for: indexPath.section),
+                    let item = dataSource?.snapshot(for: section) else {return UICollectionReusableView() }
             
             let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: HeaderView.id, for: indexPath)
             // 버튼에 UIAction 추가
             (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
-                guard let self = self, let section = section else { return }
-                self.handleDetailButtonTap(for: section)
+                guard let self = self else { return }
+                self.handleDetailButtonTap(for: section, item: item)
             }), for: .touchUpInside)
 
             switch section {
@@ -113,8 +130,9 @@ class ArtistViewController: UIViewController {
         }
     }
     
-    private func handleDetailButtonTap(for section: Section) {
-        let nextVC = DetailViewController(section: section)
+    // 자세히 보기 버튼
+    private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
+        let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
@@ -155,6 +173,46 @@ class ArtistViewController: UIViewController {
         UIView.animate(withDuration: 0.3) { [weak self] in
             self?.artistView.descriptionLabel.numberOfLines = newNumberOfLines
             self?.artistView.layoutIfNeeded() // 애니메이션 반영
+        }
+    }
+    
+    
+    // 아티스트 정보 가져오기 API
+    func postArtistInfo(artist: String, album: String){
+        musicService.artist(artist: artist, album: album){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                guard let response = response else {return}
+                self.data = response
+                postArtistCuration(artistId: response.id)
+
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 아티스트 큐레이션 API
+    func postArtistCuration(artistId: String){
+        musicService.artistCuration(artistId: artistId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                guard let response = response, let artistData = data else {return}
+                artistView.config(artistInfo: artistData, curation: response)
+
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
         }
     }
 

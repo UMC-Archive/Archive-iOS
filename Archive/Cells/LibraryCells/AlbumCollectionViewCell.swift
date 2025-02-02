@@ -27,11 +27,15 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let albumImage = UIImageView() 
+    private let albumImage = UIImageView().then{
+        $0.layer.cornerRadius = 10
+        $0.clipsToBounds = true
+    }
     
     private let albumLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
+        
     }
     
     private let albumNameLabel = UILabel().then{
@@ -40,7 +44,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white
     }
     
-    private let albumLabel = UILabel().then{
+    private let artistLabel = UILabel().then{
         $0.text = "Artist"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
@@ -56,7 +60,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         }
         
         albumLabelStackView.addSubview(albumNameLabel)
-        albumLabelStackView.addSubview(albumLabel)
+        albumLabelStackView.addSubview(artistLabel)
         
         albumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
@@ -71,15 +75,19 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         }
         albumNameLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.width.equalTo(160)
         }
-        albumLabel.snp.makeConstraints{
+        artistLabel.snp.makeConstraints{
             $0.top.equalTo(albumNameLabel.snp.bottom)
+            $0.width.equalTo(160)
         }
 
     }
     
-    public func config(image: UIImage, albumName: String){
-        albumImage.image = image
+    public func config(image: String, albumName: String, artist: String){
+        let imageUrl = URL(string: image)
+        albumImage.kf.setImage(with: imageUrl)
         albumNameLabel.text = albumName
+        artistLabel.text = artist
     }
 }

@@ -2,13 +2,6 @@
 //  UserTargetType.swift
 //  Archive
 //
-//  Created by 손현빈 on 1/31/25.
-//
-
-//
-//  UserTargetType.swift
-//  Archive
-//
 //  Created by 이수현 on 1/25/25.
 //
 
@@ -40,7 +33,6 @@ extension UserTargetType: TargetType {
             return "signup"
         case .login:
             return "login"
-     
         }
     }
     
@@ -61,7 +53,6 @@ extension UserTargetType: TargetType {
             
         case .sendVerificationCode(let email):
             return .requestParameters(parameters: ["email" : email], encoding: URLEncoding.queryString)
-             
         case .checkVerificationCode(let parameter):
             return .requestJSONEncodable(parameter)
         case .signUp(image: let image, parameter: let parameter):

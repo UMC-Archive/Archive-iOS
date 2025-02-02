@@ -48,6 +48,9 @@ extension AlbumCurationDummyModel {
                                    musicList: [
                                     MusicDummyModel(musicId: 0, albumURL: albumImage, albumTitle: "How Sweet", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024)
                                    ]),
             anotherAlbum: AlbumDummyModel.dummy(),

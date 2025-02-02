@@ -11,6 +11,12 @@ import UIKit
 class AlbumTrackView: UIView {
     private let artistImageWidth: CGFloat = 20
     
+    // 백그라운드뷰
+    private let backgroundView = UIView().then { view in
+        view.isUserInteractionEnabled = false
+        view.backgroundColor = .black.withAlphaComponent(0.4)
+    }
+    
     // 이미지 포합 그룹 뷰
     private let imageInfoGroupView = UIView()
     
@@ -84,12 +90,17 @@ class AlbumTrackView: UIView {
         ].forEach{imageInfoGroupView.addSubview($0)}
         
         [
+            backgroundView,
             imageInfoGroupView,
-            trackCollectionView
+            trackCollectionView,
         ].forEach{self.addSubview($0)}
     }
     
     private func setUI() {
+        
+        backgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         
         imageInfoGroupView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(17)
@@ -161,9 +172,10 @@ class AlbumTrackView: UIView {
     
     private func setBackgroundColorBasedOnImageColor() {
         // 배경색 지정 (이미지 평균 색)
-        let avgColor = trackImageView.avgImageColor()
-        self.backgroundColor = avgColor ?? .black
-        print("\(String(describing: avgColor?.cgColor))")
-//        UIColor(hex: "D68577")
+//        let avgColor = trackImageView.avgImageColor()
+//        self.backgroundColor = avgColor ?? .black
+//        print("\(String(describing: avgColor?.cgColor))")
+        
+        self.backgroundColor = .white
     }
 }

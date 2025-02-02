@@ -147,17 +147,20 @@ class AlbumView: UIView {
         
         let headerSize = NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(45))
         let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
+        header.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         section.boundarySupplementaryItems = [header]
         
         return section
     }
     
-    public func config(data: AlbumCurationDummyModel) {
-        albumCDView.config(albumImageURL: data.albumImageURL)
+    public func config(data: AlbumInfoReponseDTO, artist: String, description: String?) {
+        albumCDView.config(albumImageURL: data.image)
         titleLabel.text = data.title
-        artistLabel.text = data.artist
-        contentLabel.text = data.content
-        
-        trackView.config(data: data.albumTrack)
+        artistLabel.text = artist
+        contentLabel.text = description
+    }
+    
+    public func configTrack(data: AlbumTrack){
+        trackView.config(data: data)
     }
 }
