@@ -60,7 +60,6 @@ extension LibraryTargetType: TargetType {
     var headers: [String: String]? {
         return [
             "Content-Type": "application/json",
-            "Authorization": "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczODQyMDE2MSwiZXhwIjoxNzM4NDM0NTYxfQ.PfToTH2CQwcW5253U0FRFA2kD8W5bes3TXvIaEFt6y4"
         ]
     }
 }
