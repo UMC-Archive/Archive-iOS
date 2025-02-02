@@ -58,16 +58,22 @@ class LoginVC: UIViewController {
                     self?.navigateToNextScreen()
                 }
             case .failure(let error):
-                DispatchQueue.main.async {
-                    print("Login Failed: \(error.localizedDescription)")
-                    self?.showAlert(title: "Login Failed", message: error.localizedDescription)
-                }
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self?.present(alert, animated: true)
+                print("실패: \(error.description)")
+//                DispatchQueue.main.async {
+//                    print("Login Failed: \(error.localizedDescription)")
+//                    self?.showAlert(title: "Login Failed", message: error.localizedDescription)
+//                }
             }
         }
     }
 
     private func navigateToNextScreen() {
         // 로그인 성공 시 이동할 화면 여기를 다른거로 이으면 돼요
+        let nextVC = TabBarViewController()
+        self.present(nextVC, animated: true)
         //navigationController?.pushViewController(nextVC, animated: true)
     }
 
