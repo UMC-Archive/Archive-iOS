@@ -32,9 +32,9 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
 // API 추가 부분
         if isValidEmail(email) {
               // 이메일 형식이 올바르면 서버에 인증 코드 요청
-              userService.sendVerificationCode(email: email) { [weak self] result in
+            userService.sendVerificationCode(email: email ) { [weak self] result in
                   guard let self = self else { return }
-                  DispatchQueue.main.async {
+                   
                       switch result {
                       case .success(let response):
                           self.registerView.errorLabel.isHidden = true
@@ -59,7 +59,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                           self.registerView.errorLabel.text = "인증 코드 요청에 실패했습니다: \(error.localizedDescription)"
                           self.registerView.successLabel.isHidden = true
                       }
-                  }
+                  
               }
           } else {
               registerView.errorLabel.isHidden = false
