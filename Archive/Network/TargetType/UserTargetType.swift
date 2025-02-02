@@ -20,7 +20,7 @@ public enum UserTargetType {
     case sendVerificationCode(email: String) // 이메일 인증번호 전송
     case checkVerificationCode(parameter: CheckVerificationCodeRequestDTO) // 이메일 인증번호 확인
     case login(parameter: LoginRequestDTO)
-}
+   }
 
 extension UserTargetType: TargetType {
     public var baseURL: URL {
@@ -40,6 +40,7 @@ extension UserTargetType: TargetType {
             return "signup"
         case .login:
             return "login"
+     
         }
     }
     
@@ -60,8 +61,7 @@ extension UserTargetType: TargetType {
             
         case .sendVerificationCode(let email):
             return .requestParameters(parameters: ["email" : email], encoding: URLEncoding.queryString)
-            
-            
+             
         case .checkVerificationCode(let parameter):
             return .requestJSONEncodable(parameter)
         case .signUp(image: let image, parameter: let parameter):

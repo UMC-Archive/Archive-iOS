@@ -21,15 +21,15 @@ public final class UserService: NetworkManager {
     let provider: Moya.MoyaProvider<UserTargetType>
     
     init(provider: MoyaProvider<UserTargetType>? = nil) {
-         // 플러그인 추가
-                let plugins: [PluginType] = [
-                    NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
-                ]
+        // 플러그인 추가
+        let plugins: [PluginType] = [
+            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
+        ]
         
-       
-                self.provider = provider ?? MoyaProvider<UserTargetType>(plugins: plugins)
         
-      
+        self.provider = provider ?? MoyaProvider<UserTargetType>(plugins: plugins)
+        
+        
     }
     
     // 이메일 인증 번호 전송 API
@@ -41,13 +41,15 @@ public final class UserService: NetworkManager {
     public func checkVerificationCode(parameter: CheckVerificationCodeRequestDTO, completion: @escaping (Result<Bool?, NetworkError>) -> Void) {
         requestOptional(target: .checkVerificationCode(parameter: parameter), decodingType: Bool.self, completion: completion)
     }
-
+    
     // 회원가입 API
     public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<SignUpResponseDTO, NetworkError>) -> Void) {
         request(target: .signUp(image: image, parameter: parameter), decodingType: SignUpResponseDTO.self, completion: completion)
     }
     // 로그인 API
     public func login(parameter: LoginRequestDTO, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void) {
-         request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
-     }
+        request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
+    }
+ 
+    
 }

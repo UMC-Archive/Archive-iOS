@@ -4,12 +4,14 @@
 //
 
 import UIKit
+import Foundation
 
 class PreferGenreVC: UIViewController {
 
     private let preferGenreView = PreferGenreView()
-    private var selectedGenres: [String] = [] // 선택된 장르 목록
-    private var allGenres = ["Pop", "Hip-Hop", "Jazz", "Rock", "Classical", "EDM", "R&B", "Indie"]
+    private var selectedGenres: [ChooseGenreResponseDTO] = [] // 선택된 장르 목록
+    private var allGenres: [ChooseGenreResponseDTO] = [] // 서버에서 받아온 장르 목록
+    private let musicService = MusicService() // 음악 서비스 추가
 
     override func loadView() {
         self.view = preferGenreView
@@ -19,6 +21,25 @@ class PreferGenreVC: UIViewController {
         super.viewDidLoad()
         setupCollectionView()
         setupActions()
+        fetchGenres()
+    }
+
+    //  서버에서 장르 정보 가져오기
+    private func fetchGenres() {
+        musicService.chooseGenreInfo { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let genres):
+                    if let genres = genres {
+                        self.allGenres = genres
+                        self.preferGenreView.GenreCollectionView.reloadData() // UI 갱신
+                    }
+                case .failure(let error):
+                    print("장르 정보를 불러오는데 실패했습니다: \(error)")
+                }
+            }
+        }
     }
 
     // UICollectionView 설정
@@ -35,9 +56,8 @@ class PreferGenreVC: UIViewController {
     }
 
     @objc private func handleNext() {
-        print("Selected Genres: \(selectedGenres)")
-        // 다음 화면 전환
-        UserSignupData.shared.selectedGenres = selectedGenres
+        print("Selected Genres: \(selectedGenres.map { $0.name })")
+        UserSignupData.shared.selectedGenres = selectedGenres.map { $0.id } // ID만 저장
         let preferArtistVC = PreferArtistVC()
         navigationController?.pushViewController(preferArtistVC, animated: true)
     }
@@ -54,18 +74,18 @@ extension PreferGenreVC: UICollectionViewDelegate, UICollectionViewDataSource {
             fatalError("Unable to dequeue GenreCell")
         }
 
-        let genreName: String
+        let genre: ChooseGenreResponseDTO
         let isSelected: Bool
 
         if indexPath.row < selectedGenres.count {
-            genreName = selectedGenres[indexPath.row]
+            genre = selectedGenres[indexPath.row]
             isSelected = true
         } else {
-            genreName = allGenres[indexPath.row - selectedGenres.count]
+            genre = allGenres[indexPath.row - selectedGenres.count]
             isSelected = false
         }
 
-        cell.configure(imageName: genreName, name: genreName, isSelected: isSelected)
+        cell.configure(imageURL: genre.image, name: genre.name, isSelected: isSelected)
         return cell
     }
 
@@ -86,9 +106,9 @@ extension PreferGenreVC: UICollectionViewDelegate, UICollectionViewDataSource {
     }
 }
 
-// MARK: - GenreCell
 class GenreCell: UICollectionViewCell {
     static let identifier = "GenreCell"
+    private static var imageCache = NSCache<NSString, UIImage>() // 이미지 캐시
 
     private var genreImageView = UIImageView().then { make in
         make.contentMode = .scaleAspectFill
@@ -147,12 +167,38 @@ class GenreCell: UICollectionViewCell {
         ])
     }
 
-    func configure(imageName: String, name: String, isSelected: Bool) {
-        genreImageView.image = UIImage(named: imageName)
+    func configure(imageURL: String, name: String, isSelected: Bool) {
         genreNameLabel.text = name
-
-        // 선택되지 않은 상태에서는 어두운 오버레이를 보이게
         overlayView.isHidden = isSelected
+
+        if let cachedImage = GenreCell.imageCache.object(forKey: imageURL as NSString) {
+            // ✅ 캐시된 이미지가 있으면 사용
+            genreImageView.image = cachedImage
+        } else {
+            // ✅ 캐시된 이미지가 없으면 URL에서 다운로드
+            downloadImage(from: imageURL)
+        }
+    }
+
+    private func downloadImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print("❌ 잘못된 이미지 URL: \(urlString)")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else {
+                print("❌ 이미지 다운로드 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                return
+            }
+
+            // ✅ 이미지 캐시에 저장
+            GenreCell.imageCache.setObject(image, forKey: urlString as NSString)
+
+            DispatchQueue.main.async {
+                self.genreImageView.image = image
+            }
+        }
+        task.resume()
     }
 }
-

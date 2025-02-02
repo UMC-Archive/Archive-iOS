@@ -1,14 +1,10 @@
 import UIKit
-import SnapKit
 
 class PreferArtistVC: UIViewController {
-    private let userService = UserService()
     private let preferArtistView = PreferArtistView()
-    private var selectedArtists: [String] = [] // 선택된 아티스트 목록
-    private var allArtists = [
-        "Black Pink", "Rose", "NewJeans", "Kiss of life", "aespa", "TWS", "TXT", "BTS",
-        "Aimyon", "실리카겔", "요루시카", "요네즈 켄시", "Selena Gomez", "BTOB", "제로베이스원", "Taylor Swift"
-    ] // 전체 아티스트 목록
+    private var selectedArtists: [ArtistInfoReponseDTO] = [] // 선택된 아티스트 목록
+    private var allArtists: [ArtistInfoReponseDTO] = [] // 서버에서 받아온 아티스트 목록
+    private let musicService = MusicService() // 음악 서비스 추가
 
     override func loadView() {
         self.view = preferArtistView
@@ -18,6 +14,25 @@ class PreferArtistVC: UIViewController {
         super.viewDidLoad()
         setupCollectionView()
         setupActions()
+        fetchArtists()
+    }
+
+    //  서버에서 아티스트 목록 가져오기
+    private func fetchArtists() {
+        musicService.chooseArtistInfo { [weak self] result in
+            guard let self = self else { return }
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let response):
+                    if let artists = response?.artists {
+                        self.allArtists = artists
+                        self.preferArtistView.ArtistCollectionView.reloadData()
+                    }
+                case .failure(let error):
+                    print(" 아티스트 정보를 불러오는데 실패했습니다: \(error)")
+                }
+            }
+        }
     }
 
     // UICollectionView 설정
@@ -34,53 +49,16 @@ class PreferArtistVC: UIViewController {
     }
 
     @objc private func handleNext() {
-        print("Selected Artists: \(selectedArtists)")
-        // 다음 화면 전환 여기를 로그인으로
-        
-        UserSignupData.shared.selectedArtists = selectedArtists
-        // 하고 여기서 회원가입이 끝나니까 회원가입 끝나고 회원가입 API 가 시작해야한다.
-        // 회원가입 API
-        
-        // 날짜 정하기
-        let dateFormatter = DateFormatter()
-           dateFormatter.dateFormat = "yyyy-MM-dd"
-           let todayDate = dateFormatter.string(from: Date())
-        
-        let profileImage = UserSignupData.shared.profileImage ?? UIImage(named: "default_profile")!
+        print("Selected Artists: \(selectedArtists.map { $0.name })")
+        UserSignupData.shared.selectedArtists = selectedArtists.map { $0.id } // ID만 저장
 
-           // 회원가입 요청 데이터 생성
-           let signUpData = SignUpRequestDTO(
-               nickname: UserSignupData.shared.nickname ?? "", // 저장된 닉네임
-               email: UserSignupData.shared.email ?? "", // 저장된 이메일
-               password: UserSignupData.shared.password ?? "", // 저장된 비밀번호
-               status: "active",
-               socialType: "local",
-               inactiveDate: todayDate,
-               artists: UserSignupData.shared.selectedArtists.map { $0 },
-               genres: UserSignupData.shared.selectedGenres.map { $0}
-           )
-
-           // 회원가입 API 호출
-        userService.signUp(image: profileImage, parameter: signUpData) { [weak self] result in
-               guard let self = self else { return }
-               DispatchQueue.main.async {
-                   switch result {
-                   case .success:
-                       print("회원가입 성공 ")
-                       // 로그인 화면으로 이동
-                       let loginVC = LoginVC()
-                       self.navigationController?.setViewControllers([loginVC], animated: true)
-                   case .failure(let error):
-                       print("회원가입 실패 : \(error.localizedDescription)")
-                   }
-               }
-           }
-        
-        
+        // ✅ 회원가입 완료 후 로그인 화면으로 이동
         let loginVC = LoginVC()
         navigationController?.pushViewController(loginVC, animated: true)
     }
 }
+
+// MARK: - UICollectionViewDelegate & UICollectionViewDataSource
 extension PreferArtistVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         return selectedArtists.count + allArtists.count
@@ -91,45 +69,41 @@ extension PreferArtistVC: UICollectionViewDelegate, UICollectionViewDataSource {
             fatalError("Unable to dequeue ArtistCell")
         }
 
-        let artistName: String
+        let artist: ArtistInfoReponseDTO
         let isSelected: Bool
 
         if indexPath.row < selectedArtists.count {
-            artistName = selectedArtists[indexPath.row]
+            artist = selectedArtists[indexPath.row]
             isSelected = true
         } else {
-            artistName = allArtists[indexPath.row - selectedArtists.count]
+            artist = allArtists[indexPath.row - selectedArtists.count]
             isSelected = false
         }
 
-        cell.configure(imageName: artistName, name: artistName, isSelected: isSelected)
+        cell.configure(imageURL: artist.image, name: artist.name, isSelected: isSelected)
         return cell
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let artistName: String
-
-        if indexPath.row < selectedArtists.count {
-            artistName = selectedArtists[indexPath.row]
-        } else {
-            artistName = allArtists.remove(at: indexPath.row - selectedArtists.count)
-            selectedArtists.append(artistName)
+        if indexPath.row >= selectedArtists.count {
+            let artist = allArtists.remove(at: indexPath.row - selectedArtists.count)
+            selectedArtists.insert(artist, at: 0)
+            collectionView.reloadData()
         }
-        
-
-        collectionView.reloadData()
     }
 
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
         if indexPath.row < selectedArtists.count {
-            let artistName = selectedArtists.remove(at: indexPath.row)
-            allArtists.insert(artistName, at: 0)
+            let artist = selectedArtists.remove(at: indexPath.row)
+            allArtists.insert(artist, at: 0)
             collectionView.reloadData()
         }
     }
 }
+
 class ArtistCell: UICollectionViewCell {
     static let identifier = "ArtistCell"
+    private static var imageCache = NSCache<NSString, UIImage>() // 이미지 캐시
 
     private var artistImageView = UIImageView().then { make in
         make.contentMode = .scaleAspectFill
@@ -188,11 +162,39 @@ class ArtistCell: UICollectionViewCell {
         ])
     }
 
-    func configure(imageName: String, name: String, isSelected: Bool) {
-        artistImageView.image = UIImage(named: imageName)
+    func configure(imageURL: String, name: String, isSelected: Bool) {
         artistNameLabel.text = name
-
-        // 선택되지 않은 상태에서는 어두운 오버레이를 보이게
         overlayView.isHidden = isSelected
+
+        if let cachedImage = ArtistCell.imageCache.object(forKey: imageURL as NSString) {
+            // ✅ 캐시된 이미지가 있으면 사용
+            artistImageView.image = cachedImage
+        } else {
+            // ✅ 캐시된 이미지가 없으면 URL에서 다운로드
+            downloadImage(from: imageURL)
+        }
+    }
+
+    private func downloadImage(from urlString: String) {
+        guard let url = URL(string: urlString) else {
+            print(" 잘못된 이미지 URL: \(urlString)")
+            return
+        }
+
+        let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
+            guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else {
+                print("이미지 다운로드 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                return
+            }
+
+            //  이미지 캐시에 저장
+            ArtistCell.imageCache.setObject(image, forKey: urlString as NSString)
+
+            DispatchQueue.main.async {
+                self.artistImageView.image = image
+            }
+        }
+        task.resume()
     }
 }
+

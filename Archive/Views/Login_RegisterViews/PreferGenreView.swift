@@ -61,6 +61,7 @@ class PreferGenreView: UIView {
         return stackView
     }()
     
+
     // 장르 선택 컬렉션 뷰
     lazy var GenreCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
