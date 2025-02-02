@@ -2,6 +2,7 @@ import UIKit
 
 class PreferArtistVC: UIViewController {
     private let preferArtistView = PreferArtistView()
+    private let userService = UserService() // 회원가입을 위한 유저 서비스 추가
     private var selectedArtists: [ArtistInfoReponseDTO] = [] // 선택된 아티스트 목록
     private var allArtists: [ArtistInfoReponseDTO] = [] // 서버에서 받아온 아티스트 목록
     private let musicService = MusicService() // 음악 서비스 추가
@@ -50,14 +51,61 @@ class PreferArtistVC: UIViewController {
 
     @objc private func handleNext() {
         print("Selected Artists: \(selectedArtists.map { $0.name })")
-        UserSignupData.shared.selectedArtists = selectedArtists.map { $0.id } // ID만 저장
-
-        // ✅ 회원가입 완료 후 로그인 화면으로 이동
+        UserSignupData.shared.selectedArtists = selectedArtists.compactMap { Int($0.id)} // ID만 저장
+        // 회원가입 API
+        postSignUp()
+        //  회원가입 완료 후 로그인 화면으로 이동
         let loginVC = LoginVC()
         navigationController?.pushViewController(loginVC, animated: true)
     }
-}
+    private func postSignUp(){
+        // 1. 오늘 날짜 포맷 지정 (YYYY-MM-DD)
+               let dateFormatter = DateFormatter()
+               dateFormatter.dateFormat = "yyyy-MM-dd"
+               let todayDate = dateFormatter.string(from: Date())
 
+               // 2. 기본 프로필 이미지 설정 (없으면 기본 이미지)
+               let profileImage = UserSignupData.shared.profileImage ?? UIImage(named: "default_profile")!
+
+               // 3. 회원가입 요청 데이터 생성
+               let signUpData = SignUpRequestDTO(
+                   nickname: UserSignupData.shared.nickname ?? "",
+                   email: UserSignupData.shared.email ?? "",
+                   password: UserSignupData.shared.password ?? "",
+                   status: "active",
+                   socialType: "local",
+                   inactiveDate: todayDate,
+                   artists: UserSignupData.shared.selectedArtists,
+                   genres: UserSignupData.shared.selectedGenres
+               )
+
+               // 4. API 호출
+               userService.signUp(image: profileImage, parameter: signUpData) { [weak self] result in
+                   guard let self = self else { return }
+                   DispatchQueue.main.async {
+                       switch result {
+                       case .success:
+                           print(" 회원가입 성공!")
+                           
+                           // 5. 회원가입 성공 시 로그인 화면으로 이동
+                           let loginVC = LoginVC()
+                           self.navigationController?.setViewControllers([loginVC], animated: true)
+
+                       case .failure(let error):
+                           print(" 회원가입 실패: \(error.localizedDescription)")
+
+                           // 6. 실패 시 사용자에게 얼럿 표시
+                           let alert = UIAlertController(title: "회원가입 실패", message: error.localizedDescription, preferredStyle: .alert)
+                           alert.addAction(UIAlertAction(title: "확인", style: .default))
+                           self.present(alert, animated: true)
+                       }
+                   }
+               }
+           }
+
+
+
+}
 // MARK: - UICollectionViewDelegate & UICollectionViewDataSource
 extension PreferArtistVC: UICollectionViewDelegate, UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -167,10 +215,10 @@ class ArtistCell: UICollectionViewCell {
         overlayView.isHidden = isSelected
 
         if let cachedImage = ArtistCell.imageCache.object(forKey: imageURL as NSString) {
-            // ✅ 캐시된 이미지가 있으면 사용
+            //  캐시된 이미지가 있으면 사용
             artistImageView.image = cachedImage
         } else {
-            // ✅ 캐시된 이미지가 없으면 URL에서 다운로드
+            // 캐시된 이미지가 없으면 URL에서 다운로드
             downloadImage(from: imageURL)
         }
     }

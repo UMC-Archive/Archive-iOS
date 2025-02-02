@@ -13,8 +13,8 @@ struct UserSignupData {
     var password: String? // 비밀번호 
     var nickname: String?
     var profileImage: UIImage?
-    var selectedArtists: [String] = []
-    var selectedGenres: [String] = []
+    var selectedArtists: [Int] = []
+    var selectedGenres: [Int] = []
 
     mutating func reset() {
         email = nil

@@ -105,7 +105,9 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                     self.registerView.authSuccessLabel.text = "올바른 인증번호입니다."
                     self.registerView.nextButton.isEnabled = true
                     self.registerView.nextButton.backgroundColor = .systemBlue
-                    
+                        // 이메일 값 저장하기
+                    UserSignupData.shared.email = self.registerView.emailField.text ?? ""
+
                     //  다음 화면(Register2VC)으로 이동
                     let register2VC = Register2VC()
                     self.navigationController?.pushViewController(register2VC, animated: true)

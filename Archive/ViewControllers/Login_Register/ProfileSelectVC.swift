@@ -49,16 +49,23 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
             profileSelectView.profileImage.image = selectedImage
+            UserSignupData.shared.profileImage = selectedImage
         }
         dismiss(animated: true)
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-        dismiss(animated: true)
+       
+        
+dismiss(animated: true)
+        
+        
     }
 
     @objc private func handleNext() {
-        
+        // 닉네임 텍스트 필드 저장
+        UserSignupData.shared.nickname = profileSelectView.profileName.text ?? ""
+
         let preferGenreVC = PreferGenreVC() // 다음 화면
         navigationController?.pushViewController(preferGenreVC, animated: true)
     }

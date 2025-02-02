@@ -57,7 +57,7 @@ class PreferGenreVC: UIViewController {
 
     @objc private func handleNext() {
         print("Selected Genres: \(selectedGenres.map { $0.name })")
-        UserSignupData.shared.selectedGenres = selectedGenres.map { $0.id } // ID만 저장
+        UserSignupData.shared.selectedGenres = selectedGenres.compactMap { Int($0.id) } // ID만 저장
         let preferArtistVC = PreferArtistVC()
         navigationController?.pushViewController(preferArtistVC, animated: true)
     }
@@ -172,27 +172,27 @@ class GenreCell: UICollectionViewCell {
         overlayView.isHidden = isSelected
 
         if let cachedImage = GenreCell.imageCache.object(forKey: imageURL as NSString) {
-            // ✅ 캐시된 이미지가 있으면 사용
+            //  캐시된 이미지가 있으면 사용
             genreImageView.image = cachedImage
         } else {
-            // ✅ 캐시된 이미지가 없으면 URL에서 다운로드
+            // 캐시된 이미지가 없으면 URL에서 다운로드
             downloadImage(from: imageURL)
         }
     }
 
     private func downloadImage(from urlString: String) {
         guard let url = URL(string: urlString) else {
-            print("❌ 잘못된 이미지 URL: \(urlString)")
+            print(" 잘못된 이미지 URL: \(urlString)")
             return
         }
 
         let task = URLSession.shared.dataTask(with: url) { [weak self] data, response, error in
             guard let self = self, let data = data, error == nil, let image = UIImage(data: data) else {
-                print("❌ 이미지 다운로드 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
+                print(" 이미지 다운로드 실패: \(error?.localizedDescription ?? "알 수 없는 오류")")
                 return
             }
 
-            // ✅ 이미지 캐시에 저장
+            //  이미지 캐시에 저장
             GenreCell.imageCache.setObject(image, forKey: urlString as NSString)
 
             DispatchQueue.main.async {

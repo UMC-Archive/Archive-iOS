@@ -79,6 +79,8 @@ class Register2VC: UIViewController {
     @objc private func handleNextButtonTap() {
         print("다음 버튼 클릭됨")
         // 다음 화면으로 전환 로직 추가
+        UserSignupData.shared.password = register2View.PWField.text ?? ""
+
         let profileselectVC = ProfileSelectVC()
         navigationController?.pushViewController(profileselectVC, animated: true)
   

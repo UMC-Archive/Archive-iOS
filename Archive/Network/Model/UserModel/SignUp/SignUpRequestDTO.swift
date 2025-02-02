@@ -21,6 +21,6 @@ public struct SignUpRequestDTO: Encodable {
     let status: String
     let socialType: String
     let inactiveDate: String
-    let artists: [String]
-    let genres: [String]
+    let artists: [Int]
+    let genres: [Int]
 }
