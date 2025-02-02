@@ -55,9 +55,14 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .musicHidden, decodingType: [HiddenMusicResponseDTO].self, completion: completion)
     }
     
-    // 장르 정보 조회
-    public func genreInfo(completion: @escaping(Result<[GenreInfoResponseDTO], NetworkError>) -> Void) {
-        request(target: .genreInfo, decodingType: [GenreInfoResponseDTO].self, completion: completion)
+    // 선택 장르 정보 조회
+    public func chooseGenreInfo(completion: @escaping(Result<[ChooseGenreResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .chooseGenreInfo, decodingType: [ChooseGenreResponseDTO].self, completion: completion)
+    }
+    
+    // 선택 아티스트 정보 조회
+    public func chooseArtistInfo(completion: @escaping(Result<ChooseArtistResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .chooseArtistInfo, decodingType: ChooseArtistResponseDTO.self, completion: completion)
     }
     
     // 당신을 위한 추천곡(탐색 뷰)
