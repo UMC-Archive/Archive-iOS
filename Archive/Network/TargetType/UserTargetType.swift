@@ -12,7 +12,8 @@ public enum UserTargetType {
     case signUp(image: UIImage, parameter: SignUpRequestDTO) // 회원가입
     case sendVerificationCode(email: String) // 이메일 인증번호 전송
     case checkVerificationCode(parameter: CheckVerificationCodeRequestDTO) // 이메일 인증번호 확인
-}
+    case login(parameter: LoginRequestDTO)
+   }
 
 extension UserTargetType: TargetType {
     public var baseURL: URL {
@@ -30,6 +31,8 @@ extension UserTargetType: TargetType {
             return "signup/email/check-verification-code"
         case .signUp:
             return "signup"
+        case .login:
+            return "login"
         }
     }
     
@@ -37,13 +40,17 @@ extension UserTargetType: TargetType {
         switch self {
         case .sendVerificationCode:
             return .get
-        case .checkVerificationCode, .signUp:
+        case .checkVerificationCode, .signUp, .login:
             return .post
         }
     }
     
     public var task: Moya.Task {
         switch self {
+        case .login(parameter: let parameter):
+                  // `LoginRequestDTO`를 JSON body로 보냅니다.
+                  return .requestJSONEncodable(parameter)
+            
         case .sendVerificationCode(let email):
             return .requestParameters(parameters: ["email" : email], encoding: URLEncoding.queryString)
         case .checkVerificationCode(let parameter):

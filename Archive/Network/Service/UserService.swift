@@ -38,4 +38,10 @@ public final class UserService: NetworkManager {
     public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<SignUpResponseDTO, NetworkError>) -> Void) {
         request(target: .signUp(image: image, parameter: parameter), decodingType: SignUpResponseDTO.self, completion: completion)
     }
+
+    // 로그인 API
+    public func login(parameter: LoginRequestDTO, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void) {
+        request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
+    }
+
 }
