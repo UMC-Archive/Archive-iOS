@@ -12,7 +12,7 @@ enum MusicTargetType {
     case musicInfo(artist: String, music: String)           // 노래 정보 가져오기
     case albumInfo(artist: String, album: String) // 앨범 정보 가져오기
     case albumCuration(albumId: String)     // 앨범 큐레이션
-    case artistInfo(artist: String) // 아티스트 정보 가져오기
+    case artistInfo(artist: String, album: String) // 아티스트 정보 가져오기
     case artistCuration(artistId: String)   // 아티스트 큐레이션
     case musicHidden // 숨겨진 명곡
     case genreInfo // 장르 정보 가져오기
@@ -62,10 +62,10 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo(let artist, let music):
             return .requestParameters(parameters: ["artist_name" : artist, "music_name" : music], encoding: URLEncoding.queryString)
-        case .albumInfo(artist: let artist, album: let album):
+        case .albumInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
-        case .artistInfo(artist: let artist):
-            return .requestParameters(parameters: ["artist_name" : artist], encoding: URLEncoding.queryString)
+        case .artistInfo(let artist, let album):
+            return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .musicHidden, .genreInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic:
             return .requestPlain
         }

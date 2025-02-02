@@ -15,14 +15,13 @@ public final class LibraryService: NetworkManager {
     
     init(provider: MoyaProvider<LibraryTargetType>? = nil) {
         // 플러그인 추가
-//        let plugins: [PluginType] = [
-//            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
-//        ]
+        let plugins: [PluginType] = [
+            BearerTokenPlugin(),
+            NetworkLoggerPlugin(configuration: .init(logOptions: .verbose)) // 로그 플러그인
+        ]
         
-        // provider 초기화
-//        self.provider = provider ?? MoyaProvider<MusicTargetType>(plugins: plugins)
-        
-        self.provider = MoyaProvider<LibraryTargetType>()
+//         provider 초기화
+        self.provider = provider ?? MoyaProvider<LibraryTargetType>(plugins: plugins)
     }
     
     
