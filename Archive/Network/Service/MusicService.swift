@@ -41,8 +41,8 @@ public final class MusicService: NetworkManager {
     }
     
     // 아티스트 정보 가져오기
-    public func artist(artist: String, completion: @escaping (Result<ArtistInfoReponseDTO?, NetworkError>) -> Void) {
-        requestOptional(target: .artistInfo(artist: artist), decodingType: ArtistInfoReponseDTO.self, completion: completion)
+    public func artist(artist: String, album: String, completion: @escaping (Result<ArtistInfoReponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .artistInfo(artist: artist, album: album), decodingType: ArtistInfoReponseDTO.self, completion: completion)
     }
     
     // 아티스트 큐레이션

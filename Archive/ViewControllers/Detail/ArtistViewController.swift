@@ -14,10 +14,12 @@ class ArtistViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let gradientLayer = CAGradientLayer()
     private let artist: String
+    private let album: String
     private var data: ArtistInfoReponseDTO?
     
-    init(artist: String = "빅뱅") {
+    init(artist: String = "빅뱅", album: String = "MADE") {
         self.artist = artist
+        self.album = album
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -34,7 +36,7 @@ class ArtistViewController: UIViewController {
         setDataSource()
         setSnapshot()
         
-        postArtistInfo(artist: artist)
+        postArtistInfo(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -176,8 +178,8 @@ class ArtistViewController: UIViewController {
     
     
     // 아티스트 정보 가져오기 API
-    func postArtistInfo(artist: String){
-        musicService.artist(artist: artist){ [weak self] result in
+    func postArtistInfo(artist: String, album: String){
+        musicService.artist(artist: artist, album: album){ [weak self] result in
             guard let self = self else { return }
             
             switch result {

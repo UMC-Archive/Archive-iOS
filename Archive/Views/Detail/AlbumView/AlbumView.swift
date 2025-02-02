@@ -158,8 +158,6 @@ class AlbumView: UIView {
         titleLabel.text = data.title
         artistLabel.text = artist
         contentLabel.text = description
-        
-
     }
     
     public func configTrack(data: AlbumTrack){

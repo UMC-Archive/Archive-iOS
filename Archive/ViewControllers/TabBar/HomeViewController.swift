@@ -87,6 +87,7 @@ class HomeViewController: UIViewController {
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = item.artist
+                tapArtistGesture.album = item.albumTitle
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
                 return cell
@@ -104,6 +105,7 @@ class HomeViewController: UIViewController {
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = data.artist
+                tapArtistGesture.album = data.albumTitle
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                 
                 return cell
@@ -121,6 +123,7 @@ class HomeViewController: UIViewController {
                // 아티스트 탭 제스처
                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
                tapArtistGesture.artist = item.artist
+                tapArtistGesture.album = item.albumTitle
                verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                return cell
             default:
@@ -173,8 +176,8 @@ class HomeViewController: UIViewController {
     
     // 아티스트 버튼
     @objc private func TapArtistLabelGesture(_ sender: CustomTapGesture) {
-        guard let artist = sender.artist else { return }
-        let nextVC = ArtistViewController(artist: artist)
+        guard let album = sender.album, let artist = sender.artist else { return }
+        let nextVC = ArtistViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
