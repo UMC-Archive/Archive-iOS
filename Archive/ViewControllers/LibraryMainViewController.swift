@@ -30,6 +30,12 @@ class LibraryMainViewController: UIViewController {
         super.viewDidDisappear(animated)
         print("ㅣㅣㅣView has disappeared")
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getArtistInfo()
+        getAlbumInfo()
+        getMusicInfo()
+    }
     private func datasourceSetting() {
         rootView.playlistCollectionView.dataSource = self
         rootView.songCollectionView.dataSource = self
@@ -162,16 +168,16 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             return PlayListDummy.dummy().count
             
         case rootView.songCollectionView:
-            getMusicInfo()
+//            getMusicInfo()
             return musicResponse?.count ?? 0
             
         case rootView.albumCollectionView:
-            getAlbumInfo()
+//            getAlbumInfo()
             return albumResponse?.count ?? 0
             
             
         case rootView.artistCollectionView:
-            getArtistInfo()
+//            getArtistInfo()
             return artistResponse?.count ?? 0
             
         default:
