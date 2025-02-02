@@ -18,10 +18,10 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
-        
-        let navigationController = UINavigationController(rootViewController: LoginVC())
-              window?.rootViewController = navigationController
-              window?.makeKeyAndVisible()
+        window?.rootViewController = TabBarViewController()
+//        let navigationController = UINavigationController(rootViewController: LoginVC())
+//        window?.rootViewController = navigationController
+        window?.makeKeyAndVisible()
       
     }
 }

@@ -42,7 +42,7 @@ class HomeViewController: UIViewController {
 //        postSignUp(image: .cdSample, parameter: parameter)
         
 //        getChooseGenreInfo()
-        getChooseArtistInfo()
+//        getChooseArtistInfo()
         buttonTapped()
 
     }
