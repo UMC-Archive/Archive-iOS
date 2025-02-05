@@ -13,6 +13,7 @@ public enum UserTargetType {
     case sendVerificationCode(email: String) // 이메일 인증번호 전송
     case checkVerificationCode(parameter: CheckVerificationCodeRequestDTO) // 이메일 인증번호 확인
     case login(parameter: LoginRequestDTO)
+    case userPlayingRecord(musicId: String) // 재생 기록
    }
 
 extension UserTargetType: TargetType {
@@ -33,6 +34,8 @@ extension UserTargetType: TargetType {
             return "signup"
         case .login:
             return "login"
+        case .userPlayingRecord:
+            return "play"
         }
     }
     
@@ -40,7 +43,7 @@ extension UserTargetType: TargetType {
         switch self {
         case .sendVerificationCode:
             return .get
-        case .checkVerificationCode, .signUp, .login:
+        case .checkVerificationCode, .signUp, .login, .userPlayingRecord:
             return .post
         }
     }
@@ -84,37 +87,11 @@ extension UserTargetType: TargetType {
                 print("Failed to encode request body: \(error)")
                 return .requestPlain
             }
-                
-            // 일반 텍스트 필드 추가
-//            let textFields: [String: String] = [
-//                "nickname": parameter.nickname,
-//                "email": parameter.email,
-//                "password": parameter.password,
-//                "status": parameter.status,
-//                "socialType": parameter.socialType,
-//                "inactiveDate": parameter.inactiveDate
-//            ]
-//
-//            for (key, value) in textFields {
-//                if let data = value.data(using: .utf8) {
-//                    formData.append(MultipartFormData(provider: .data(data), name: key))
-//                }
-//            }
-//
-//            // 배열 필드 추가
-//            for artist in parameter.artists {
-//                if let data = "\(artist)".data(using: .utf8) {
-//                    formData.append(MultipartFormData(provider: .data(data), name: "artists"))
-//                }
-//            }
-//
-//            for genre in parameter.genres {
-//                if let data = "\(genre)".data(using: .utf8) {
-//                    formData.append(MultipartFormData(provider: .data(data), name: "genres"))
-//                }
-//            }
 
             return .uploadMultipart(formData)
+        case .userPlayingRecord(musicId: let musicId):
+            guard let id = Int(musicId) else {return .requestPlain}
+            return .requestParameters(parameters: ["musicId" : id], encoding: URLEncoding.queryString)
         }
     }
     

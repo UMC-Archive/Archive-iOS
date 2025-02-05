@@ -44,4 +44,8 @@ public final class UserService: NetworkManager {
         request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
     }
 
+    // 음악 재생 기록 API
+    public func playingRecord(musicId: String, completion: @escaping (Result<UserPlayingRecordResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .userPlayingRecord(musicId: musicId), decodingType: UserPlayingRecordResponseDTO.self, completion: completion)
+    }
 }

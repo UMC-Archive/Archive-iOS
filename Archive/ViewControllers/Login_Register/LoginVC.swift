@@ -20,6 +20,10 @@ class LoginVC: UIViewController {
 
         // 버튼 액션 설정
         setupActions()
+        
+        
+        // 음악 재생 기록 예시
+        postPlayingRecord(musicId: "1")
     }
 
     private func setupActions() {
@@ -81,6 +85,29 @@ class LoginVC: UIViewController {
         let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "OK", style: .default))
         present(alert, animated: true)
+    }
+    
+    // 음악 기록 API
+    func postPlayingRecord(musicId: String){
+        userService.playingRecord(musicId: musicId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("postPlayingRecord() 성공")
+                print(response?.musicId)
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("실패: \(error.description)")
+            }
+        }
     }
 }
 
