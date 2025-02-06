@@ -7,7 +7,7 @@
 
 import Foundation
 
-let albumImage = "https://i.namu.wiki/i/OeTn8iKBxoVy2CowtEAuPJCYIjoeQlveyg2xmPlIgcHtUEBi3q62QUArv-Uekse76QKmQvIpS6_WSf4Tva2APnUJQSOiXbnADfEw7sb1n4bNC6D8AtfG_72r2EQlLKYJq4l3wislCX2J9jjUzsrpCQ.webp"
+let albumImage = "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5b/9b/8e/5b9b8ef2-998e-1210-8454-dfebfbf6271c/BB_COVER_IMAGE_4000.jpg/100x100bb.jpg"
 
 struct AlbumCurationDummyModel {
     let albumImageURL: String
@@ -51,7 +51,7 @@ extension AlbumCurationDummyModel {
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
-                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024)
+//                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024)
                                    ]),
             anotherAlbum: AlbumDummyModel.dummy(),
             recommendAlbum: AlbumDummyModel.dummy()

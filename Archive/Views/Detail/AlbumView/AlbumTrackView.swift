@@ -63,12 +63,13 @@ class AlbumTrackView: UIView {
     })).then { view in
         view.isPagingEnabled = true // 페이지 단위 스크롤 적용
         view.showsHorizontalScrollIndicator = false
+        view.showsVerticalScrollIndicator = false
         view.backgroundColor = .clear
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
     }
     
     // 페이지 인디케이터
-    private let pageControl = UIPageControl().then { view in
+    public let pageControl = UIPageControl().then { view in
         view.currentPage = 0
         view.numberOfPages = 5  // 페이지 개수 (이후 동적으로 설정 가능)
         view.pageIndicatorTintColor = .lightGray
@@ -80,6 +81,7 @@ class AlbumTrackView: UIView {
         super.init(frame: frame)
         
         self.layer.cornerRadius = 20
+        self.clipsToBounds = true
         setSubView()
         setUI()
     }
@@ -117,7 +119,8 @@ class AlbumTrackView: UIView {
         
         imageInfoGroupView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(17)
-            make.horizontalEdges.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview()
             make.height.equalTo(120)
         }
         
@@ -128,8 +131,8 @@ class AlbumTrackView: UIView {
         
         infoGroupView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(17)
-            make.leading.equalTo(trackImageView.snp.trailing).offset(16)
-            make.trailing.equalToSuperview()
+            make.leading.lessThanOrEqualTo(trackImageView.snp.trailing).offset(16)
+            make.trailing.equalToSuperview().inset(8)
         }
         
         
@@ -147,7 +150,7 @@ class AlbumTrackView: UIView {
         trackArtist.snp.makeConstraints { make in
             make.centerY.equalTo(artistImageView)
             make.leading.equalTo(artistImageView.snp.trailing).offset(6)
-            make.trailing.equalToSuperview().priority(.low)
+            make.trailing.equalToSuperview()
         }
         
         trackDetailLabel.snp.makeConstraints { make in
@@ -156,7 +159,7 @@ class AlbumTrackView: UIView {
         }
         
         trackCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(imageInfoGroupView.snp.bottom).offset(20)
+            make.top.equalTo(imageInfoGroupView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
             make.bottom.equalToSuperview().inset(30)
         }
@@ -169,7 +172,6 @@ class AlbumTrackView: UIView {
     }
     
     public func config(data: AlbumTrack){
-        
         trackImageView.kf.setImage(with: URL(string: data.albumImageURL)) { [weak self] result in
             switch result {
             case .success:

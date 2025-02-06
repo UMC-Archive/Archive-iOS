@@ -83,6 +83,31 @@ class AlbumViewController: UIViewController {
 //            make.height.equalTo(180 + data.albumTrack.count * 60)
 //        }
         
+        // 앨범 리스트가 4개 이하일 경우
+        let musicCount = self.data.albumTrack.musicList.count
+        print("musicCount: \(musicCount)")
+        if musicCount <= 4 {
+            albumView.trackView.pageControl.isHidden = true
+            
+            let baseHeight: CGFloat = 120 + 17 * 2 + 20
+            let trackHeight: CGFloat = CGFloat(musicCount) * 50.0 + (CGFloat(musicCount - 1) * 10.0)
+            let totalHeight = baseHeight + trackHeight
+            print("totalHeight \(totalHeight)")
+            
+            albumView.trackView.snp.updateConstraints { make in
+                make.height.equalTo(totalHeight)
+            }
+            
+            albumView.trackView.trackCollectionView.snp.updateConstraints { make in
+                make.bottom.equalToSuperview().inset(17)
+            }
+        } else { // 4개 이상일 경우
+            albumView.trackView.pageControl.isHidden = false
+            albumView.trackView.snp.updateConstraints { make in
+                make.height.equalTo(420)
+            }
+        }
+        
         albumView.layoutIfNeeded()
     }
     
@@ -165,7 +190,6 @@ class AlbumViewController: UIViewController {
                 guard let data = response else { return }
                 albumData = data
                 postAlbumCuration(albumId: data.id)
-//
 //                albumView.config(data: data, artist: artist, description: "asd")
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
