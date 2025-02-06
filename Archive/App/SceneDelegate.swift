@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
 //        window?.rootViewController = TabBarViewController()
-        let navigationController = UINavigationController(rootViewController: LoginVC())
+        let navigationController = UINavigationController(rootViewController: LibraryMainViewController())
         window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
       
