@@ -23,7 +23,8 @@ class LoginVC: UIViewController {
         
         
         // 음악 재생 기록 예시
-        postPlayingRecord(musicId: "1")
+        let param = UserPlayingRecordRequestDTO(musicId: 1)
+        postPlayingRecord(param: param)
     }
 
     private func setupActions() {
@@ -88,8 +89,8 @@ class LoginVC: UIViewController {
     }
     
     // 음악 기록 API
-    func postPlayingRecord(musicId: String){
-        userService.playingRecord(musicId: musicId){ [weak self] result in
+    func postPlayingRecord(param: UserPlayingRecordRequestDTO){
+        userService.playingRecord(parameter: param){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
