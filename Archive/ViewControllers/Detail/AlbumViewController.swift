@@ -233,7 +233,6 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("cellForItemAt")
         switch collectionView {
         case albumView.trackView.trackCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell else {return UICollectionViewCell()
@@ -246,4 +245,10 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
 }
 
-extension AlbumViewController: UICollectionViewDelegate { }
+extension AlbumViewController: UICollectionViewDelegate {
+    // 페이지 컨트롤 설정
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageIndex = round(scrollView.contentOffset.x / scrollView.frame.width)
+        albumView.trackView.pageControl.currentPage = Int(pageIndex)
+    }
+}

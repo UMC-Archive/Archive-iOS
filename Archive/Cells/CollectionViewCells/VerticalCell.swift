@@ -88,7 +88,7 @@ class VerticalCell: UICollectionViewCell {
         // 더보기 버튼
         overflowButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().inset(8)
             make.width.equalTo(3)
             make.height.equalTo(17)
         }

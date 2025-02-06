@@ -59,6 +59,7 @@ class AlbumTrackView: UIView {
         // AlbumTrackView의 inset 합 40, collectionView inset 합 32
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 72, height: 50)
         layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = .zero
         layout.scrollDirection = .horizontal  // 가로 스크롤 활성화
     })).then { view in
         view.isPagingEnabled = true // 페이지 단위 스크롤 적용
@@ -71,9 +72,7 @@ class AlbumTrackView: UIView {
     // 페이지 인디케이터
     public let pageControl = UIPageControl().then { view in
         view.currentPage = 0
-        view.numberOfPages = 5  // 페이지 개수 (이후 동적으로 설정 가능)
-        view.pageIndicatorTintColor = .lightGray
-        view.currentPageIndicatorTintColor = .white
+        view.numberOfPages = 2  // 페이지 개수 (이후 동적으로 설정 가능)
         view.isUserInteractionEnabled = false
     }
     
@@ -187,6 +186,8 @@ class AlbumTrackView: UIView {
         artistImageView.kf.setImage(with: URL(string: data.artistImageURL))
         trackArtist.text = data.artist
         trackDetailLabel.text = "\(data.year) • \(data.count)곡 • \(data.totalMinute)분"
+        
+        pageControl.numberOfPages = data.musicList.count / 4 + 1
     }
     
     private func setBackgroundColorBasedOnImageColor() {
