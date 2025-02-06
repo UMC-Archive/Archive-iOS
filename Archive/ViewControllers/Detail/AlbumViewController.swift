@@ -79,9 +79,9 @@ class AlbumViewController: UIViewController {
     }
     
     private func updateTrackViewHeight(){
-        albumView.trackView.snp.updateConstraints { make in
-            make.height.equalTo(180 + data.albumTrack.count * 60)
-        }
+//        albumView.trackView.snp.updateConstraints { make in
+//            make.height.equalTo(180 + data.albumTrack.count * 60)
+//        }
         
         albumView.layoutIfNeeded()
     }

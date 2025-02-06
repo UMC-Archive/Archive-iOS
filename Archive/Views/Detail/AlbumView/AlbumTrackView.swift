@@ -59,9 +59,21 @@ class AlbumTrackView: UIView {
         // AlbumTrackView의 inset 합 40, collectionView inset 합 32
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 72, height: 50)
         layout.minimumInteritemSpacing = 10
+        layout.scrollDirection = .horizontal  // 가로 스크롤 활성화
     })).then { view in
+        view.isPagingEnabled = true // 페이지 단위 스크롤 적용
+        view.showsHorizontalScrollIndicator = false
         view.backgroundColor = .clear
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
+    }
+    
+    // 페이지 인디케이터
+    private let pageControl = UIPageControl().then { view in
+        view.currentPage = 0
+        view.numberOfPages = 5  // 페이지 개수 (이후 동적으로 설정 가능)
+        view.pageIndicatorTintColor = .lightGray
+        view.currentPageIndicatorTintColor = .white
+        view.isUserInteractionEnabled = false
     }
     
     override init(frame: CGRect) {
@@ -93,6 +105,7 @@ class AlbumTrackView: UIView {
             backgroundView,
             imageInfoGroupView,
             trackCollectionView,
+            pageControl,
         ].forEach{self.addSubview($0)}
     }
     
@@ -145,7 +158,13 @@ class AlbumTrackView: UIView {
         trackCollectionView.snp.makeConstraints { make in
             make.top.equalTo(imageInfoGroupView.snp.bottom).offset(20)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(17)
+            make.bottom.equalToSuperview().inset(30)
+        }
+        
+        pageControl.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(13)
+            make.height.equalTo(4.8)
+            make.centerX.equalToSuperview()
         }
     }
     
@@ -166,16 +185,19 @@ class AlbumTrackView: UIView {
         artistImageView.kf.setImage(with: URL(string: data.artistImageURL))
         trackArtist.text = data.artist
         trackDetailLabel.text = "\(data.year) • \(data.count)곡 • \(data.totalMinute)분"
-        
-
     }
     
     private func setBackgroundColorBasedOnImageColor() {
         // 배경색 지정 (이미지 평균 색)
-//        let avgColor = trackImageView.avgImageColor()
-//        self.backgroundColor = avgColor ?? .black
-//        print("\(String(describing: avgColor?.cgColor))")
+        let avgColor = trackImageView.avgImageColor()
+        self.backgroundColor = avgColor ?? .black
         
-        self.backgroundColor = .white
+        // 페이지 컨트롤
+        pageControl.currentPageIndicatorTintColor = .white_70
+        pageControl.pageIndicatorTintColor = avgColor?.withAlphaComponent(0.7)
+        
+        print("\(String(describing: avgColor?.cgColor))")
+        
+//        self.backgroundColor = .white
     }
 }

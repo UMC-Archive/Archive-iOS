@@ -113,7 +113,7 @@ class AlbumView: UIView {
         trackView.snp.makeConstraints { make in
             make.top.equalTo(contentLabel.snp.bottom).offset(40)
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.height.equalTo(200) // 수정 필요 180 + 60 * x
+            make.height.equalTo(420) // 수정 필요 180 + 60 * x -> 동적으로 바꿔야 함
         }
         
         collectionView.snp.makeConstraints { make in
