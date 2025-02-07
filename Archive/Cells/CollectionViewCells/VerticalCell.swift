@@ -26,10 +26,16 @@ class VerticalCell: UICollectionViewCell {
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
         lbl.isUserInteractionEnabled = true
+        lbl.sizeToFit()
     }
     
     // 더보기 버튼
     public let overflowButton = OverflowButton()
+    
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
+    }
     
     
     override init(frame: CGRect) {
@@ -58,7 +64,8 @@ class VerticalCell: UICollectionViewCell {
             imageView,
             titleLabel,
             artistYearLabel,
-            overflowButton
+            overflowButton,
+            overflowView
         ].forEach{self.addSubview($0)}
     }
     
@@ -81,16 +88,23 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
             make.leading.equalTo(titleLabel)
-            make.trailing.equalTo(overflowButton.snp.leading)
-//            make.bottom.equalTo(imageView).inset(6)
+//            make.trailing.equalTo(overflowButton.snp.leading)
         }
         
         // 더보기 버튼
         overflowButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(8)
-            make.width.equalTo(3)
+            make.width.equalTo(5)
             make.height.equalTo(17)
+        }
+        
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.trailing.equalTo(overflowButton)
         }
     }
     
