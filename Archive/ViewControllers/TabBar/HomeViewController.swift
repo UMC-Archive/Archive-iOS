@@ -15,6 +15,7 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
+    private var overflowView: OverflowView?
 //    private var recommendMusic: [(RecommendMusic, String)]?
 
     override func viewDidLoad() {
@@ -28,9 +29,10 @@ class HomeViewController: UIViewController {
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
 
-        buttonTapped()
-
+        setAction()
+        setGesture()
     }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         print("homeView has disappeared")
@@ -39,7 +41,16 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
     }
-    private func buttonTapped(){
+    
+    private func setGesture() {
+        // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
+        tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        homeView.addGestureRecognizer(tapGesture)
+    }
+    
+    private func setAction(){
         homeView.topView.exploreIconButton.addTarget(self, action: #selector(exploreIconTapped), for: .touchUpInside)
     }
     @objc func exploreIconTapped(){
@@ -86,13 +97,17 @@ class HomeViewController: UIViewController {
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
                 tapAlbumGesture.artist = data.artist
                 tapAlbumGesture.album = data.albumTitle
-                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = data.artist
                 tapArtistGesture.album = data.albumTitle
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
+                // overflow 버튼 로직 선택
+                verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+                verticalCell.setOverflowView(type: .other)
                 
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
@@ -151,6 +166,29 @@ class HomeViewController: UIViewController {
             return headerView
         }
         
+    }
+    
+    // overflow 버튼 클릭 시 실행될 메서드
+    @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
+        // 버튼의 superview를 통해 셀 찾기
+        guard let cell = sender.superview as? VerticalCell ?? sender.superview?.superview as? VerticalCell else { return }
+
+        // isHidden 토글
+        cell.overflowView.isHidden.toggle()
+    }
+    
+    // overflow 버튼 영역 외부 터치 실행될 메서드
+    @objc private func dismissOverflowView(_ gesture: UITapGestureRecognizer) {
+        let touchLocation = gesture.location(in: homeView)
+        
+        // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
+        for cell in homeView.collectionView.visibleCells {
+            if let verticalCell = cell as? VerticalCell {
+                if !verticalCell.overflowView.frame.contains(touchLocation) {
+                    verticalCell.overflowView.isHidden = true
+                }
+            }
+        }
     }
     
     // 앨범 버튼
@@ -235,5 +273,13 @@ class HomeViewController: UIViewController {
                 print("실패: \(error.description)")
             }
         }
+    }
+}
+
+extension HomeViewController: UIGestureRecognizerDelegate {
+    // 👉 UITapGestureRecognizer가 실행될 때, 특정 조건에서만 실행되도록 설정
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // ✅ 터치한 뷰가 OverflowView이면 제스처 실행하지 않음
+        return !(touch.view is OverflowView)
     }
 }
