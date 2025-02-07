@@ -7,7 +7,7 @@
 
 import Foundation
 
-let albumImage = "https://is1-ssl.mzstatic.com/image/thumb/Music125/v4/5b/9b/8e/5b9b8ef2-998e-1210-8454-dfebfbf6271c/BB_COVER_IMAGE_4000.jpg/100x100bb.jpg"
+let albumImage = "https://i.namu.wiki/i/Hy_qoJXya3YqGI3dXpi6dwycUT-Jaf4X8sii4Th5RdX-ko9w4XQc0qj2aLm3NPZV0SEvY2B-hwMcGRL0oudEkHLJPtrcIH4FEmoHrxRnY8vpWtZmxNuI7einzbASzo4Gk30Ao4X6RBZlwA11yERD0Q.webp"
 
 struct AlbumCurationDummyModel {
     let albumImageURL: String

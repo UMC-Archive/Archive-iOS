@@ -11,12 +11,6 @@ import UIKit
 class AlbumTrackView: UIView {
     private let artistImageWidth: CGFloat = 20
     
-    // 백그라운드뷰
-    private let backgroundView = UIView().then { view in
-        view.isUserInteractionEnabled = false
-        view.backgroundColor = .black.withAlphaComponent(0.4)
-    }
-    
     // 이미지 포합 그룹 뷰
     private let imageInfoGroupView = UIView()
     
@@ -81,6 +75,7 @@ class AlbumTrackView: UIView {
         
         self.layer.cornerRadius = 20
         self.clipsToBounds = true
+        backgroundColor = .black.withAlphaComponent(0.3)
         setSubView()
         setUI()
     }
@@ -103,7 +98,6 @@ class AlbumTrackView: UIView {
         ].forEach{imageInfoGroupView.addSubview($0)}
         
         [
-            backgroundView,
             imageInfoGroupView,
             trackCollectionView,
             pageControl,
@@ -111,10 +105,6 @@ class AlbumTrackView: UIView {
     }
     
     private func setUI() {
-        
-        backgroundView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
         
         imageInfoGroupView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(17)
@@ -192,15 +182,24 @@ class AlbumTrackView: UIView {
     
     private func setBackgroundColorBasedOnImageColor() {
         // 배경색 지정 (이미지 평균 색)
-        let avgColor = trackImageView.avgImageColor()
-        self.backgroundColor = avgColor ?? .black
+        guard let avgColor = trackImageView.avgImageColor() else {return}
+        self.backgroundColor = avgColor
         
         // 페이지 컨트롤
         pageControl.currentPageIndicatorTintColor = .white_70
-        pageControl.pageIndicatorTintColor = avgColor?.withAlphaComponent(0.7)
+        pageControl.pageIndicatorTintColor = avgColor.withAlphaComponent(0.7)
         
-        print("\(String(describing: avgColor?.cgColor))")
+        print("\(String(describing: avgColor.cgColor))")
         
-//        self.backgroundColor = .white
+        
+//        let gradientLayer = CAGradientLayer().then { layer in
+//            layer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
+//            layer.colors = [
+//                avgColor.withAlphaComponent(0.5).cgColor,
+//                avgColor.cgColor,
+//            ]
+//        }
+//        
+//        self.layer.addSublayer(gradientLayer)
     }
 }
