@@ -7,7 +7,7 @@
 
 import Foundation
 
-let albumImage = "https://i.namu.wiki/i/OeTn8iKBxoVy2CowtEAuPJCYIjoeQlveyg2xmPlIgcHtUEBi3q62QUArv-Uekse76QKmQvIpS6_WSf4Tva2APnUJQSOiXbnADfEw7sb1n4bNC6D8AtfG_72r2EQlLKYJq4l3wislCX2J9jjUzsrpCQ.webp"
+let albumImage = "https://i.namu.wiki/i/Hy_qoJXya3YqGI3dXpi6dwycUT-Jaf4X8sii4Th5RdX-ko9w4XQc0qj2aLm3NPZV0SEvY2B-hwMcGRL0oudEkHLJPtrcIH4FEmoHrxRnY8vpWtZmxNuI7einzbASzo4Gk30Ao4X6RBZlwA11yERD0Q.webp"
 
 struct AlbumCurationDummyModel {
     let albumImageURL: String
@@ -51,7 +51,15 @@ extension AlbumCurationDummyModel {
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                     MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
-                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024)
+                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 1, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
+                                    MusicDummyModel(musicId: 2, albumURL: albumImage, albumTitle: "Bubble Gum", albumSubTitle: "", genre: "", musicTitle: "How Sweet", artist: "New Jeans", year: 2024),
                                    ]),
             anotherAlbum: AlbumDummyModel.dummy(),
             recommendAlbum: AlbumDummyModel.dummy()
