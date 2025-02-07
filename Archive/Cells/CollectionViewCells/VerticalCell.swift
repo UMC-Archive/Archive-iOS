@@ -125,4 +125,16 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.text = music.title
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
+    
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+        default:
+            return
+        }
+    }
 }

@@ -7,6 +7,12 @@
 
 import UIKit
 
+enum OverflowType {
+    case inLibrary // 보관함에서 눌렀을 때 (앨범으로 이동, 보관함에서 삭제_
+    case inAlbum   // 앨범에서 눌렀을 때 (보관함에 추가)
+    case other     // 나머지 뷰 (앨범으로 이동, 보관함에 추가)
+}
+
 class OverflowView: UIView {
     private let groupView = UIView().then { view in
         view.backgroundColor = .black_35
@@ -23,14 +29,12 @@ class OverflowView: UIView {
     }
     
     public let libraryButton = UIButton().then { btn in
-        btn.setTitle("보관함에서 제거", for: .normal)
         btn.setTitleColor(.white, for: .normal)
         btn.titleLabel?.font = .customFont(font: .SFPro, ofSize: 12, rawValue: 400)
     }
     
     init(){
         super.init(frame: .zero)
-        
         setSubView()
         setUI()
     }
@@ -70,6 +74,22 @@ class OverflowView: UIView {
             make.top.equalTo(seperatorLine.snp.bottom)
             make.horizontalEdges.bottom.equalToSuperview()
             make.height.equalTo(26)
+        }
+    }
+    
+    public func setType(type: OverflowType){
+        goToAlbumButton.isHidden = type == .inAlbum ? true : false
+        seperatorLine.isHidden = type == .inAlbum ? true : false
+        libraryButton.setTitle(type == .inLibrary ? "보관함에서 제거" : "보관함에 추가", for: .normal)
+        
+        switch type {
+        case .inAlbum:
+            libraryButton.snp.remakeConstraints { make in
+                make.horizontalEdges.centerY.equalToSuperview()
+                
+            }
+        default:
+            return
         }
     }
 }

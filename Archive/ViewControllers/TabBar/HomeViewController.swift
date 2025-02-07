@@ -107,6 +107,7 @@ class HomeViewController: UIViewController {
                 
                 // overflow 버튼 로직 선택
                 verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+                verticalCell.setOverflowView(type: .other)
                 
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
