@@ -46,6 +46,7 @@ class HomeViewController: UIViewController {
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         homeView.addGestureRecognizer(tapGesture)
     }
     
@@ -96,7 +97,7 @@ class HomeViewController: UIViewController {
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
                 tapAlbumGesture.artist = data.artist
                 tapAlbumGesture.album = data.albumTitle
-                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
@@ -106,7 +107,7 @@ class HomeViewController: UIViewController {
                 
                 // overflow 버튼 로직 선택
                 verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
-        
+                
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -169,24 +170,15 @@ class HomeViewController: UIViewController {
     // overflow 버튼 클릭 시 실행될 메서드
     @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
         // 버튼의 superview를 통해 셀 찾기
-        guard let cell = sender.superview as? VerticalCell ?? sender.superview?.superview as? VerticalCell,
-              let indexPath = homeView.collectionView.indexPath(for: cell) else {
-            return
-        }
-        
-        print("didTapOverflowButton: \(indexPath)")
-        
+        guard let cell = sender.superview as? VerticalCell ?? sender.superview?.superview as? VerticalCell else { return }
+
         // isHidden 토글
-        cell.overflowView.isHidden = false
-        
-        // 데이터 전달
-        let itemData = dataSource?.itemIdentifier(for: indexPath)
-        print("선택한 아이템 데이터:", itemData ?? "없음")
+        cell.overflowView.isHidden.toggle()
     }
     
     // overflow 버튼 영역 외부 터치 실행될 메서드
     @objc private func dismissOverflowView(_ gesture: UITapGestureRecognizer) {
-        let touchLocation = gesture.location(in: homeView.collectionView)
+        let touchLocation = gesture.location(in: homeView)
         
         // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
         for cell in homeView.collectionView.visibleCells {
@@ -197,7 +189,6 @@ class HomeViewController: UIViewController {
             }
         }
     }
-    
     
     // 앨범 버튼
     @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
@@ -281,5 +272,13 @@ class HomeViewController: UIViewController {
                 print("실패: \(error.description)")
             }
         }
+    }
+}
+
+extension HomeViewController: UIGestureRecognizerDelegate {
+    // 👉 UITapGestureRecognizer가 실행될 때, 특정 조건에서만 실행되도록 설정
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // ✅ 터치한 뷰가 OverflowView이면 제스처 실행하지 않음
+        return !(touch.view is OverflowView)
     }
 }
