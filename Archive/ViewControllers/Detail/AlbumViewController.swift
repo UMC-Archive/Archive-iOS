@@ -17,6 +17,7 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
+    private var recommendAlbumData: [AlbumRecommendAlbumResponseDTO]?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     init(artist: String = "IU", album: String = "Love Poem") {
@@ -44,6 +45,9 @@ class AlbumViewController: UIViewController {
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
+        
+        // 앨범 추천 API
+        getRecommendAlbum()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -212,6 +216,25 @@ class AlbumViewController: UIViewController {
                 albumView.config(data: data, artist: artist, description: response.description)
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 당신을 위한 앨범 추천
+    func getRecommendAlbum() {
+        albumService.albumRecommendAlbum { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                self.recommendAlbumData = response
+                print(response)
+                albumView.collectionView.reloadData()
+            case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
                 self.present(alert, animated: true) // 얼럿 띄우기
