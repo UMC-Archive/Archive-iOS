@@ -24,8 +24,13 @@ public final class AlbumService: NetworkManager {
         self.provider = provider ?? MoyaProvider<AlbumTargetType>(plugins: plugins)
     }
     
-    // 당신을 위한 앨범 추천 조회
-    public func recommendAlbum(completion: @escaping (Result<[ExploreRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
+    // 당신을 위한 앨범 추천 조회 (탐색 뷰)
+    public func exploreRecommendAlbum(completion: @escaping (Result<[ExploreRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .ExploreRecommendAlbum, decodingType: [ExploreRecommendAlbumResponseDTO].self, completion: completion)
+    }
+    
+    // 당신을 위한 앨범 추천(앨범 뷰)
+    public func albumRecommendAlbum(completion: @escaping (Result<[AlbumRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .ExploreRecommendAlbum, decodingType: [AlbumRecommendAlbumResponseDTO].self, completion: completion)
     }
 }

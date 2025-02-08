@@ -17,6 +17,7 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     init(artist: String = "IU", album: String = "Love Poem") {
@@ -44,6 +45,9 @@ class AlbumViewController: UIViewController {
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
+        
+        // 앨범 추천 API
+        getRecommendAlbum()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,9 +127,9 @@ class AlbumViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
-            case .RecommendAlbum(let data): // 당신을 위한 추천 앨범
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: data)
+                (cell as? BannerCell)?.configAlbumRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -172,10 +176,11 @@ class AlbumViewController: UIViewController {
         snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
         
         // 당신을 위한 추천 앨범
-        let recommendAlbumItem = data.recommendAlbum.map{Item.RecommendAlbum($0)}
-        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        
-        
+        if let recommendAlbumData = recommendAlbumData {
+            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
+        }
+
         dataSource?.apply(snapshot)
     }
     
@@ -212,6 +217,25 @@ class AlbumViewController: UIViewController {
                 albumView.config(data: data, artist: artist, description: response.description)
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 당신을 위한 앨범 추천
+    func getRecommendAlbum() {
+        albumService.albumRecommendAlbum { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                self.recommendAlbumData = response.map{($0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapshot()
+            case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
                 self.present(alert, animated: true) // 얼럿 띄우기

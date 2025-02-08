@@ -140,7 +140,7 @@ class ExploreViewController: UIViewController {
             case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 guard let bannerCell = cell as? BannerCell else {return cell}
-                bannerCell.configRecommendAlbum(album: album, artist: artist)
+                bannerCell.configExploreRecommendAlbum(album: album, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
@@ -269,7 +269,7 @@ class ExploreViewController: UIViewController {
     
     // 당신을 위한 앨범 추천 API
     func getRecommendAlbum() {
-        albumService.recommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
+        albumService.exploreRecommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
             guard let self = self else { return }
             switch result {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
