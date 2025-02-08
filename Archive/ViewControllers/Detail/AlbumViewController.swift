@@ -17,7 +17,7 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
-    private var recommendAlbumData: [AlbumRecommendAlbumResponseDTO]?
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     init(artist: String = "IU", album: String = "Love Poem") {
@@ -127,9 +127,9 @@ class AlbumViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
-            case .RecommendAlbum(let data): // 당신을 위한 추천 앨범
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: data)
+                (cell as? BannerCell)?.configAlbumRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -176,10 +176,11 @@ class AlbumViewController: UIViewController {
         snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
         
         // 당신을 위한 추천 앨범
-        let recommendAlbumItem = data.recommendAlbum.map{Item.RecommendAlbum($0)}
-        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        
-        
+        if let recommendAlbumData = recommendAlbumData {
+            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
+        }
+
         dataSource?.apply(snapshot)
     }
     
@@ -231,9 +232,9 @@ class AlbumViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else { return }
-                self.recommendAlbumData = response
-                print(response)
-                albumView.collectionView.reloadData()
+                self.recommendAlbumData = response.map{($0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapshot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성

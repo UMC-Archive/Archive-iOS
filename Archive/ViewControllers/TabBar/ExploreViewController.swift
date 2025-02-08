@@ -140,7 +140,7 @@ class ExploreViewController: UIViewController {
             case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 guard let bannerCell = cell as? BannerCell else {return cell}
-                bannerCell.configRecommendAlbum(album: album, artist: artist)
+                bannerCell.configExploreRecommendAlbum(album: album, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
