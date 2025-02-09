@@ -34,6 +34,9 @@ class HomeViewController: UIViewController {
         
         // 당신을 위한 추천곡
         getRecommendMusic()
+        
+        // 최근 탐색 연도 불러오기
+        getHistory()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -259,7 +262,7 @@ class HomeViewController: UIViewController {
     
     
     // 음악 정보 가져오기 API
-    func postMusicInfo(artist: String, music: String) {
+    private func postMusicInfo(artist: String, music: String) {
         musicService.musicInfo(artist: artist, music: music){ [weak self] result in
             guard let self = self else { return }
             
@@ -281,7 +284,7 @@ class HomeViewController: UIViewController {
     }
     
     // 당신을 위한 추천곡 API
-    func getRecommendMusic(){
+    private func getRecommendMusic(){
         musicService.homeRecommendMusic { [weak self] result in
             guard let self = self else {return}
             switch result {
@@ -291,6 +294,21 @@ class HomeViewController: UIViewController {
                 self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
                 setDataSource()
                 setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 최근 탐색 연도 불러오기 API
+    private func getHistory() {
+        userService.getHistroy { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                print("getHistory()")
+                print(response)
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)

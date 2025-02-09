@@ -48,4 +48,9 @@ public final class UserService: NetworkManager {
     public func playingRecord(parameter: UserPlayingRecordRequestDTO, completion: @escaping (Result<UserPlayingRecordResponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .userPlayingRecord(parameter: parameter), decodingType: UserPlayingRecordResponseDTO.self, completion: completion)
     }
+    
+    // 최근 탐색 연도 불러오기 API
+    public func getHistroy(completion: @escaping (Result<[GetHistoryResponseDTO]?, NetworkError>) -> Void){
+        requestOptional(target: .getHistory, decodingType: [GetHistoryResponseDTO].self, completion: completion)
+    }
 }
