@@ -104,7 +104,7 @@ class ExploreViewController: UIViewController {
             case let .ExploreRecommendMusic(music, album, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 guard let verticalCell = cell as? VerticalCell else {return cell}
-                verticalCell.configRecommendMusic(music: music, artist: artist)
+                verticalCell.configExploreRecommendMusic(music: music, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
@@ -247,7 +247,7 @@ class ExploreViewController: UIViewController {
     
     // 당신을 위한 추천곡 API
     func getRecommendMusic() {
-        musicService.recommendMusic(){ [weak self] result in
+        musicService.exploreRecommendMusic(){ [weak self] result in
             guard let self = self else { return }
             
             switch result {

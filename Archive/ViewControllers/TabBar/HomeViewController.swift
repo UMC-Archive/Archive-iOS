@@ -16,7 +16,7 @@ class HomeViewController: UIViewController {
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
-//    private var recommendMusic: [(RecommendMusic, String)]?
+    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,6 +31,9 @@ class HomeViewController: UIViewController {
 
         setAction()
         setGesture()
+        
+        // 당신을 위한 추천곡
+        getRecommendMusic()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -88,21 +91,21 @@ class HomeViewController: UIViewController {
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
                 return cell
-            case .RecommendMusic(let data): // 추천곡
+            case let .RecommendMusic(music, album, artist): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 guard let verticalCell = cell as? VerticalCell else {return cell}
-                verticalCell.config(data: data)
+                verticalCell.configHomeRecommendMusic(music: music, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                tapAlbumGesture.artist = data.artist
-                tapAlbumGesture.album = data.albumTitle
+                tapAlbumGesture.artist = artist
+                tapAlbumGesture.album = album.title
                 verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = data.artist
-                tapArtistGesture.album = data.albumTitle
+                tapArtistGesture.artist = artist
+                tapArtistGesture.album = album.title
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                 
                 // overflow 버튼 로직 선택
@@ -238,9 +241,12 @@ class HomeViewController: UIViewController {
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
-        // 추천곡
-        let recommendMusicItem = musicData.map{Item.RecommendMusic($0)}
-        snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        // 당신을 위한 추천곡
+        if let recommendMusic = recommendMusic {
+            let recommendMusicItem = recommendMusic.map{Item.RecommendMusic($0.0, $0.1, $0.2)}
+            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        }
+        
         
         let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
         snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
@@ -270,7 +276,24 @@ class HomeViewController: UIViewController {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 당신을 위한 추천곡 API
+    func getRecommendMusic(){
+        musicService.homeRecommendMusic { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print("getRecommendMusic() 성공")
+                guard let response = response else { return }
+                self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
+                setDataSource()
+                setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }
