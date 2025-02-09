@@ -16,6 +16,7 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var data: ArtistInfoReponseDTO?
+    private var similarArtist: [SimilarArtistResponse]?
     
     init(artist: String = "빅뱅", album: String = "MADE") {
         self.artist = artist
@@ -155,8 +156,10 @@ class ArtistViewController: UIViewController {
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
-        let similarArtistItem = artistData.similarArtist.map{Item.SimilarArtist($0)}
-        snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        if let similarArtist = similarArtist {
+            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0)}
+            snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        }
         
         dataSource?.apply(snapshot)
     }
@@ -228,7 +231,9 @@ class ArtistViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                print(response)
+                self.similarArtist = response?.artists
+                self.setDataSource()
+                self.setSnapshot()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
