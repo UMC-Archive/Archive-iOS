@@ -10,6 +10,7 @@ import Moya
 
 public enum AlbumTargetType {
     case ExploreRecommendAlbum // 당신을 위한 앨범 추천 조회(탐색뷰)
+    case AlbumRecommendAlbum   // 당신을 위한 앨범 추천 조회(앨범 뷰)
 }
 
 extension AlbumTargetType: TargetType {
@@ -24,19 +25,21 @@ extension AlbumTargetType: TargetType {
         switch self {
         case .ExploreRecommendAlbum:
             return "year/nomination"
+        case .AlbumRecommendAlbum:
+            return "/nomination"
         }
     }
     
     public var method: Moya.Method {
         switch self {
-        case .ExploreRecommendAlbum:
+        case .ExploreRecommendAlbum, .AlbumRecommendAlbum:
             return .get
         }
     }
     
     public var task: Moya.Task {
         switch self {
-        case .ExploreRecommendAlbum:
+        case .ExploreRecommendAlbum, .AlbumRecommendAlbum:
             return .requestPlain
         }
     }
@@ -47,6 +50,4 @@ extension AlbumTargetType: TargetType {
             return ["Content-Type": "application/json"]
         }
     }
-    
-    
 }

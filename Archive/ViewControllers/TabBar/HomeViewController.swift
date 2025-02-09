@@ -15,7 +15,9 @@ class HomeViewController: UIViewController {
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
-//    private var recommendMusic: [(RecommendMusic, String)]?
+    private var overflowView: OverflowView?
+    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]?
+    private var pointOfViewData: [GetHistoryResponseDTO]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,25 +29,17 @@ class HomeViewController: UIViewController {
         
         // 음악 정보 가져오기 API
 //        postMusicInfo(artist: "IU", music: "Love poem") // 예시
-        
-        
-        // 이메일 인증 번호 전송 API
-//        getSendVerificationCode(email: "tngus0673@naver.com")
-        
-        // 회원가입 API
-        let date = Date()
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd"
-        let inactiveDate = dateFormatter.string(from: date)
-        
-        let parameter = SignUpRequestDTO(nickname: "example", email: "aasdlkkc123sl123l@naver.com", password: "example", status: "active", socialType: "local", inactiveDate: inactiveDate, artists: [1], genres: [1])
-//        postSignUp(image: .cdSample, parameter: parameter)
-        
-//        getChooseGenreInfo()
-//        getChooseArtistInfo()
-        buttonTapped()
 
+        setAction()
+        setGesture()
+        
+        // 당신을 위한 추천곡
+        getRecommendMusic()
+        
+        // 최근 탐색 연도 불러오기
+        getHistory()
     }
+    
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         print("homeView has disappeared")
@@ -54,7 +48,16 @@ class HomeViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
     }
-    private func buttonTapped(){
+    
+    private func setGesture() {
+        // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
+        tapGesture.cancelsTouchesInView = false
+        tapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        homeView.addGestureRecognizer(tapGesture)
+    }
+    
+    private func setAction(){
         homeView.topView.exploreIconButton.addTarget(self, action: #selector(exploreIconTapped), for: .touchUpInside)
     }
     @objc func exploreIconTapped(){
@@ -92,22 +95,26 @@ class HomeViewController: UIViewController {
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
                 return cell
-            case .RecommendMusic(let data): // 추천곡
+            case let .RecommendMusic(music, album, artist): // 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 guard let verticalCell = cell as? VerticalCell else {return cell}
-                verticalCell.config(data: data)
+                verticalCell.configHomeRecommendMusic(music: music, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
-                tapAlbumGesture.artist = data.artist
-                tapAlbumGesture.album = data.albumTitle
-                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                tapAlbumGesture.artist = artist
+                tapAlbumGesture.album = album.title
+                verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = data.artist
-                tapArtistGesture.album = data.albumTitle
+                tapArtistGesture.artist = artist
+                tapArtistGesture.album = album.title
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
+                // overflow 버튼 로직 선택
+                verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+                verticalCell.setOverflowView(type: .other)
                 
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
@@ -168,6 +175,29 @@ class HomeViewController: UIViewController {
         
     }
     
+    // overflow 버튼 클릭 시 실행될 메서드
+    @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
+        // 버튼의 superview를 통해 셀 찾기
+        guard let cell = sender.superview as? VerticalCell ?? sender.superview?.superview as? VerticalCell else { return }
+
+        // isHidden 토글
+        cell.overflowView.isHidden.toggle()
+    }
+    
+    // overflow 버튼 영역 외부 터치 실행될 메서드
+    @objc private func dismissOverflowView(_ gesture: UITapGestureRecognizer) {
+        let touchLocation = gesture.location(in: homeView)
+        
+        // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
+        for cell in homeView.collectionView.visibleCells {
+            if let verticalCell = cell as? VerticalCell {
+                if !verticalCell.overflowView.frame.contains(touchLocation) {
+                    verticalCell.overflowView.isHidden = true
+                }
+            }
+        }
+    }
+    
     // 앨범 버튼
     @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
@@ -209,15 +239,22 @@ class HomeViewController: UIViewController {
         let archiveItem = musicData.map{Item.ArchiveItem($0)}
         snapshot.appendItems(archiveItem, toSection: archiveSection)
         
-        let pointItem = pointData.map{Item.PointItem($0)}
-        snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        // 최근 탐색 시점
+        if let pointOfViewData = pointOfViewData {
+            let pointItem = pointOfViewData.map{Item.PointItem($0)}
+            snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        }
+        
         
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
 
-        // 추천곡
-        let recommendMusicItem = musicData.map{Item.RecommendMusic($0)}
-        snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        // 당신을 위한 추천곡
+        if let recommendMusic = recommendMusic {
+            let recommendMusicItem = recommendMusic.map{Item.RecommendMusic($0.0, $0.1, $0.2)}
+            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        }
+        
         
         let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
         snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
@@ -230,7 +267,7 @@ class HomeViewController: UIViewController {
     
     
     // 음악 정보 가져오기 API
-    func postMusicInfo(artist: String, music: String) {
+    private func postMusicInfo(artist: String, music: String) {
         musicService.musicInfo(artist: artist, music: music){ [weak self] result in
             guard let self = self else { return }
             
@@ -247,133 +284,49 @@ class HomeViewController: UIViewController {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
     
+    // 당신을 위한 추천곡 API
+    private func getRecommendMusic(){
+        musicService.homeRecommendMusic { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print("getRecommendMusic() 성공")
+                guard let response = response else { return }
+                self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
+                setDataSource()
+                setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 최근 탐색 연도 불러오기 API
+    private func getHistory() {
+        userService.getHistroy { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                self.pointOfViewData = response
+                setDataSource()
+                setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+}
 
-    // 이메일 인증 번호 전송 API
-    func getSendVerificationCode(email: String) {
-        userService.sendVerificationCode(email: email){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response): // response == cipherCode
-                print("getSendVerificationCode() 성공")
-                print(response)
-                if let cipherCode = response {
-                    // cipherCode 키체인 저장 후 인증 확인 API에 사용
-                }
-                
-                Task{
-                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-                    //                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
-    }
-    
-    // 이메일 인증 번호 확인 API
-    func postCheckVerificationCode(cipherCode: String, code: String) {
-        let param = CheckVerificationCodeRequestDTO(cipherCode: cipherCode, code: code)
-        userService.checkVerificationCode(parameter: param){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
-                print("postCheckVerificationCode() 성공")
-                print(response)
-                Task{
-                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-                    //                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
-    }
-    
-    // 회원가입 API
-    func postSignUp(image: UIImage, parameter: SignUpRequestDTO) {
-        userService.signUp(image: image, parameter: parameter){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
-                print("postSignUp() 성공")
-                print(response)
-                Task{
-                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-                    //                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
-    }
-    
-    // 장르 정보 조회
-    func getChooseGenreInfo() {
-        musicService.chooseGenreInfo(){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
-                print("getChooseGenreInfo() 성공")
-                print(response)
-                Task{
-                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-                    //                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
-    }
-    
-    // 선택 아티스트 정보 조회
-    func getChooseArtistInfo() {
-        musicService.chooseArtistInfo(){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                // 이 API는 성공이나 실패나 result가 null로 오기 떄문에 .success일 경우 확인 코드 검증된 거임
-                print("getChooseArtistInfo() 성공")
-                print(response)
-                Task{
-                    //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-                    //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-                    //                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-                print("실패: \(error.description)")
-            }
-        }
+extension HomeViewController: UIGestureRecognizerDelegate {
+    // 👉 UITapGestureRecognizer가 실행될 때, 특정 조건에서만 실행되도록 설정
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        // ✅ 터치한 뷰가 OverflowView이면 제스처 실행하지 않음
+        return !(touch.view is OverflowView)
     }
 }

@@ -86,7 +86,15 @@ class BannerCell: UICollectionViewCell {
         artistLabel.text = data.artist
     }
     
-    public func configRecommendAlbum(album: ExploreRecommendAlbum, artist: String) {
+    // 앨범 뷰 추천 앨범
+    public func configAlbumRecommendAlbum(album: AlbumRecommendAlbum, artist: String) {
+        imageView.kf.setImage(with: URL(string: album.image))
+        titleLabel.text = album.title
+        artistLabel.text = artist
+    }
+    
+    // 탐색 뷰 추천 앨범
+    public func configExploreRecommendAlbum(album: ExploreRecommendAlbum, artist: String) {
         imageView.kf.setImage(with: URL(string: album.image))
         titleLabel.text = album.title
         artistLabel.text = artist

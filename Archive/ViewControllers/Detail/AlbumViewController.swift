@@ -17,6 +17,7 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     init(artist: String = "IU", album: String = "Love Poem") {
@@ -44,6 +45,9 @@ class AlbumViewController: UIViewController {
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
+        
+        // 앨범 추천 API
+        getRecommendAlbum()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -79,8 +83,33 @@ class AlbumViewController: UIViewController {
     }
     
     private func updateTrackViewHeight(){
-        albumView.trackView.snp.updateConstraints { make in
-            make.height.equalTo(180 + data.albumTrack.count * 60)
+//        albumView.trackView.snp.updateConstraints { make in
+//            make.height.equalTo(180 + data.albumTrack.count * 60)
+//        }
+        
+        // 앨범 리스트가 4개 이하일 경우
+        let musicCount = self.data.albumTrack.musicList.count
+        print("musicCount: \(musicCount)")
+        if musicCount <= 4 {
+            albumView.trackView.pageControl.isHidden = true
+            
+            let baseHeight: CGFloat = 120 + 17 * 2 + 20
+            let trackHeight: CGFloat = CGFloat(musicCount) * 50.0 + (CGFloat(musicCount - 1) * 10.0)
+            let totalHeight = baseHeight + trackHeight
+            print("totalHeight \(totalHeight)")
+            
+            albumView.trackView.snp.updateConstraints { make in
+                make.height.equalTo(totalHeight)
+            }
+            
+            albumView.trackView.trackCollectionView.snp.updateConstraints { make in
+                make.bottom.equalToSuperview().inset(17)
+            }
+        } else { // 4개 이상일 경우
+            albumView.trackView.pageControl.isHidden = false
+            albumView.trackView.snp.updateConstraints { make in
+                make.height.equalTo(420)
+            }
         }
         
         albumView.layoutIfNeeded()
@@ -98,9 +127,9 @@ class AlbumViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configAlbum(data: data)
                 return cell
-            case .RecommendAlbum(let data): // 당신을 위한 추천 앨범
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: data)
+                (cell as? BannerCell)?.configAlbumRecommendAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -147,10 +176,11 @@ class AlbumViewController: UIViewController {
         snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
         
         // 당신을 위한 추천 앨범
-        let recommendAlbumItem = data.recommendAlbum.map{Item.RecommendAlbum($0)}
-        snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        
-        
+        if let recommendAlbumData = recommendAlbumData {
+            let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
+            snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
+        }
+
         dataSource?.apply(snapshot)
     }
     
@@ -165,7 +195,6 @@ class AlbumViewController: UIViewController {
                 guard let data = response else { return }
                 albumData = data
                 postAlbumCuration(albumId: data.id)
-//
 //                albumView.config(data: data, artist: artist, description: "asd")
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
@@ -195,6 +224,25 @@ class AlbumViewController: UIViewController {
             }
         }
     }
+    
+    // 당신을 위한 앨범 추천
+    func getRecommendAlbum() {
+        albumService.albumRecommendAlbum { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                self.recommendAlbumData = response.map{($0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapshot()
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
+                self.present(alert, animated: true) // 얼럿 띄우기
+                print("실패: \(error.description)")
+            }
+        }
+    }
 }
 
 extension AlbumViewController: UICollectionViewDataSource {
@@ -209,7 +257,6 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        print("cellForItemAt")
         switch collectionView {
         case albumView.trackView.trackCollectionView:
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell else {return UICollectionViewCell()
@@ -222,4 +269,10 @@ extension AlbumViewController: UICollectionViewDataSource {
     }
 }
 
-extension AlbumViewController: UICollectionViewDelegate { }
+extension AlbumViewController: UICollectionViewDelegate {
+    // 페이지 컨트롤 설정
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pageIndex = round(scrollView.contentOffset.x / scrollView.frame.width)
+        albumView.trackView.pageControl.currentPage = Int(pageIndex)
+    }
+}

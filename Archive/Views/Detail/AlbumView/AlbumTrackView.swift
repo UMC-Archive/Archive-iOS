@@ -11,12 +11,6 @@ import UIKit
 class AlbumTrackView: UIView {
     private let artistImageWidth: CGFloat = 20
     
-    // 백그라운드뷰
-    private let backgroundView = UIView().then { view in
-        view.isUserInteractionEnabled = false
-        view.backgroundColor = .black.withAlphaComponent(0.4)
-    }
-    
     // 이미지 포합 그룹 뷰
     private let imageInfoGroupView = UIView()
     
@@ -59,15 +53,29 @@ class AlbumTrackView: UIView {
         // AlbumTrackView의 inset 합 40, collectionView inset 합 32
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width - 72, height: 50)
         layout.minimumInteritemSpacing = 10
+        layout.minimumLineSpacing = .zero
+        layout.scrollDirection = .horizontal  // 가로 스크롤 활성화
     })).then { view in
+        view.isPagingEnabled = true // 페이지 단위 스크롤 적용
+        view.showsHorizontalScrollIndicator = false
+        view.showsVerticalScrollIndicator = false
         view.backgroundColor = .clear
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
+    }
+    
+    // 페이지 인디케이터
+    public let pageControl = UIPageControl().then { view in
+        view.currentPage = 0
+        view.numberOfPages = 2  // 페이지 개수 (이후 동적으로 설정 가능)
+        view.isUserInteractionEnabled = false
     }
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         self.layer.cornerRadius = 20
+        self.clipsToBounds = true
+        backgroundColor = .black.withAlphaComponent(0.3)
         setSubView()
         setUI()
     }
@@ -90,21 +98,18 @@ class AlbumTrackView: UIView {
         ].forEach{imageInfoGroupView.addSubview($0)}
         
         [
-            backgroundView,
             imageInfoGroupView,
             trackCollectionView,
+            pageControl,
         ].forEach{self.addSubview($0)}
     }
     
     private func setUI() {
         
-        backgroundView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        
         imageInfoGroupView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(17)
-            make.horizontalEdges.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview()
             make.height.equalTo(120)
         }
         
@@ -115,8 +120,8 @@ class AlbumTrackView: UIView {
         
         infoGroupView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(17)
-            make.leading.equalTo(trackImageView.snp.trailing).offset(16)
-            make.trailing.equalToSuperview()
+            make.leading.lessThanOrEqualTo(trackImageView.snp.trailing).offset(16)
+            make.trailing.equalToSuperview().inset(8)
         }
         
         
@@ -134,7 +139,7 @@ class AlbumTrackView: UIView {
         trackArtist.snp.makeConstraints { make in
             make.centerY.equalTo(artistImageView)
             make.leading.equalTo(artistImageView.snp.trailing).offset(6)
-            make.trailing.equalToSuperview().priority(.low)
+            make.trailing.equalToSuperview()
         }
         
         trackDetailLabel.snp.makeConstraints { make in
@@ -143,14 +148,19 @@ class AlbumTrackView: UIView {
         }
         
         trackCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(imageInfoGroupView.snp.bottom).offset(20)
+            make.top.equalTo(imageInfoGroupView.snp.bottom).offset(16)
             make.horizontalEdges.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(17)
+            make.bottom.equalToSuperview().inset(30)
+        }
+        
+        pageControl.snp.makeConstraints { make in
+            make.bottom.equalToSuperview().inset(13)
+            make.height.equalTo(4.8)
+            make.centerX.equalToSuperview()
         }
     }
     
     public func config(data: AlbumTrack){
-        
         trackImageView.kf.setImage(with: URL(string: data.albumImageURL)) { [weak self] result in
             switch result {
             case .success:
@@ -167,15 +177,29 @@ class AlbumTrackView: UIView {
         trackArtist.text = data.artist
         trackDetailLabel.text = "\(data.year) • \(data.count)곡 • \(data.totalMinute)분"
         
-
+        pageControl.numberOfPages = data.musicList.count / 4 + 1
     }
     
     private func setBackgroundColorBasedOnImageColor() {
         // 배경색 지정 (이미지 평균 색)
-//        let avgColor = trackImageView.avgImageColor()
-//        self.backgroundColor = avgColor ?? .black
-//        print("\(String(describing: avgColor?.cgColor))")
+        guard let avgColor = trackImageView.avgImageColor() else {return}
+        self.backgroundColor = avgColor
         
-        self.backgroundColor = .white
+        // 페이지 컨트롤
+        pageControl.currentPageIndicatorTintColor = .white_70
+        pageControl.pageIndicatorTintColor = avgColor.withAlphaComponent(0.7)
+        
+        print("\(String(describing: avgColor.cgColor))")
+        
+        
+//        let gradientLayer = CAGradientLayer().then { layer in
+//            layer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
+//            layer.colors = [
+//                avgColor.withAlphaComponent(0.5).cgColor,
+//                avgColor.cgColor,
+//            ]
+//        }
+//        
+//        self.layer.addSublayer(gradientLayer)
     }
 }
