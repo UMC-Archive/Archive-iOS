@@ -16,6 +16,7 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var data: ArtistInfoReponseDTO?
+    private var similarArtist: [SimilarArtistResponse]?
     
     init(artist: String = "빅뱅", album: String = "MADE") {
         self.artist = artist
@@ -36,6 +37,7 @@ class ArtistViewController: UIViewController {
         setDataSource()
         setSnapshot()
         
+        // 아티스트 정보 조회
         postArtistInfo(artist: artist, album: album)
     }
     
@@ -154,8 +156,10 @@ class ArtistViewController: UIViewController {
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
-        let similarArtistItem = artistData.similarArtist.map{Item.SimilarArtist($0)}
-        snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        if let similarArtist = similarArtist {
+            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0)}
+            snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        }
         
         dataSource?.apply(snapshot)
     }
@@ -186,7 +190,12 @@ class ArtistViewController: UIViewController {
             case .success(let response):
                 guard let response = response else {return}
                 self.data = response
+                
+                // 아티스트 큐레이션
                 postArtistCuration(artistId: response.id)
+                
+                // 비슷한 아티스트 조회
+                getSimilarArtist(artistId: response.id)
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -212,6 +221,22 @@ class ArtistViewController: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
                 print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 비슷한 아티스트 조회
+    private func getSimilarArtist(artistId: String){
+        musicService.similarArtist(aristId: artistId) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                self.similarArtist = response?.artists
+                self.setDataSource()
+                self.setSnapshot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }
