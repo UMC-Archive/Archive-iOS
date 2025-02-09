@@ -120,7 +120,13 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
-    public func configRecommendMusic(music: ExploreRecommendMusic, artist: String){
+    public func configExploreRecommendMusic(music: ExploreRecommendMusic, artist: String){
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
+    public func configHomeRecommendMusic(music: RecommendMusic, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
