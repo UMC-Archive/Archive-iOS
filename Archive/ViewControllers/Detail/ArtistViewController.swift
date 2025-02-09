@@ -36,6 +36,7 @@ class ArtistViewController: UIViewController {
         setDataSource()
         setSnapshot()
         
+        // 아티스트 정보 조회
         postArtistInfo(artist: artist, album: album)
     }
     
@@ -186,7 +187,12 @@ class ArtistViewController: UIViewController {
             case .success(let response):
                 guard let response = response else {return}
                 self.data = response
+                
+                // 아티스트 큐레이션
                 postArtistCuration(artistId: response.id)
+                
+                // 비슷한 아티스트 조회
+                getSimilarArtist(artistId: response.id)
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -212,6 +218,20 @@ class ArtistViewController: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
                 print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 비슷한 아티스트 조회
+    private func getSimilarArtist(artistId: String){
+        musicService.similarArtist(aristId: artistId) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print(response)
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }

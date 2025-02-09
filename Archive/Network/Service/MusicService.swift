@@ -75,4 +75,9 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .recommendMusic, decodingType: [RecommendMusicResponseDTO].self, completion: completion)
     }
     
+    // 비슷한 아티스트 조회
+    public func similarArtist(aristId: String, completion: @escaping(Result<SilmilarArtistResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .similarArtist(artistId: aristId), decodingType: SilmilarArtistResponseDTO.self, completion: completion)
+    }
+    
 }
