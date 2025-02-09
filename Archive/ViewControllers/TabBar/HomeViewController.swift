@@ -17,6 +17,7 @@ class HomeViewController: UIViewController {
     private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
     private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]?
+    private var pointOfViewData: [GetHistoryResponseDTO]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -34,6 +35,9 @@ class HomeViewController: UIViewController {
         
         // 당신을 위한 추천곡
         getRecommendMusic()
+        
+        // 최근 탐색 연도 불러오기
+        getHistory()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -235,8 +239,12 @@ class HomeViewController: UIViewController {
         let archiveItem = musicData.map{Item.ArchiveItem($0)}
         snapshot.appendItems(archiveItem, toSection: archiveSection)
         
-        let pointItem = pointData.map{Item.PointItem($0)}
-        snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        // 최근 탐색 시점
+        if let pointOfViewData = pointOfViewData {
+            let pointItem = pointOfViewData.map{Item.PointItem($0)}
+            snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        }
+        
         
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
@@ -259,7 +267,7 @@ class HomeViewController: UIViewController {
     
     
     // 음악 정보 가져오기 API
-    func postMusicInfo(artist: String, music: String) {
+    private func postMusicInfo(artist: String, music: String) {
         musicService.musicInfo(artist: artist, music: music){ [weak self] result in
             guard let self = self else { return }
             
@@ -281,7 +289,7 @@ class HomeViewController: UIViewController {
     }
     
     // 당신을 위한 추천곡 API
-    func getRecommendMusic(){
+    private func getRecommendMusic(){
         musicService.homeRecommendMusic { [weak self] result in
             guard let self = self else {return}
             switch result {
@@ -289,6 +297,22 @@ class HomeViewController: UIViewController {
                 print("getRecommendMusic() 성공")
                 guard let response = response else { return }
                 self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
+                setDataSource()
+                setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 최근 탐색 연도 불러오기 API
+    private func getHistory() {
+        userService.getHistroy { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                self.pointOfViewData = response
                 setDataSource()
                 setSnapShot()
             case .failure(let error):

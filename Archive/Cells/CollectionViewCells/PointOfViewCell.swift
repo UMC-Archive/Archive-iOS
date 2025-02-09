@@ -65,8 +65,9 @@ class PointOfViewCell: UICollectionViewCell {
         }
     }
     
-    public func config(data: PointOfViewDummyModel) {
-        albumImageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = "\(data.year) \(data.month) \(data.week)"
+    public func config(data: GetHistoryResponseDTO) {
+        albumImageView.kf.setImage(with: URL(string: "https://cdn.hankyung.com/photo/202410/01.38493988.1.jpg"))
+        let weekData = data.history.getWeekTuple()
+        titleLabel.text = "\(weekData.year) \(weekData.month) \(weekData.week)"
     }
 }
