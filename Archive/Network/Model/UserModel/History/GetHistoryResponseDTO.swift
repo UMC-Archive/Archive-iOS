@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct GetHistoryResponseDTO: Decodable {
+public struct GetHistoryResponseDTO: Decodable, Hashable {
     let id: String
     let history: String
     

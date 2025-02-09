@@ -17,6 +17,7 @@ class HomeViewController: UIViewController {
     private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
     private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]?
+    private var pointOfViewData: [GetHistoryResponseDTO]?
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -238,8 +239,12 @@ class HomeViewController: UIViewController {
         let archiveItem = musicData.map{Item.ArchiveItem($0)}
         snapshot.appendItems(archiveItem, toSection: archiveSection)
         
-        let pointItem = pointData.map{Item.PointItem($0)}
-        snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        // 최근 탐색 시점
+        if let pointOfViewData = pointOfViewData {
+            let pointItem = pointOfViewData.map{Item.PointItem($0)}
+            snapshot.appendItems(pointItem, toSection: pointOfViewSection)
+        }
+        
         
         let fastSelectionItem = musicData.map{Item.FastSelectionItem($0)}
         snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
@@ -307,8 +312,9 @@ class HomeViewController: UIViewController {
             guard let self = self else {return }
             switch result {
             case .success(let response):
-                print("getHistory()")
-                print(response)
+                self.pointOfViewData = response
+                setDataSource()
+                setSnapShot()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
