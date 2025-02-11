@@ -56,6 +56,7 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.text = ""
         artistYearLabel.text = ""
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
+        
         gestureRecognizers = nil
     }
     

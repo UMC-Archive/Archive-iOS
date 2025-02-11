@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AnotherAlbumResponseDTO: Decodable {
+public struct AnotherAlbumResponseDTO: Decodable, Hashable {
     let id: String
     let title: String
     let releaseTime: String

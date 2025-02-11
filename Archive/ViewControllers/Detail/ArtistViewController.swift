@@ -39,9 +39,6 @@ class ArtistViewController: UIViewController {
         
         // 아티스트 정보 조회
         postArtistInfo(artist: artist, album: album)
-        
-        // 앨범 아이디 조회
-        getAlbumId(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -237,21 +234,6 @@ class ArtistViewController: UIViewController {
                 self.similarArtist = response?.artists
                 self.setDataSource()
                 self.setSnapshot()
-            case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-            }
-        }
-    }
-
-    // 앨범 아이디 조회
-    private func getAlbumId(artist: String, album: String){
-        musicService.allInfo(album: album, artist: artist) { [weak self] result in
-            guard let self = self else {return}
-            switch result {
-            case .success(let response):
-                guard let artistId = response.artist.info.id, let albumId = response.album.info.id else { return }
-                print("getAlbumId", artistId, albumId)
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)

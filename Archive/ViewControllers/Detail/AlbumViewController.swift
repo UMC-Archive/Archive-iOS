@@ -18,9 +18,10 @@ class AlbumViewController: UIViewController {
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
     private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
+    private var anotherAlbum: [AnotherAlbumResponseDTO]? // 이 아티스트의 다른 앨범
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
-    init(artist: String = "IU", album: String = "Love Poem") {
+    init(artist: String, album: String) {
         self.artist = artist
         self.album = album
         
@@ -48,6 +49,10 @@ class AlbumViewController: UIViewController {
         
         // 앨범 추천 API
         getRecommendAlbum()
+        
+        
+        // 모든 아이디 조회
+        getAllId(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,9 +128,9 @@ class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: albumView.collectionView){ collectionView, indexPath, ItemIdentifier in
             switch ItemIdentifier {
-            case .AnotherAlbum(let data):
+            case .AnotherAlbum(let album):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: data)
+                (cell as? BannerCell)?.configAnotherAlbum(album: album, artist: self.artist)
                 return cell
             case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -172,8 +177,11 @@ class AlbumViewController: UIViewController {
         
         snapshot.appendSections([anotherAlbumSection, recommendAlbumSection])
         
-        let anotherAlbumItem = data.anotherAlbum.map{Item.AnotherAlbum($0)}
-        snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
+        // 이 아티스트의 다른 앨범
+        if let anotherAlbum = anotherAlbum {
+            let anotherAlbumItem = anotherAlbum.map{Item.AnotherAlbum($0)}
+            snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
+        }
         
         // 당신을 위한 추천 앨범
         if let recommendAlbumData = recommendAlbumData {
@@ -244,6 +252,25 @@ class AlbumViewController: UIViewController {
         }
     }
     
+    // 모든 아이디 조회
+    private func getAllId(artist: String, album: String){
+        musicService.allInfo(album: album, artist: artist) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                guard let artistId = response.artist.info.id, let albumId = response.album.info.id else {
+                    let alert = NetworkAlert.shared.getAlertController(title: "아티스트: \(String(describing: response.artist.info.id))\n 앨범: \(String(describing: response.album.info.id))")
+                    self.present(alert, animated: true)
+                    return
+                }
+                self.getAnotherAlbum(artistId: artistId, albumId: albumId) //  이 아티스트의 다른 앨범 조회 함수 호출
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
     // 이 아티스트의 다른 앨범 조회
     private func getAnotherAlbum(artistId: String, albumId: String) {
         musicService.anotherAlbum(artistId: artistId, albumId: albumId) { [weak self] result in
@@ -251,6 +278,9 @@ class AlbumViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("getAnotherAlbum() 성공")
+                self.anotherAlbum = response
+                self.setDataSource()
+                self.setSnapshot()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
