@@ -80,4 +80,8 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .similarArtist(artistId: aristId), decodingType: SilmilarArtistResponseDTO.self, completion: completion)
     }
     
+    // 모든 정보 조회
+    public func allInfo(music: String? = nil, album: String? = nil, artist: String? = nil, completion: @escaping(Result<AllInfoResponseDTO, NetworkError>) -> Void) {
+        request(target: .allInfo(music: music, artist: artist, album: album), decodingType: AllInfoResponseDTO.self, completion: completion)
+    }
 }
