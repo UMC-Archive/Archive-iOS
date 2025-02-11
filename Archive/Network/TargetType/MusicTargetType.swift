@@ -21,6 +21,7 @@ enum MusicTargetType {
     case recommendMusic // 홈 - 당신을 위한 추천곡
     case similarArtist(artistId: String) // 비슷한 아티스트 가져오기
     case anotherAlbum(artistId: String, albumId: String) // 이 아티스트의 다른 앨범
+    case allInfo(music: String?, artist: String?, album: String?) // 노래, 앨범, 아티스트 조회
 }
 
 
@@ -58,6 +59,8 @@ extension MusicTargetType: TargetType {
             return "artist/\(artistId)/similar"
         case .anotherAlbum(artistId: let artistId, albumId: let albumId):
             return "artist/\(artistId)/album/\(albumId)"
+        case .allInfo:
+            return "all/info"
         }
     }
     
@@ -65,7 +68,7 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo:
             return .get
         }
     }
@@ -80,6 +83,8 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum:
             return .requestPlain
+        case .allInfo(music: let music, artist: let artist, album: let album):
+            return .requestParameters(parameters: ["music" : music ?? "", "album" : album ?? "", "artist": artist ?? ""], encoding: URLEncoding.queryString)
         }
     }
     
