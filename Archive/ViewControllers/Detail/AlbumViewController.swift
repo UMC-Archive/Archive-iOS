@@ -243,6 +243,22 @@ class AlbumViewController: UIViewController {
             }
         }
     }
+    
+    // 이 아티스트의 다른 앨범 조회
+    private func getAnotherAlbum(artistId: String, albumId: String) {
+        musicService.anotherAlbum(artistId: artistId, albumId: albumId) { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                print("getAnotherAlbum() 성공")
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("getAnotherAlbum() 실패")
+                print(error.description)
+            }
+        }
+    }
 }
 
 extension AlbumViewController: UICollectionViewDataSource {
