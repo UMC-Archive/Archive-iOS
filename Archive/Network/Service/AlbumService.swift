@@ -33,4 +33,9 @@ public final class AlbumService: NetworkManager {
     public func albumRecommendAlbum(completion: @escaping (Result<[AlbumRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .ExploreRecommendAlbum, decodingType: [AlbumRecommendAlbumResponseDTO].self, completion: completion)
     }
+    
+    // 트랙 리스트 (수록곡 소개)
+    public func trackList(albumId: String, completion: @escaping (Result<AlbumTrackListResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .TrackList(albumId: albumId), decodingType: AlbumTrackListResponseDTO.self, completion: completion)
+    }
 }

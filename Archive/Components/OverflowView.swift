@@ -16,6 +16,7 @@ enum OverflowType {
 class OverflowView: UIView {
     private let groupView = UIView().then { view in
         view.backgroundColor = .black_35
+        view.isOpaque = true
         view.layer.cornerRadius = 4
     }
     public let goToAlbumButton = UIButton().then { btn in
