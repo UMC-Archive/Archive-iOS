@@ -8,16 +8,16 @@
 import Foundation
 
 public struct AlbumTrackListResponseDTO: Decodable {
+    let album: AlbumTrackListResponse
     let tracks: [TrackListResponse]
-    
-    enum CodingKeys: CodingKey {
-        case tracks
-    }
-    
-    public init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.tracks = try container.decode([TrackListResponse].self, forKey: .tracks)
-    }
+}
+
+public struct AlbumTrackListResponse: Decodable {
+    let id: String
+    let title: String
+    let image: String
+    let artist: String
+    let releaseTime: Int
 }
 
 public struct TrackListResponse: Decodable {

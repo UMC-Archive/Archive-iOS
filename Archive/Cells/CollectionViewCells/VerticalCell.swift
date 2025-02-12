@@ -104,8 +104,9 @@ class VerticalCell: UICollectionViewCell {
         overflowView.snp.makeConstraints { make in
             make.width.equalTo(97)
             make.height.equalTo(52.5)
-            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
-            make.trailing.equalTo(overflowButton)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(overflowButton).offset(-7)
         }
     }
     
@@ -115,22 +116,32 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.text = "\(data.artist) ⦁ \(data.year)"
     }
     
+    // 숨겨진 명곡
     public func configHiddenMusic(music: HiddenMusicResponse, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
+    // 탐색 뷰 - 추천곡
     public func configExploreRecommendMusic(music: ExploreRecommendMusic, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
+    // 홈 - 추천곡
     public func configHomeRecommendMusic(music: RecommendMusic, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
+    // 트랙 리스트
+    public func configTrackList(music: TrackListResponse){
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(music.artist) ⦁ \(music.releaseTime)"
     }
     
     public func setOverflowView(type: OverflowType){

@@ -17,7 +17,8 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
-    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
+    private var trackListData: [TrackListResponse]? // 트랙 리스트 데이터
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]? // 추천 앨범
     private var anotherAlbum: [AnotherAlbumResponseDTO]? // 이 아티스트의 다른 앨범
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
@@ -40,9 +41,6 @@ class AlbumViewController: UIViewController {
         setDataSource()
         setSnapshot()
         setProtocol()
-        updateTrackViewHeight()
-        
-        albumView.configTrack(data: self.data.albumTrack)
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
@@ -297,7 +295,13 @@ class AlbumViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("getTrackList() 성공")
-                print(response)
+                guard let response = response else {return}
+                self.trackListData = response.tracks
+                self.albumView.trackView.trackCollectionView.reloadData()
+                
+                albumView.configTrack(data: response)
+                updateTrackViewHeight()
+                
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
@@ -308,25 +312,14 @@ class AlbumViewController: UIViewController {
 
 extension AlbumViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch collectionView {
-        case albumView.trackView.trackCollectionView:
-            return data.albumTrack.musicList.count
-        default:
-            return data.albumTrack.musicList.count
-        }
-        
+        return self.trackListData?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch collectionView {
-        case albumView.trackView.trackCollectionView:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell else {return UICollectionViewCell()
-            }
-            cell.config(data: data.albumTrack.musicList[indexPath.row])
-            return cell
-        default:
-            return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell, let trackListData = trackListData else {return UICollectionViewCell()
         }
+        cell.configTrackList(music: trackListData[indexPath.row])
+        return cell
     }
 }
 
