@@ -8,16 +8,19 @@
 import UIKit
 
 class HomeViewController: UIViewController {
-    private let musicService = MusicService() // 예시
+    private let musicService = MusicService()
     private let userService = UserService()
+    private let albumService = AlbumService()
     
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     private let musicData = MusicDummyModel.dummy()
     private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
-    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]?
-    private var pointOfViewData: [GetHistoryResponseDTO]?
+    
+    private var archiveData: [(AlbumRecommendAlbum, String)]? // 당신을 위한 아카이브
+    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]? // 당신을 위한 추천곡
+    private var pointOfViewData: [GetHistoryResponseDTO]? // 탐색했던 시점
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,19 +28,13 @@ class HomeViewController: UIViewController {
         view = homeView
         setDataSource()
         setSnapShot()
-        
-        
-        // 음악 정보 가져오기 API
-//        postMusicInfo(artist: "IU", music: "Love poem") // 예시
-
         setAction()
         setGesture()
         
-        // 당신을 위한 추천곡
-        getRecommendMusic()
         
-        // 최근 탐색 연도 불러오기
-        getHistory()
+        getArchive() // 당신을 위한 아카이브
+        getRecommendMusic() // 당신을 위한 추천곡
+        getHistory() // 최근 탐색 연도 불러오기
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -68,9 +65,9 @@ class HomeViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {[weak self] collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case .ArchiveItem(let item): // 아카이브
+            case let .ArchiveItem(album, artist): // 아카이브
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
-                (cell as? BigBannerCell)?.config(album: item)
+                (cell as? BigBannerCell)?.config(album: album, artist: artist)
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
@@ -237,8 +234,11 @@ class HomeViewController: UIViewController {
                                  recommendSection, RecentlyListendMusicSection,
                                  RecentlyAddMusicSection])
         
-        let archiveItem = musicData.map{Item.ArchiveItem($0)}
-        snapshot.appendItems(archiveItem, toSection: archiveSection)
+        // 당신을 위한 아카이브
+        if let archiveData = archiveData {
+            let archiveItem = archiveData.map{Item.ArchiveItem($0.0, $0.1)}
+            snapshot.appendItems(archiveItem, toSection: archiveSection)
+        }
         
         // 최근 탐색 시점
         if let pointOfViewData = pointOfViewData {
@@ -264,6 +264,23 @@ class HomeViewController: UIViewController {
         snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
         
         dataSource?.apply(snapshot)
+    }
+    
+    // 당신을 위한 아카이브 API
+    private func getArchive() {
+        albumService.albumRecommendAlbum { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let response = response else {return}
+                self.archiveData = response.map{($0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     
