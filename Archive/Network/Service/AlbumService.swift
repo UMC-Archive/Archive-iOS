@@ -29,7 +29,7 @@ public final class AlbumService: NetworkManager {
         requestOptional(target: .ExploreRecommendAlbum, decodingType: [ExploreRecommendAlbumResponseDTO].self, completion: completion)
     }
     
-    // 당신을 위한 앨범 추천(앨범 뷰)
+    // 당신을 위한 앨범 추천(앨범 뷰, 홈뷰)
     public func albumRecommendAlbum(completion: @escaping (Result<[AlbumRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .ExploreRecommendAlbum, decodingType: [AlbumRecommendAlbumResponseDTO].self, completion: completion)
     }

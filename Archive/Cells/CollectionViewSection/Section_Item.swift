@@ -36,7 +36,7 @@ enum Section: Hashable {
 }
 
 enum Item: Hashable {
-    case ArchiveItem(MusicDummyModel)                // 아카이브 아이템
+    case ArchiveItem(AlbumRecommendAlbum, String)                // 아카이브 아이템
     case PointItem(GetHistoryResponseDTO)            // 탐색했던 시점 아이템
     case FastSelectionItem(MusicDummyModel)          // 빠른 선곡
     case RecommendMusic(RecommendMusic, RecommendAlbum, String)       // 당신을 위한 추천곡 (홈 뷰)
