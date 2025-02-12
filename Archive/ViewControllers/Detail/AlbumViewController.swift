@@ -50,7 +50,6 @@ class AlbumViewController: UIViewController {
         // 앨범 추천 API
         getRecommendAlbum()
         
-        
         // 모든 아이디 조회
         getAllId(artist: artist, album: album)
     }
@@ -202,8 +201,9 @@ class AlbumViewController: UIViewController {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
                 guard let data = response else { return }
                 albumData = data
-                postAlbumCuration(albumId: data.id)
-//                albumView.config(data: data, artist: artist, description: "asd")
+                
+                postAlbumCuration(albumId: data.id) // 앨범 큐레이션
+                getTrackList(albumId: data.id)      // 앨범 트랙 리스트
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
@@ -286,6 +286,21 @@ class AlbumViewController: UIViewController {
                 self.present(alert, animated: true)
                 print("getAnotherAlbum() 실패")
                 print(error.description)
+            }
+        }
+    }
+    
+    // 트랙 리스트 (수록곡 소개)
+    private func getTrackList(albumId: String) {
+        albumService.trackList(albumId: albumId) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print("getTrackList() 성공")
+                print(response)
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }
