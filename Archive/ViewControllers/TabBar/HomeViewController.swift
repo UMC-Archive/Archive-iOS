@@ -70,6 +70,18 @@ class HomeViewController: UIViewController {
             case let .ArchiveItem(album, artist): // 아카이브
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
                 (cell as? BigBannerCell)?.config(album: album, artist: artist)
+                // 앨범 제스처
+                let albumGesture = CustomTapGesture(target: self, action: #selector(self?.TapAlbumImageGesture(_:)))
+                albumGesture.album = album.title
+                albumGesture.artist = artist
+                (cell as? BigBannerCell)?.CDImageView.addGestureRecognizer(albumGesture)
+                
+                // 아티스트 제스처
+                let artistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                artistGesture.album = album.title
+                artistGesture.artist = artist
+                (cell as? BigBannerCell)?.artistLabel.addGestureRecognizer(artistGesture)
+                
                 return cell
             case .PointItem(let item): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)

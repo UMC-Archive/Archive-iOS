@@ -117,7 +117,7 @@ class AlbumTrackView: UIView {
         
         infoGroupView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(17)
-            make.leading.lessThanOrEqualTo(trackImageView.snp.trailing).offset(16)
+            make.leading.equalTo(trackImageView.snp.trailing).offset(16)
             make.trailing.equalToSuperview().inset(8)
         }
         
