@@ -53,4 +53,9 @@ public final class UserService: NetworkManager {
     public func getHistroy(completion: @escaping (Result<[GetHistoryResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .getHistory, decodingType: [GetHistoryResponseDTO].self, completion: completion)
     }
+    
+    // 사용자 정보 불러오기
+    public func userInfo(completion: @escaping (Result<UserInfoResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .info, decodingType: UserInfoResponseDTO.self, completion: completion)
+    }
 }
