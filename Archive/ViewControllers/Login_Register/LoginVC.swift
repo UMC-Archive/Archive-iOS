@@ -58,9 +58,11 @@ class LoginVC: UIViewController {
             switch result {
             case .success(let response):
                 DispatchQueue.main.async {
-                    print("Login Success: \(response.message)")
                     // 다음 화면으로 전환
+                //토큰 추가해야함 keychain
+                   
                     self?.navigateToNextScreen()
+                    
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿

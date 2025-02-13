@@ -40,8 +40,8 @@ public final class UserService: NetworkManager {
     }
 
     // 로그인 API
-    public func login(parameter: LoginRequestDTO, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void) {
-        request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
+    public func login(parameter: LoginRequestDTO, completion: @escaping (Result<String?, NetworkError>) -> Void) {
+        request(target: .login(parameter: parameter), decodingType: String?.self, completion: completion)
     }
 
     // 음악 재생 기록 API
