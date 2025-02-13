@@ -37,16 +37,18 @@ class HomeViewController: UIViewController {
         getSelection() // 빠른 선곡
         getRecommendMusic() // 당신을 위한 추천곡
         getHistory() // 최근 탐색 연도 불러오기
-        getUserInfo()
-    }
-    
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("homeView has disappeared")
     }
     
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
+        setProfileImage()
+    }
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            homeView.topView.config(profileImage: profileImage)
+        }
     }
     
     private func setGesture() {
@@ -386,21 +388,6 @@ class HomeViewController: UIViewController {
                 self.fastSelectionData = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapShot()
-            case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-            }
-        }
-    }
-    
-    
-    // 사용자 정보 불러오기
-    private func getUserInfo() {
-        userService.userInfo { [weak self] result in
-            guard let self = self else {return}
-            switch result {
-            case .success(let response):
-                print("getUserInfo() 성공")
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)

@@ -10,6 +10,7 @@ import Foundation
 public enum KeychainServiceType : String {
     case userId = "userId"
     case nickname = "nickname"
+    case profileImage = "profileImage"
     case cipherCode = "cipherCode" // 이메일 인증 코드 저장용
     case year = "year"
     case month = "month"

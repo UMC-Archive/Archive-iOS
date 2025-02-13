@@ -12,6 +12,11 @@ class MyPageViewController: UIViewController {
     let rootView = MyPageView()
     let gradient = CAGradientLayer()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setProfileImage() // 프로필 설정 함수
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -132,4 +137,10 @@ extension MyPageViewController : UICollectionViewDataSource {
     }
     
     
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            rootView.topView.config(profileImage: profileImage)
+        }
+    }
 }

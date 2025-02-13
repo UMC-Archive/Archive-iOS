@@ -21,8 +21,15 @@ class ExploreViewController: UIViewController {
     private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
     
     override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-
+        self.navigationController?.navigationBar.isHidden = true
+        setProfileImage()
+    }
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            exploreView.topView.config(profileImage: profileImage)
+        }
     }
     
     override func viewDidLoad() {

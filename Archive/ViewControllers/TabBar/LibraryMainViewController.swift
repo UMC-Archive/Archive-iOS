@@ -28,13 +28,22 @@ class LibraryMainViewController: UIViewController {
     }
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        print("ㅣㅣㅣView has disappeared")
+        navigationController?.navigationBar.isHidden = false
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        navigationController?.navigationBar.isHidden = true
         getArtistInfo()
         getAlbumInfo()
         getMusicInfo()
+        setProfileImage()
+    }
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            rootView.mypageIcon.kf.setImage(with: URL(string: profileImage))
+        }
     }
     private func datasourceSetting() {
         rootView.playlistCollectionView.dataSource = self
