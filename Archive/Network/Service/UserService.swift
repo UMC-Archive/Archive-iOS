@@ -60,4 +60,7 @@ public final class UserService: NetworkManager {
     public func getRecap(completion: @escaping (Result<[RecapResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .getRecap, decodingType: [RecapResponseDTO].self, completion: completion)
     }
+    public func getGenrePreference(completion: @escaping (Result<[GenrePreferenceResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .preference, decodingType: [GenrePreferenceResponseDTO].self, completion: completion)
+    }
 }

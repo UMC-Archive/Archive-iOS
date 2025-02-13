@@ -20,6 +20,7 @@ class RecapViewController: UIViewController {
     private let rootView = RecapView()
     private let userService = UserService()
     public var recapResponseData: [RecapResponseDTO]?
+    public var genreResponseDate: [GenrePreferenceResponseDTO]?
     
     
     
@@ -48,6 +49,7 @@ class RecapViewController: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         getRecap()
+        getGenre()
     }
     
     private func controlTapped(){
@@ -112,11 +114,32 @@ class RecapViewController: UIViewController {
                 print("recapMusicInfo() 성공")
                 print(response)
                 Task{
+                    
                     let viewController = RecapCollectionViewViewController()
                     self.recapResponseData = response
                     self.rootView.collectionView.reloadData()
                     self.rootView.recapCollectionView.reloadData()
                     viewController.responseData = response
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    private func getGenre(){
+        userService.getGenrePreference(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("------------- 장르")
+                print(response)
+                Task{
+                    
+                    self.genreResponseDate = response
+                    self.rootView.genreCollectionView.reloadData()
                     
                 }
             case .failure(let error):
@@ -135,7 +158,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
         case rootView.recapCollectionView :
             return recapResponseData?.count ?? 3
         case rootView.genreCollectionView :
-            return 5
+            return genreResponseDate?.count ?? 5
         case rootView.collectionView :
             return recapResponseData?.count ?? 0
         default :
@@ -162,9 +185,13 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             guard let cell = rootView.genreCollectionView.dequeueReusableCell(withReuseIdentifier: "genreRecommendedCollectionViewIdentifier", for: indexPath)as? GenreRecommendedCollectionViewCell else {
                 fatalError("Failed to dequeue genreRecommendedCollectionViewCell")
             }
-            let dummy = GenreRecommendedModel.dummy()
             
-            cell.config(image: dummy[indexPath.row].AlbumImage)
+            guard let data = genreResponseDate else {
+                let dummy = GenreRecommendedModel.dummy()
+                cell.configExample(image: dummy[indexPath.row].AlbumImage)
+                return cell
+            }
+            cell.config(data: data[indexPath.row])
             return cell
         case rootView.collectionView:
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {

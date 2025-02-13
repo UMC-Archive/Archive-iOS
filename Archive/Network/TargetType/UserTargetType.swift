@@ -17,7 +17,7 @@ public enum UserTargetType {
     case getHistory // 최근 탐색 연도 불러오기 API
     case postHistory(date: PostHistoryRequestDTO)
     case getRecap
-//    case preference
+    case preference
    }
 
 extension UserTargetType: TargetType {
@@ -46,6 +46,8 @@ extension UserTargetType: TargetType {
             return "history"
         case .getRecap:
             return "recap"
+        case .preference:
+            return "genre/preference"
         }
     }
     
@@ -58,6 +60,8 @@ extension UserTargetType: TargetType {
         case .postHistory:
             return .post
         case .getRecap:
+            return .get
+        case .preference:
             return .get
         }
     }
@@ -111,6 +115,8 @@ extension UserTargetType: TargetType {
         case .postHistory(date: let parameter):
             return .requestJSONEncodable(parameter)
         case .getRecap:
+            return .requestPlain
+        case .preference:
             return .requestPlain
         }
     }
