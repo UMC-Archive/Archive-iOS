@@ -76,8 +76,8 @@ public final class MusicService: NetworkManager {
     }
     
     // 비슷한 아티스트 조회
-    public func similarArtist(aristId: String, completion: @escaping(Result<SilmilarArtistResponseDTO?, NetworkError>) -> Void) {
-        requestOptional(target: .similarArtist(artistId: aristId), decodingType: SilmilarArtistResponseDTO.self, completion: completion)
+    public func similarArtist(aristId: String, completion: @escaping(Result<[SimilarArtistResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .similarArtist(artistId: aristId), decodingType: [SimilarArtistResponseDTO].self, completion: completion)
     }
     
     // 이 아티스트의 다른 앨범 조회

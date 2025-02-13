@@ -16,7 +16,7 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var data: ArtistInfoReponseDTO?
-    private var similarArtist: [SimilarArtistResponse]?
+    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]?
     
     init(artist: String, album: String) {
         self.artist = artist
@@ -46,11 +46,10 @@ class ArtistViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isHidden = true
     }
-    
-    
     
     private func setNavigationBar(){
         self.navigationController?.navigationBar.isHidden = false
@@ -94,9 +93,16 @@ class ArtistViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MusicVideoCell.id, for: indexPath)
                 (cell as? MusicVideoCell)?.config(data: item)
                 return cell
-            case .SimilarArtist(let item):  // 비슷한 아티스트
+            case let .SimilarArtist(artist, album):  // 비슷한 아티스트
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CircleCell.id, for: indexPath)
-                (cell as? CircleCell)?.config(data: item)
+                
+                // 탭 제스처
+                let tapGesture = CustomTapGesture(target: self, action: #selector(self.tapSimilarArtist(_:)))
+                tapGesture.artist = artist.name
+                tapGesture.album = album.title
+                cell.addGestureRecognizer(tapGesture)
+                
+                (cell as? CircleCell)?.config(artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -132,6 +138,13 @@ class ArtistViewController: UIViewController {
         }
     }
     
+    // 비슷한 아티스트 탭 제스처
+    @objc private func tapSimilarArtist(_ sender: CustomTapGesture) {
+        guard let artist = sender.artist, let album = sender.album else {return}
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
     // 자세히 보기 버튼
     private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
@@ -157,7 +170,7 @@ class ArtistViewController: UIViewController {
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
         if let similarArtist = similarArtist {
-            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0)}
+            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
             snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
         }
         
@@ -231,7 +244,8 @@ class ArtistViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                self.similarArtist = response?.artists
+                guard let response = response else { return }
+                self.similarArtist = response.map{($0.artist, $0.album)}
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):

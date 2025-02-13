@@ -69,9 +69,8 @@ class CircleCell: UICollectionViewCell {
         
     }
     
-    public func config(data: SimilarArtistResponse){
-        imageView.kf.setImage(with: URL(string: data.image))
-        artistLabel.text = data.name
-
+    public func config(artist: ArtistInfoReponseDTO){
+        imageView.kf.setImage(with: URL(string: artist.image))
+        artistLabel.text = artist.name
     }
 }
