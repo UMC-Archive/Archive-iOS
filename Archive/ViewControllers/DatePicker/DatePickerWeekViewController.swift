@@ -10,6 +10,7 @@ import UIKit
 
 class DatePickerWeekViewController : UIViewController {
     let rootView = DatePickerWeekView()
+    private let service = UserService()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,8 +32,9 @@ class DatePickerWeekViewController : UIViewController {
     }
     
     @objc func nextButtonTapped() {
-        KeychainService.shared.save(account: .userInfo, service: .year, value: rootView.year.text ?? "2001")
-        KeychainService.shared.save(account: .userInfo, service: .month, value: rootView.month.text ?? "11")
+        //        KeychainService.shared.save(account: .userInfo, service: .year, value: rootView.year.text ?? "2001")
+        //        KeychainService.shared.save(account: .userInfo, service: .month, value: rootView.month.text ?? "11")
+        
         
         let collectionView = rootView.collectionView
         
@@ -52,27 +54,72 @@ class DatePickerWeekViewController : UIViewController {
                 
                 // 로그 출력
                 print("마지막 선택된 데이터: \(data)")
-                KeychainService.shared.save(account: .userInfo, service: .week, value: data ?? "1st")
-            }
-            async {
-                // 탭 전환
-                tabBarController?.selectedViewController = tabBarController?.viewControllers?[1]
+                //                KeychainService.shared.save(account: .userInfo, service: .week, value: data ?? "1st")
                 
-                // 약간의 지연 후 내비게이션 스택 초기화
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.navigationController?.popToRootViewController(animated: true)
+                let year = rootView.year.text ?? "0000"
+                let month = rootView.month.text ?? "00"
+                var week = 1
+                switch data {
+                case "1st":
+                    week = 1
+                case "2st":
+                    week = 2
+                case "3st":
+                    week = 3
+                case "4st":
+                    week = 4
+                default :
+                    print("유효하지 않은 데이터: \(data)")
                 }
+                let day = 1 + 7*(week - 1)
+                
+                let dateString = "\(year)-\(month)-\(day)"
+                print("------------------")
+                let requestDTO = PostHistoryRequestDTO(history: dateString)
+                postHistory(date: requestDTO)
+                
+                
+                async {
+                    // 탭 전환
+                    tabBarController?.selectedViewController = tabBarController?.viewControllers?[1]
+                    
+                    // 약간의 지연 후 내비게이션 스택 초기화
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                }
+                
+                
             }
-
-            
         }
-         
     }
     @objc func backButtonTapped() {
         self.navigationController?.popViewController(animated: true)
     }
     @objc func XButtonTapped(){
         navigationController?.popToRootViewController(animated: true)
+    }
+    private func postHistory(date: PostHistoryRequestDTO){
+        service.postHistory(parameter: date){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("history post 성공")
+                print("-------------------------")
+                print(response.history)
+                Task{
+//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
+//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
+//                    self.goToNextView()
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                print("-------------------------")
+                self.present(alert, animated: true)
+            }
+        }
     }
 }
 

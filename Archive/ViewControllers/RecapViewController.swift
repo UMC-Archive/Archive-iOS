@@ -18,6 +18,8 @@ class RecapViewController: UIViewController {
     let gradient = CAGradientLayer()
     
     private let rootView = RecapView()
+    private let userService = UserService()
+    public var recapResponseData: [RecapResponseDTO]?
     
     
     
@@ -43,6 +45,10 @@ class RecapViewController: UIViewController {
         self.view.layoutIfNeeded()
         
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        getRecap()
+    }
     
     private func controlTapped(){
         rootView.navigationView.popButton.addTarget(self, action: #selector(recapButtonTapped), for: .touchUpInside)
@@ -51,6 +57,8 @@ class RecapViewController: UIViewController {
         rootView.headerButton.isUserInteractionEnabled = true // 제스처 인식 활성화
         rootView.headerButton.addGestureRecognizer(tapGesture)
         
+
+        
     }
     @objc func recapButtonTapped(){
         
@@ -58,7 +66,9 @@ class RecapViewController: UIViewController {
     }
     
     @objc private func headerButtonTapped() {
+        
         let viewController = RecapCollectionViewViewController()
+        viewController.responseData = self.recapResponseData
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
@@ -93,17 +103,41 @@ class RecapViewController: UIViewController {
         rootView.CDView.layer.addSublayer(gradient)
     }
     
+    private func getRecap(){
+        userService.getRecap(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("recapMusicInfo() 성공")
+                print(response)
+                Task{
+                    let viewController = RecapCollectionViewViewController()
+                    self.recapResponseData = response
+                    self.rootView.collectionView.reloadData()
+                    self.rootView.recapCollectionView.reloadData()
+                    viewController.responseData = response
+                    
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
 }
 
 extension RecapViewController : UICollectionViewDataSource, UICollectionViewDelegate {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case rootView.recapCollectionView :
-            return 3
+            return recapResponseData?.count ?? 3
         case rootView.genreCollectionView :
             return 5
         case rootView.collectionView :
-            return MusicDummyModel.dummy().count
+            return recapResponseData?.count ?? 0
         default :
             fatalError("Unknown collection view")
         }
@@ -115,16 +149,14 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             guard let cell = rootView.recapCollectionView.dequeueReusableCell(withReuseIdentifier: "recapCollectionViewIdentifier", for: indexPath) as? RecapCollectionViewCell else {
                 fatalError("Failed to dequeue RecapCollectionViewCell")
             }
-//            let dummy = RecapModel.dummy()
-            cell.config(data: dummyData[indexPath.row])
-//            if indexPath.row == 0{
-////                cell.config(image: dummy[1].CDImage)
-//                cell.config(data: dummyData[indexPath.row])
-//            }else if indexPath.row == 1{
-////                cell.config(image: dummy[0].CDImage)
-//            }else{
-////                cell.config(image: dummy[indexPath.row].CDImage)
-//            }
+            guard let data = recapResponseData else {
+                let dummy = MusicDummyModel.dummy()
+                cell.config(data: dummy[indexPath.row])
+                return cell
+            }
+            
+            cell.recapConfig(data: data[indexPath.row])
+            
             return cell
         case rootView.genreCollectionView:
             guard let cell = rootView.genreCollectionView.dequeueReusableCell(withReuseIdentifier: "genreRecommendedCollectionViewIdentifier", for: indexPath)as? GenreRecommendedCollectionViewCell else {
@@ -138,8 +170,10 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {
                 fatalError("Failed to dequeue CollectionViewCell")
             }
-            let dummy = MusicDummyModel.dummy()
-            cell.config(albumURL: dummy[indexPath.row].albumURL, musicTitle: dummy[indexPath.row].musicTitle, artist: dummy[indexPath.row].artist, year: String(dummy[indexPath.row].year))
+            //            let dummy = MusicDummyModel.dummy()
+            //            cell.config(albumURL: dummy[indexPath.row].albumURL, musicTitle: dummy[indexPath.row].musicTitle, artist: dummy[indexPath.row].artist, year: String(dummy[indexPath.row].year))
+               
+            cell.config(albumURL: recapResponseData?[indexPath.row].image ?? "CDSample", musicTitle: recapResponseData?[indexPath.row].title ?? "", artist: recapResponseData?[indexPath.row].artists ?? "", year:recapResponseData?[indexPath.row].releaseYear ?? 0)
             return cell
         default:
             fatalError("Unknown collection view")

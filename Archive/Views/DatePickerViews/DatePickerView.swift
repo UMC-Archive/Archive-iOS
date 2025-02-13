@@ -9,7 +9,7 @@ import UIKit
 
 class DatePickerView : UIView {
     private enum constant {//작은 디바이스 대응용 constraint
-        static let pickerTop = UIScreen.main.isWiderThan375pt ? -55 : -88
+        static let pickerTop = UIScreen.main.isWiderThan375pt ? -70 : -103
     }
 
     override init(frame: CGRect) {

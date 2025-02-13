@@ -53,4 +53,11 @@ public final class UserService: NetworkManager {
     public func getHistroy(completion: @escaping (Result<[GetHistoryResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .getHistory, decodingType: [GetHistoryResponseDTO].self, completion: completion)
     }
+    // 로그인 API
+    public func postHistory(parameter: PostHistoryRequestDTO, completion: @escaping (Result<PostHistoryResponseDTO, NetworkError>) -> Void) {
+        request(target: .postHistory(date: parameter), decodingType: PostHistoryResponseDTO.self, completion: completion)
+    }
+    public func getRecap(completion: @escaping (Result<[RecapResponseDTO]?, NetworkError>) -> Void){
+        requestOptional(target: .getRecap, decodingType: [RecapResponseDTO].self, completion: completion)
+    }
 }

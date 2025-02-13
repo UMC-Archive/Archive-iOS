@@ -13,6 +13,7 @@ enum LibraryTargetType {
     case libraryMusicInfo
     case libraryArtistInfo
     case libraryAlbumInfo
+    case musicPost(musicId: String)
 }
 
 
@@ -32,6 +33,8 @@ extension LibraryTargetType: TargetType {
             return "/artist"
         case .libraryAlbumInfo:
             return "/album"
+        case .musicPost(let musicId):
+            return "/music/\(musicId)"
         }
     }
     
@@ -43,6 +46,8 @@ extension LibraryTargetType: TargetType {
             return .get
         case .libraryAlbumInfo:
             return .get
+        case .musicPost:
+            return .post
         }
     }
     
@@ -53,6 +58,8 @@ extension LibraryTargetType: TargetType {
         case .libraryArtistInfo:
             return .requestPlain
         case .libraryAlbumInfo:
+            return .requestPlain
+        case .musicPost(musicId: let parameter):
             return .requestPlain
         }
     }
