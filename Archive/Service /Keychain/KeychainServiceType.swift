@@ -16,4 +16,5 @@ public enum KeychainServiceType : String {
     case month = "month"
     case week = "week"
     case serverAccessToken = "serverAccessToken"
+    case timeHistory = "timeHistory"
 }

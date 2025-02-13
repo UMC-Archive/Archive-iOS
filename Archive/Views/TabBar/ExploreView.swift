@@ -210,4 +210,9 @@ class ExploreView: UIView {
         header.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         return header
     }
+    
+    // 년도 설정
+    public func config(time: String) {
+        self.timeLabel.text = time
+    }
 }
