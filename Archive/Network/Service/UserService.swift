@@ -53,6 +53,11 @@ public final class UserService: NetworkManager {
     public func getHistroy(completion: @escaping (Result<[GetHistoryResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .getHistory, decodingType: [GetHistoryResponseDTO].self, completion: completion)
     }
+    
+    // 사용자 정보 불러오기
+    public func userInfo(completion: @escaping (Result<UserInfoResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .info, decodingType: UserInfoResponseDTO.self, completion: completion)
+    }
     // 로그인 API
     public func postHistory(parameter: PostHistoryRequestDTO, completion: @escaping (Result<PostHistoryResponseDTO, NetworkError>) -> Void) {
         request(target: .postHistory(date: parameter), decodingType: PostHistoryResponseDTO.self, completion: completion)

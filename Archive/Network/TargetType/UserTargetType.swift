@@ -15,6 +15,7 @@ public enum UserTargetType {
     case login(parameter: LoginRequestDTO)
     case userPlayingRecord(parameter: UserPlayingRecordRequestDTO) // 재생 기록
     case getHistory // 최근 탐색 연도 불러오기 API
+    case info // 사용자 정보 불러오기
     case postHistory(date: PostHistoryRequestDTO)
     case getRecap
     case preference
@@ -42,6 +43,8 @@ extension UserTargetType: TargetType {
             return "play"
         case .getHistory:
             return "history"
+        case .info:
+            return "info"
         case .postHistory:
             return "history"
         case .getRecap:
@@ -53,7 +56,7 @@ extension UserTargetType: TargetType {
     
     public var method: Moya.Method {
         switch self {
-        case .sendVerificationCode, .getHistory:
+        case .sendVerificationCode, .getHistory, .info:
             return .get
         case .checkVerificationCode, .signUp, .login, .userPlayingRecord:
             return .post
@@ -110,7 +113,7 @@ extension UserTargetType: TargetType {
         
         case .userPlayingRecord(parameter: let parameter):
             return .requestJSONEncodable(parameter)
-        case .getHistory:
+        case .getHistory, .info:
             return .requestPlain
         case .postHistory(date: let parameter):
             return .requestJSONEncodable(parameter)
