@@ -2,7 +2,11 @@ import UIKit
 
 class NextTrackVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
     private let nextTrackView = NextTrackView()
-
+    
+    // API 연결 tracks 
+    private let albumService = AlbumService()
+    
+    
     private let tracks: [(title: String, artist: String, year: String)] = [
         ("How Sweet", "NewJeans", "2024"),
         ("Attention", "NewJeans", "2022"),

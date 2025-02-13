@@ -274,7 +274,7 @@ class HomeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("postMusicInfo() 성공")
-                print(response?.musicUrl)
+                print(response?.music)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")

@@ -3,6 +3,8 @@ import UIKit
 class LyricsVC: UIViewController, UICollectionViewDelegate, UICollectionViewDataSource {
 
     private let lyricsView = LyricsView() // LyricsView 추가
+    private let musiceservice = MusicService()
+    
     private let lyrics: [String] = [
         "Stormy night", "Stormy night", "Stormy night", "Stormy night", "Stormy night",
         "Cloudy sky", "In a moment you and I", "One more chance", "너와 나 다시 한 번 만나게",
