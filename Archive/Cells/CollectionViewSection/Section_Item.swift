@@ -50,5 +50,5 @@ enum Item: Hashable {
     case ArtistPopularMusic(MusicDummyModel)        // 아티스트 인기곡
     case SameArtistAnotherAlbum(AlbumDummyModel)     // 앨범 둘러보기
     case MusicVideo(MusicVideoModel)                // 아티스트 뮤직비디오
-    case SimilarArtist(SimilarArtistResponse)          // 다른 비슷한 아티스트
+    case SimilarArtist(ArtistInfoReponseDTO, AlbumInfoReponseDTO)          // 다른 비슷한 아티스트
 }
