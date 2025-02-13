@@ -16,6 +16,9 @@ enum LibraryTargetType {
     case musicPost(musicId: String)
     case albumPost(albumId: String)
     case artistPost(artistId: String)
+    case musicDelete(musicId: String)
+    case albumDelete(albumId: String)
+    case artistDelete(artistId: String)
 }
 
 
@@ -41,6 +44,12 @@ extension LibraryTargetType: TargetType {
             return "/album/\(albumId)"
         case .artistPost(artistId: let artistId):
             return "/artist/\(artistId)"
+        case .musicDelete(musicId: let musicId):
+            return "/music/\(musicId)"
+        case .albumDelete(albumId: let albumId):
+            return "/album/\(albumId)"
+        case .artistDelete(artistId: let artistId):
+            return "/artist/\(artistId)"
         }
     }
     
@@ -58,6 +67,12 @@ extension LibraryTargetType: TargetType {
             return .post
         case .artistPost:
             return .post
+        case .musicDelete:
+            return .delete
+        case .albumDelete:
+            return .delete
+        case .artistDelete:
+            return .delete
         }
     }
     
@@ -74,6 +89,12 @@ extension LibraryTargetType: TargetType {
         case .albumPost:
             return .requestPlain
         case .artistPost:
+            return .requestPlain
+        case .musicDelete:
+            return .requestPlain
+        case .albumDelete:
+            return .requestPlain
+        case .artistDelete:
             return .requestPlain
         }
     }

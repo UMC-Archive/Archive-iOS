@@ -258,7 +258,31 @@ class HomeViewController: UIViewController {
             }
         }
     }
-    
+//    @objc private func deleteMusic(_ sender: CustomTapGesture) {
+//        guard let musicId = sender.musicId else {
+//            print("nil")
+//            return }
+//        print("-------musicId\(musicId)")
+//        
+//        libraryService.musicDelete(musicId: musicId){ [weak self] result in
+//            guard let self = self else { return }
+//            
+//            switch result {
+//            case .success(let response):
+//                print("deleteMusicInfo() 성공")
+//                print(response)
+//                Task{
+//                    print("-----------------musicPost 성공")
+//                }
+//            case .failure(let error):
+//                // 네트워크 연결 실패 얼럿
+//                print("-----------fail")
+//                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+//                self.present(alert, animated: true)
+//            }
+//        }
+//    }
+//    
     // 앨범 버튼
     @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }

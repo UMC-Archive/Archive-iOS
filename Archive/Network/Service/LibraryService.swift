@@ -11,6 +11,8 @@ import Moya
 public final class LibraryService: NetworkManager {
     typealias Endpoint = LibraryTargetType
     
+    struct EmptyResponse: Decodable {}
+    
     let provider: Moya.MoyaProvider<LibraryTargetType>
     
     init(provider: MoyaProvider<LibraryTargetType>? = nil) {
@@ -44,5 +46,37 @@ public final class LibraryService: NetworkManager {
     public func artistPost(artistId: String, completion: @escaping(Result<LibraryArtistPostResponseDTO?, NetworkError>) -> Void){
         requestOptional(target: .artistPost(artistId: artistId), decodingType: LibraryArtistPostResponseDTO.self, completion: completion)
     }
-
+    public func musicDelete(musicId: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        requestOptional(target: .musicDelete(musicId: musicId), decodingType: EmptyResponse.self) {
+            result in
+            switch result {
+            case .success:
+                completion(.success(())) // Void 반환
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    public func albumDelete(albumId: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        requestOptional(target: .albumDelete(albumId: albumId), decodingType: EmptyResponse.self) {
+            result in
+            switch result {
+            case .success:
+                completion(.success(())) // Void 반환
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
+    public func artistDelete(artistId: String, completion: @escaping (Result<Void, NetworkError>) -> Void) {
+        requestOptional(target: .artistDelete(artistId: artistId), decodingType: EmptyResponse.self) {
+            result in
+            switch result {
+            case .success:
+                completion(.success(())) // Void 반환
+            case .failure(let error):
+                completion(.failure(error))
+            }
+        }
+    }
 }
