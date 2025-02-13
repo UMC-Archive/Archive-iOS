@@ -24,7 +24,7 @@ class BigBannerCell: UICollectionViewCell {
     }
     
     // CD View
-    private lazy var CDImageView = CDView(imageWidthHeight: imageWidth, holeWidthHeight: holeWidthHeight)
+    public lazy var CDImageView = CDView(imageWidthHeight: imageWidth, holeWidthHeight: holeWidthHeight)
     
     private let infoGroupView = UIView()
     
