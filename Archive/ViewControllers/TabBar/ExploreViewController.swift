@@ -22,7 +22,7 @@ class ExploreViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        setTime() // 년도 설정
     }
     
     override func viewDidLoad() {
@@ -30,7 +30,7 @@ class ExploreViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         
         view = exploreView
-        
+
         setDataSource()
         setDelegate()
         setRecapIndex()
@@ -54,6 +54,13 @@ class ExploreViewController: UIViewController {
         }
         
         exploreView.layoutIfNeeded()
+    }
+    
+    // 선택 년도 가져오기
+    private func setTime() {
+        if let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) {
+            exploreView.config(time: time)
+        }
     }
     
     // 컬렉션 뷰 높이 구하는 함수
