@@ -33,8 +33,10 @@ class LibraryMainView : UIView {
         $0.textColor = .white
     }
       
-    private let mypageIcon = UIImageView().then{
+    public let mypageIcon = UIImageView().then{
         $0.image = UIImage(named: "myPageIcon")
+        $0.layer.cornerRadius = 25 / 2
+        $0.clipsToBounds = true
     }
     public let exploreIcon = UIImageView().then{
         $0.image = UIImage(named: "exploreIcon")
@@ -147,7 +149,8 @@ class LibraryMainView : UIView {
         }
         
         libraryLabel.snp.makeConstraints{
-            $0.top.equalTo(safeAreaLayoutGuide).offset(46 * UIScreen.main.screenHeight / 667)
+//            $0.top.equalTo(safeAreaLayoutGuide).offset(46 * UIScreen.main.screenHeight / 667)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(librarySegmentControl)
             $0.size.equalTo(constant.libraryLabelSize)
         }

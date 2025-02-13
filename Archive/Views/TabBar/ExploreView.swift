@@ -8,8 +8,7 @@
 import UIKit
 
 class ExploreView: UIView {
-    private let topView = TopView(type: .explore)
-    
+    public let topView = TopView(type: .explore)
     
     // 탐색 시기 그룹
     private let timeGroupView = UIView()

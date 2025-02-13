@@ -22,7 +22,18 @@ class ExploreViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+
+        self.navigationController?.navigationBar.isHidden = true
+        setProfileImage() // 프로필 설정
         setTime() // 년도 설정
+    }
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            exploreView.topView.config(profileImage: profileImage)
+        }
+
     }
     
     override func viewDidLoad() {
