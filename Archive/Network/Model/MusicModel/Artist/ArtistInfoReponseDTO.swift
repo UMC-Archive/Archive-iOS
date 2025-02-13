@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct ArtistInfoReponseDTO: Decodable {
+public struct ArtistInfoReponseDTO: Decodable, Hashable {
     let id: String
     let name: String
     let image: String

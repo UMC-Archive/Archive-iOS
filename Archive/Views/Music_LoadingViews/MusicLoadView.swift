@@ -1,6 +1,8 @@
+
 import UIKit
 import SnapKit
 import Then
+import Kingfisher
 
 class MusicLoadView: UIView {
 
@@ -66,13 +68,13 @@ class MusicLoadView: UIView {
 
     // 재생 시간 레이블
     lazy var currentTimeLabel = UILabel().then { make in
-        make.text = "0:23"
+        make.text = "0:00"
         make.textColor = .gray
         make.font = UIFont.systemFont(ofSize: 12)
     }
 
     lazy var totalTimeLabel = UILabel().then { make in
-        make.text = "4:32"
+        make.text = "0:30"
         make.textColor = .gray
         make.font = UIFont.systemFont(ofSize: 12)
     }
@@ -223,5 +225,17 @@ class MusicLoadView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    // UI 업데이트 함수
+      func updateUI(imageUrl: String, title: String, artist: String, musicUrl: String) {
+          albumImageView.kf.setImage(with: URL(string: imageUrl), placeholder: UIImage(named: "placeholder"))
+          titleLabel.text = title
+          artistLabel.text = artist
+      }
+
+      // 재생 버튼 UI 업데이트
+      func updatePlayButton(isPlaying: Bool) {
+          let buttonImage = isPlaying ? UIImage(systemName: "pause.fill") : UIImage(systemName: "play.fill")
+          playPauseButton.setImage(buttonImage, for: .normal)
+      }
 }
 

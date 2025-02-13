@@ -36,19 +36,19 @@ enum Section: Hashable {
 }
 
 enum Item: Hashable {
-    case ArchiveItem(MusicDummyModel)                // 아카이브 아이템
+    case ArchiveItem(AlbumRecommendAlbum, String)                // 아카이브 아이템
     case PointItem(GetHistoryResponseDTO)            // 탐색했던 시점 아이템
-    case FastSelectionItem(MusicDummyModel)          // 빠른 선곡
+    case FastSelectionItem(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)          // 빠른 선곡
     case RecommendMusic(RecommendMusic, RecommendAlbum, String)       // 당신을 위한 추천곡 (홈 뷰)
     case RecommendAlbum(AlbumRecommendAlbum, String)       // 당신을 위한 앨범 추천(앨범 뷰)
     case ExploreRecommendMusic(ExploreRecommendMusic, ExploreRecommendAlbum, String)       // 당신을 위한 추천곡 (탐색 뷰)
     case ExploreRecommendAlbum(ExploreRecommendAlbum, String)    // 당신을 위한 앨범 추천(탐색 뷰)
     case RecentlyListendMusicItem(MusicDummyModel)   // 최근 들은 노래
     case RecentlyAddMusicItem(MusicDummyModel)       // 최근에 추가한 노래
-    case AnotherAlbum(AlbumDummyModel)               // 이 아티스트의 다른 앨범
+    case AnotherAlbum(AnotherAlbumResponseDTO)               // 이 아티스트의 다른 앨범
     case HiddenMusic(HiddenMusicResponse, ExploreRecommendAlbum, String)         // 숨겨진 명곡
     case ArtistPopularMusic(MusicDummyModel)        // 아티스트 인기곡
     case SameArtistAnotherAlbum(AlbumDummyModel)     // 앨범 둘러보기
     case MusicVideo(MusicVideoModel)                // 아티스트 뮤직비디오
-    case SimilarArtist(SimilarArtistModel)          // 다른 비슷한 아티스트
+    case SimilarArtist(ArtistInfoReponseDTO, AlbumInfoReponseDTO)          // 다른 비슷한 아티스트
 }

@@ -160,7 +160,7 @@ class AlbumView: UIView {
         contentLabel.text = description
     }
     
-    public func configTrack(data: AlbumTrack){
+    public func configTrack(data: AlbumTrackListResponseDTO){
         trackView.config(data: data)
     }
 }

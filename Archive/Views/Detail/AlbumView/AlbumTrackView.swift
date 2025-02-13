@@ -23,7 +23,6 @@ class AlbumTrackView: UIView {
     // 수록곡 타이틀
     private let trackTitleLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 21, rawValue: 700)
-        lbl.numberOfLines = 1
         lbl.textColor = .white
     }
     
@@ -38,14 +37,12 @@ class AlbumTrackView: UIView {
     private let trackArtist = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         lbl.textColor = .white
-        lbl.numberOfLines = 1
     }
     
     // 년도, 곡 수, 분
     private let trackDetailLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         lbl.textColor = .white_70
-        lbl.numberOfLines = 1
     }
 
     // 수록곡 컬렉션뷰
@@ -120,7 +117,7 @@ class AlbumTrackView: UIView {
         
         infoGroupView.snp.makeConstraints { make in
             make.verticalEdges.equalToSuperview().inset(17)
-            make.leading.lessThanOrEqualTo(trackImageView.snp.trailing).offset(16)
+            make.leading.equalTo(trackImageView.snp.trailing).offset(16)
             make.trailing.equalToSuperview().inset(8)
         }
         
@@ -160,8 +157,8 @@ class AlbumTrackView: UIView {
         }
     }
     
-    public func config(data: AlbumTrack){
-        trackImageView.kf.setImage(with: URL(string: data.albumImageURL)) { [weak self] result in
+    public func config(data: AlbumTrackListResponseDTO){
+        trackImageView.kf.setImage(with: URL(string: data.album.image)) { [weak self] result in
             switch result {
             case .success:
                 // 이미지 설정 완료 후 평균 색상을 계산
@@ -172,12 +169,12 @@ class AlbumTrackView: UIView {
                 self?.backgroundColor = .black
             }
         }
-        trackTitleLabel.text = data.title
-        artistImageView.kf.setImage(with: URL(string: data.artistImageURL))
-        trackArtist.text = data.artist
-        trackDetailLabel.text = "\(data.year) • \(data.count)곡 • \(data.totalMinute)분"
+        trackTitleLabel.text = data.album.title
+        artistImageView.kf.setImage(with: URL(string: data.album.image))
+        trackArtist.text = data.album.artist
+        trackDetailLabel.text = "\(data.album.artist) • \(data.tracks.count)곡 • 13분"
         
-        pageControl.numberOfPages = data.musicList.count / 4 + 1
+        pageControl.numberOfPages = data.tracks.count / 4 + 1
     }
     
     private func setBackgroundColorBasedOnImageColor() {
@@ -187,19 +184,6 @@ class AlbumTrackView: UIView {
         
         // 페이지 컨트롤
         pageControl.currentPageIndicatorTintColor = .white_70
-        pageControl.pageIndicatorTintColor = avgColor.withAlphaComponent(0.7)
-        
-        print("\(String(describing: avgColor.cgColor))")
-        
-        
-//        let gradientLayer = CAGradientLayer().then { layer in
-//            layer.frame = CGRect(x: 0, y: 0, width: self.bounds.width, height: self.bounds.height)
-//            layer.colors = [
-//                avgColor.withAlphaComponent(0.5).cgColor,
-//                avgColor.cgColor,
-//            ]
-//        }
-//        
-//        self.layer.addSublayer(gradientLayer)
+        pageControl.pageIndicatorTintColor = .white_35
     }
 }

@@ -99,4 +99,18 @@ class BannerCell: UICollectionViewCell {
         titleLabel.text = album.title
         artistLabel.text = artist
     }
+    
+    // 이 아티스트의 다른 앨범
+    public func configAnotherAlbum(album: AnotherAlbumResponseDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: album.image))
+        titleLabel.text = album.title
+        artistLabel.text = artist
+    }
+    
+    // 홈 뷰 - 빠른 선곡
+    public func configFastSelection(music: MusicInfoResponseDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistLabel.text = artist
+    }
 }
