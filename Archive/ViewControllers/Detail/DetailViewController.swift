@@ -53,9 +53,9 @@ class DetailViewController: UIViewController {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: detailView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             
             switch itemIdentifier {
-            case .FastSelectionItem(let data): // 빠른 탐색
+            case let .FastSelectionItem(music, album, artist): // 빠른 탐색
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configMusic(data: data)
+                (cell as? BannerCell)?.configFastSelection(music: music, artist: artist)
                 return cell
             case .RecentlyListendMusicItem(let data): // 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
