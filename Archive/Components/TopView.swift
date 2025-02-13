@@ -27,9 +27,11 @@ class TopView: UIView {
         lbl.textColor = .white
     }
     
-    // 마이페이지 버튼
-    public let myPageIconButton = UIButton().then { btn in
-        btn.setImage(.myPageIcon, for: .normal)
+    // 프로필 이미지 버튼
+    public let profileImageView = UIImageView().then { view in
+        view.image = .myPageIcon
+        view.layer.cornerRadius = 25 / 2
+        view.clipsToBounds = true
     }
     
     // 탐색 버튼
@@ -63,7 +65,7 @@ class TopView: UIView {
             titleLabel,
             exploreIconButton,
             searchIconButton,
-            myPageIconButton,
+            profileImageView,
         ].forEach{self.addSubview($0)}
     }
     
@@ -75,7 +77,7 @@ class TopView: UIView {
         }
         
         // 마이페이지
-        myPageIconButton.snp.makeConstraints { make in
+        profileImageView.snp.makeConstraints { make in
             make.trailing.equalToSuperview()
             make.centerY.equalToSuperview()
             make.width.height.equalTo(25)
@@ -83,7 +85,7 @@ class TopView: UIView {
         
         // 검색
         searchIconButton.snp.makeConstraints { make in
-            make.trailing.equalTo(myPageIconButton.snp.leading).offset(-20)
+            make.trailing.equalTo(profileImageView.snp.leading).offset(-20)
             make.centerY.equalToSuperview()
             make.width.height.equalTo(21.24)
         }
@@ -100,22 +102,27 @@ class TopView: UIView {
     private func setIcon() {
         switch type {
         case .home:
-            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.profileImageView.isHidden = false  // 프로필 아이콘
             self.exploreIconButton.isHidden = false // 탐색 아이콘
             self.searchIconButton.isHidden = false  // 검색 아이콘
         case .library:
-            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.profileImageView.isHidden = false  // 프로필 아이콘
             self.exploreIconButton.isHidden = false // 탐색 아이콘
             self.searchIconButton.isHidden = false  // 검색 아이콘
         case .explore:
-            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.profileImageView.isHidden = false  // 프로필 아이콘
             self.exploreIconButton.isHidden = true // 탐색 아이콘
             self.searchIconButton.isHidden = false  // 검색 아이콘
         case .myPage:
-            self.myPageIconButton.isHidden = false  // 프로필 아이콘
+            self.profileImageView.isHidden = false  // 프로필 아이콘
             self.exploreIconButton.isHidden = false // 탐색 아이콘
             self.searchIconButton.isHidden = false  // 검색 아이콘
         }
+    }
+    
+    // 프로필 이미지 설정
+    public func config(profileImage: String) {
+        profileImageView.kf.setImage(with: URL(string: profileImage))
     }
 }
 

@@ -42,13 +42,16 @@ class HomeViewController: UIViewController {
         getHistory() // 최근 탐색 연도 불러오기
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print("homeView has disappeared")
-    }
-    
     override func viewWillAppear(_ animated: Bool) {
         self.navigationController?.navigationBar.isHidden = true
+        setProfileImage()
+    }
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            homeView.topView.config(profileImage: profileImage)
+        }
     }
     
     private func setGesture() {
