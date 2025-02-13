@@ -33,6 +33,7 @@ class HomeViewController: UIViewController {
         
         
         getArchive() // 당신을 위한 아카이브
+        getSelection() // 빠른 선곡
         getRecommendMusic() // 당신을 위한 추천곡
         getHistory() // 최근 탐색 연도 불러오기
     }
@@ -292,7 +293,7 @@ class HomeViewController: UIViewController {
             switch result {
             case .success(let response):
                 print("postMusicInfo() 성공")
-                print(response?.musicUrl)
+                print(response?.music)
                 Task{
 //                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
 //                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
@@ -333,6 +334,21 @@ class HomeViewController: UIViewController {
                 self.pointOfViewData = response
                 setDataSource()
                 setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 빠른 선곡 불러오기 API
+    private func getSelection() {
+        musicService.selection { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print("getSelection() 성공")
+                print(response)
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
