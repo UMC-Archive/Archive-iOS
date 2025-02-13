@@ -19,6 +19,10 @@ enum MusicTargetType {
     case chooseArtistInfo // 선택 아티스트 정보 가져오기
     case ExploreRecommendMusic // 당신을 위한 추천곡(탐색뷰)
     case recommendMusic // 홈 - 당신을 위한 추천곡
+    case similarArtist(artistId: String) // 비슷한 아티스트 가져오기
+    case anotherAlbum(artistId: String, albumId: String) // 이 아티스트의 다른 앨범
+    case allInfo(music: String?, artist: String?, album: String?) // 노래, 앨범, 아티스트 조회
+    case selection // 빠른 선곡, 다음 트랙
 }
 
 
@@ -52,6 +56,14 @@ extension MusicTargetType: TargetType {
             return "year/nomination"
         case .recommendMusic:
             return "nomination"
+        case .similarArtist(let artistId):
+            return "artist/\(artistId)/similar"
+        case .anotherAlbum(artistId: let artistId, albumId: let albumId):
+            return "artist/\(artistId)/album/\(albumId)"
+        case .allInfo:
+            return "all/info"
+        case .selection:
+            return "selection"
         }
     }
     
@@ -59,12 +71,12 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection:
             return .get
         }
     }
     
-    var task: Moya.Task {
+    var task: Moya.Task {		
         switch self {
         case .musicInfo(let artist, let music):
             return .requestParameters(parameters: ["artist_name" : artist, "music_name" : music], encoding: URLEncoding.queryString)
@@ -72,8 +84,10 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .artistInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection:
             return .requestPlain
+        case .allInfo(music: let music, artist: let artist, album: let album):
+            return .requestParameters(parameters: ["music" : music ?? "", "album" : album ?? "", "artist": artist ?? ""], encoding: URLEncoding.queryString)
         }
     }
     
@@ -84,3 +98,5 @@ extension MusicTargetType: TargetType {
         }
     }
 }
+					
+

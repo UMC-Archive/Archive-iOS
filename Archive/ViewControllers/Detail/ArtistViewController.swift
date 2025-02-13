@@ -16,8 +16,9 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var data: ArtistInfoReponseDTO?
+    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]?
     
-    init(artist: String = "빅뱅", album: String = "MADE") {
+    init(artist: String, album: String) {
         self.artist = artist
         self.album = album
         super.init(nibName: nil, bundle: nil)
@@ -36,6 +37,7 @@ class ArtistViewController: UIViewController {
         setDataSource()
         setSnapshot()
         
+        // 아티스트 정보 조회
         postArtistInfo(artist: artist, album: album)
     }
     
@@ -44,11 +46,10 @@ class ArtistViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = false
     }
     
-    override func viewDidDisappear(_ animated: Bool) {
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         self.navigationController?.navigationBar.isHidden = true
     }
-    
-    
     
     private func setNavigationBar(){
         self.navigationController?.navigationBar.isHidden = false
@@ -92,9 +93,16 @@ class ArtistViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MusicVideoCell.id, for: indexPath)
                 (cell as? MusicVideoCell)?.config(data: item)
                 return cell
-            case .SimilarArtist(let item):  // 비슷한 아티스트
+            case let .SimilarArtist(artist, album):  // 비슷한 아티스트
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CircleCell.id, for: indexPath)
-                (cell as? CircleCell)?.config(data: item)
+                
+                // 탭 제스처
+                let tapGesture = CustomTapGesture(target: self, action: #selector(self.tapSimilarArtist(_:)))
+                tapGesture.artist = artist.name
+                tapGesture.album = album.title
+                cell.addGestureRecognizer(tapGesture)
+                
+                (cell as? CircleCell)?.config(artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
@@ -130,6 +138,13 @@ class ArtistViewController: UIViewController {
         }
     }
     
+    // 비슷한 아티스트 탭 제스처
+    @objc private func tapSimilarArtist(_ sender: CustomTapGesture) {
+        guard let artist = sender.artist, let album = sender.album else {return}
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
     // 자세히 보기 버튼
     private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
@@ -154,8 +169,10 @@ class ArtistViewController: UIViewController {
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
-        let similarArtistItem = artistData.similarArtist.map{Item.SimilarArtist($0)}
-        snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        if let similarArtist = similarArtist {
+            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
+            snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        }
         
         dataSource?.apply(snapshot)
     }
@@ -186,7 +203,12 @@ class ArtistViewController: UIViewController {
             case .success(let response):
                 guard let response = response else {return}
                 self.data = response
+                
+                // 아티스트 큐레이션
                 postArtistCuration(artistId: response.id)
+                
+                // 비슷한 아티스트 조회
+                getSimilarArtist(artistId: response.id)
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -215,5 +237,21 @@ class ArtistViewController: UIViewController {
             }
         }
     }
-
+    
+    // 비슷한 아티스트 조회
+    private func getSimilarArtist(artistId: String){
+        musicService.similarArtist(aristId: artistId) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                self.similarArtist = response.map{($0.artist, $0.album)}
+                self.setDataSource()
+                self.setSnapshot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
 }

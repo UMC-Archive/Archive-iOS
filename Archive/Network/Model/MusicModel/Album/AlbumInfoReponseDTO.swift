@@ -8,7 +8,7 @@
 import Foundation
 
 
-public struct AlbumInfoReponseDTO: Decodable {
+public struct AlbumInfoReponseDTO: Decodable, Hashable {
     let id : String
     let title: String
     let releaseTime: String

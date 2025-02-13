@@ -24,7 +24,7 @@ class BigBannerCell: UICollectionViewCell {
     }
     
     // CD View
-    private lazy var CDImageView = CDView(imageWidthHeight: imageWidth, holeWidthHeight: holeWidthHeight)
+    public lazy var CDImageView = CDView(imageWidthHeight: imageWidth, holeWidthHeight: holeWidthHeight)
     
     private let infoGroupView = UIView()
     
@@ -189,10 +189,10 @@ class BigBannerCell: UICollectionViewCell {
         borderLayer.addSublayer(gradientLayer)
     }
     
-    public func config(album: MusicDummyModel) {
-        CDImageView.config(albumImageURL: album.albumURL)
-        albumTitleLabel.text = album.albumTitle
-        artistLabel.text = album.artist
-        yearLabel.text = "⦁ \(album.year)"
+    public func config(album: AlbumRecommendAlbum, artist: String) {
+        CDImageView.config(albumImageURL: album.image)
+        albumTitleLabel.text = album.title
+        artistLabel.text = artist
+        yearLabel.text = "⦁ \(album.releaseTime.prefixBeforeDash())"
     }
 }

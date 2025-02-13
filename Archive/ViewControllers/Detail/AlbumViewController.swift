@@ -17,10 +17,12 @@ class AlbumViewController: UIViewController {
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO?
-    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]?
+    private var trackListData: [TrackListResponse]? // 트랙 리스트 데이터
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]? // 추천 앨범
+    private var anotherAlbum: [AnotherAlbumResponseDTO]? // 이 아티스트의 다른 앨범
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
-    init(artist: String = "IU", album: String = "Love Poem") {
+    init(artist: String, album: String) {
         self.artist = artist
         self.album = album
         
@@ -39,15 +41,15 @@ class AlbumViewController: UIViewController {
         setDataSource()
         setSnapshot()
         setProtocol()
-        updateTrackViewHeight()
-        
-        albumView.configTrack(data: self.data.albumTrack)
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
         
         // 앨범 추천 API
         getRecommendAlbum()
+        
+        // 모든 아이디 조회
+        getAllId(artist: artist, album: album)
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -123,9 +125,9 @@ class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: albumView.collectionView){ collectionView, indexPath, ItemIdentifier in
             switch ItemIdentifier {
-            case .AnotherAlbum(let data):
+            case .AnotherAlbum(let album):
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: data)
+                (cell as? BannerCell)?.configAnotherAlbum(album: album, artist: self.artist)
                 return cell
             case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -172,8 +174,11 @@ class AlbumViewController: UIViewController {
         
         snapshot.appendSections([anotherAlbumSection, recommendAlbumSection])
         
-        let anotherAlbumItem = data.anotherAlbum.map{Item.AnotherAlbum($0)}
-        snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
+        // 이 아티스트의 다른 앨범
+        if let anotherAlbum = anotherAlbum {
+            let anotherAlbumItem = anotherAlbum.map{Item.AnotherAlbum($0)}
+            snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
+        }
         
         // 당신을 위한 추천 앨범
         if let recommendAlbumData = recommendAlbumData {
@@ -194,8 +199,9 @@ class AlbumViewController: UIViewController {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
                 guard let data = response else { return }
                 albumData = data
-                postAlbumCuration(albumId: data.id)
-//                albumView.config(data: data, artist: artist, description: "asd")
+                
+                postAlbumCuration(albumId: data.id) // 앨범 큐레이션
+                getTrackList(albumId: data.id)      // 앨범 트랙 리스트
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
@@ -243,29 +249,77 @@ class AlbumViewController: UIViewController {
             }
         }
     }
+    
+    // 모든 아이디 조회
+    private func getAllId(artist: String, album: String){
+        musicService.allInfo(album: album, artist: artist) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                guard let artistId = response.artist.info.id, let albumId = response.album.info.id else {
+                    let alert = NetworkAlert.shared.getAlertController(title: "아티스트: \(String(describing: response.artist.info.id))\n 앨범: \(String(describing: response.album.info.id))")
+                    self.present(alert, animated: true)
+                    return
+                }
+                self.getAnotherAlbum(artistId: artistId, albumId: albumId) //  이 아티스트의 다른 앨범 조회 함수 호출
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 이 아티스트의 다른 앨범 조회
+    private func getAnotherAlbum(artistId: String, albumId: String) {
+        musicService.anotherAlbum(artistId: artistId, albumId: albumId) { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                print("getAnotherAlbum() 성공")
+                self.anotherAlbum = response
+                self.setDataSource()
+                self.setSnapshot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+                print("getAnotherAlbum() 실패")
+                print(error.description)
+            }
+        }
+    }
+    
+    // 트랙 리스트 (수록곡 소개)
+    private func getTrackList(albumId: String) {
+        albumService.trackList(albumId: albumId) { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                print("getTrackList() 성공")
+                guard let response = response else {return}
+                self.trackListData = response.tracks
+                self.albumView.trackView.trackCollectionView.reloadData()
+                
+                albumView.configTrack(data: response)
+                updateTrackViewHeight()
+                
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
 }
 
 extension AlbumViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch collectionView {
-        case albumView.trackView.trackCollectionView:
-            return data.albumTrack.musicList.count
-        default:
-            return data.albumTrack.musicList.count
-        }
-        
+        return self.trackListData?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch collectionView {
-        case albumView.trackView.trackCollectionView:
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell else {return UICollectionViewCell()
-            }
-            cell.config(data: data.albumTrack.musicList[indexPath.row])
-            return cell
-        default:
-            return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell, let trackListData = trackListData else {return UICollectionViewCell()
         }
+        cell.configTrackList(music: trackListData[indexPath.row])
+        return cell
     }
 }
 
