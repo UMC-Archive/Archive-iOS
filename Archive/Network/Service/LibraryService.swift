@@ -35,4 +35,14 @@ public final class LibraryService: NetworkManager {
     public func libraryAlbumInfo(completion: @escaping(Result<[LibraryAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .libraryAlbumInfo, decodingType: [LibraryAlbumResponseDTO].self, completion: completion)
     }
+    public func musicPost(musicId: String, completion: @escaping(Result<LibraryMusicPostResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .musicPost(musicId: musicId), decodingType: LibraryMusicPostResponseDTO.self, completion: completion)
+    }
+    public func albumPost(albumId: String, completion: @escaping(Result<LibraryAlbumPostResponseDTO?, NetworkError>) -> Void){
+        requestOptional(target: .albumPost(albumId: albumId), decodingType: LibraryAlbumPostResponseDTO.self, completion: completion)
+    }
+    public func artistPost(artistId: String, completion: @escaping(Result<LibraryArtistPostResponseDTO?, NetworkError>) -> Void){
+        requestOptional(target: .artistPost(artistId: artistId), decodingType: LibraryArtistPostResponseDTO.self, completion: completion)
+    }
+
 }

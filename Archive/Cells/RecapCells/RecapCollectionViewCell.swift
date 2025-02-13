@@ -47,11 +47,15 @@ class RecapCollectionViewCell: UICollectionViewCell {
         }
         song.snp.makeConstraints{
             $0.top.equalTo(cdView.snp.bottom).offset(12)
-            $0.centerX.equalTo(cdView)
+            $0.leading.equalToSuperview().offset(59)
+            $0.trailing.equalToSuperview().offset(-59)
+//            $0.centerX.equalTo(cdView)
         }
         artist.snp.makeConstraints{
             $0.top.equalTo(song.snp.bottom).offset(2)
-            $0.centerX.equalTo(cdView)
+            $0.leading.equalToSuperview().offset(59)
+            $0.trailing.equalToSuperview().offset(-59)
+//            $0.centerX.equalTo(cdView)
         }
     }
     
@@ -59,5 +63,10 @@ class RecapCollectionViewCell: UICollectionViewCell {
         cdView.config(albumImageURL: data.albumURL)
         song.text = data.musicTitle
         artist.text = data.artist
+    }
+    public func recapConfig(data: RecapResponseDTO){
+        cdView.config(albumImageURL: data.image)
+        song.text = data.title
+        artist.text = data.artists
     }
 }

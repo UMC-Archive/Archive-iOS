@@ -12,6 +12,7 @@ class MyPageViewController: UIViewController {
     let rootView = MyPageView()
     let gradient = CAGradientLayer()
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -92,6 +93,7 @@ class MyPageViewController: UIViewController {
         
         rootView.CDView.layer.addSublayer(gradient)
     }
+    
 }
 extension MyPageViewController : UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

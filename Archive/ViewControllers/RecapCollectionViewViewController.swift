@@ -9,6 +9,15 @@ import UIKit
 
 class RecapCollectionViewViewController: UIViewController {
     private let rootView = RecentMusicView()
+    public var responseData: [RecapResponseDTO]? {
+        didSet {
+            DispatchQueue.main.async { [weak self] in
+                print("📌 responseData 변경됨: \(self?.responseData?.count ?? 0)개") // 디버깅 로그
+                self?.rootView.collectionView.reloadData()
+            }
+        }
+    }
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -16,6 +25,8 @@ class RecapCollectionViewViewController: UIViewController {
         view.backgroundColor = .white
         setDataSource()
         controlTapped()
+        
+//        rootView.collectionView.reloadData()
     }
     
     private func setDataSource(){
@@ -34,19 +45,17 @@ class RecapCollectionViewViewController: UIViewController {
 
 extension RecapCollectionViewViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return GenreModel.dummy().count
+        return responseData?.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(
-            withReuseIdentifier: GenreCollectionViewCell.genreCollectionViewIdentifier,
+            withReuseIdentifier: RecapCollectionViewVerticalCell.recapCollectionViewVerticalCellIdentifier,
             for: indexPath
-        ) as? GenreCollectionViewCell else {
-            fatalError("Failed to dequeue genreCollectionViewCell")
+        ) as? RecapCollectionViewVerticalCell else {
+            fatalError("Failed to dequeue RecapCollectionViewVerticalCell")
         }
-        let dummy = GenreModel.dummy()
-        
-        cell.config(image: dummy[indexPath.row].albumImage, songName: dummy[indexPath.row].songName, artist: dummy[indexPath.row].artist, year: dummy[indexPath.row].year)
+        cell.config(image: responseData?[indexPath.row].image ?? "CDSample", songName: responseData?[indexPath.row].title ?? "", artist: responseData?[indexPath.row].artists ?? "", year: responseData?[indexPath.row].releaseYear ?? 0)
         
        return cell
     }
