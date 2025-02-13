@@ -117,10 +117,10 @@ class HomeViewController: UIViewController {
                 verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
                 verticalCell.setOverflowView(type: .other)
                 
-                // 노래 앨범으로 이동 탭 제스처
-                let tapGoToAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.goToAlbum(_:)))
-                tapGoToAlbumGesture.musicId = music.id
-                verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapGoToAlbumGesture)
+                // 노래 보관함으로 이동 탭 제스처
+                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self?.goToLibrary(_:)))
+                tapGoToLibraryGesture.musicId = music.albumId
+                verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
                 
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
@@ -203,8 +203,12 @@ class HomeViewController: UIViewController {
             }
         }
     }
-    @objc private func goToAlbum(_ sender: CustomTapGesture) {
-        guard let musicId = sender.musicId else { return }
+    @objc private func goToLibrary(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId else {
+            print("nil")
+            return }
+        print("-------musicId\(musicId)")
+        
         libraryService.musicPost(musicId: musicId){ [weak self] result in
             guard let self = self else { return }
             
@@ -213,12 +217,11 @@ class HomeViewController: UIViewController {
                 print("postMusicInfo() 성공")
                 print(response)
                 Task{
-//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-//                    self.goToNextView()
+                    print("-----------------musicPost 성공")
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
+                print("-----------fail")
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -293,7 +296,6 @@ class HomeViewController: UIViewController {
     }
     
     
-    // 음악 정보 가져오기 API
     private func postMusicInfo(artist: String, music: String) {
         musicService.musicInfo(artist: artist, music: music){ [weak self] result in
             guard let self = self else { return }

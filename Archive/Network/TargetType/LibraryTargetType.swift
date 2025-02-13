@@ -69,11 +69,11 @@ extension LibraryTargetType: TargetType {
             return .requestPlain
         case .libraryAlbumInfo:
             return .requestPlain
-        case .musicPost(musicId: let parameter):
+        case .musicPost:
             return .requestPlain
-        case .albumPost(albumId: let parameter):
+        case .albumPost:
             return .requestPlain
-        case .artistPost(artistId: let parameter):
+        case .artistPost:
             return .requestPlain
         }
     }
