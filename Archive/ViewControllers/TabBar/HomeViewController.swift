@@ -10,7 +10,10 @@ import UIKit
 class HomeViewController: UIViewController {
     private let musicService = MusicService()
     private let userService = UserService()
+
+    private let libraryService = LibraryService()
     private let albumService = AlbumService()
+
     
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
@@ -129,6 +132,11 @@ class HomeViewController: UIViewController {
                 verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
                 verticalCell.setOverflowView(type: .other)
                 
+                // 노래 보관함으로 이동 탭 제스처
+                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self?.goToLibrary(_:)))
+                tapGoToLibraryGesture.musicId = music.albumId
+                verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
+                
                 return cell
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -229,6 +237,30 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    @objc private func goToLibrary(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId else {
+            print("nil")
+            return }
+        print("-------musicId\(musicId)")
+        
+        libraryService.musicPost(musicId: musicId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("postMusicInfo() 성공")
+                print(response)
+                Task{
+                    print("-----------------musicPost 성공")
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                print("-----------fail")
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
     
     // 앨범 버튼
     @objc private func TapAlbumImageGesture(_ sender: CustomTapGesture) {
@@ -321,7 +353,6 @@ class HomeViewController: UIViewController {
     }
     
     
-    // 음악 정보 가져오기 API
     private func postMusicInfo(artist: String, music: String) {
         musicService.musicInfo(artist: artist, music: music){ [weak self] result in
             guard let self = self else { return }

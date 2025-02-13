@@ -16,6 +16,7 @@ public struct MusicInfoResponseDTO: Decodable, Hashable {
     let lyrics: String
     let image: String
     let music: String
+
     
     enum CodingKeys: CodingKey {
         case id

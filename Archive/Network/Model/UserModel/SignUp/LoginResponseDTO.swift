@@ -8,10 +8,7 @@
 import UIKit
 
 public struct LoginResponseDTO:  Decodable{
-    let isSuccess : Bool
-    let code: String
-     let message: String
+  
     let result : String
     
 }
-

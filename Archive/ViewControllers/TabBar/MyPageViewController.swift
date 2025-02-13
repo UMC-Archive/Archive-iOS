@@ -16,7 +16,7 @@ class MyPageViewController: UIViewController {
         super.viewWillAppear(animated)
         setProfileImage() // 프로필 설정 함수
     }
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -97,6 +97,7 @@ class MyPageViewController: UIViewController {
         
         rootView.CDView.layer.addSublayer(gradient)
     }
+    
 }
 extension MyPageViewController : UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {

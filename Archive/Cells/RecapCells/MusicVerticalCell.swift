@@ -92,7 +92,7 @@ class MusicVerticalCell: UICollectionViewCell {
         }
     }
     
-    public func config(albumURL: String, musicTitle: String, artist: String, year: String) {
+    public func config(albumURL: String, musicTitle: String, artist: String, year: Int) {
         // 이미지 설정
         imageView.kf.setImage(with: URL(string: albumURL))
         

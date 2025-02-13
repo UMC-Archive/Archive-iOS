@@ -35,7 +35,10 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
         }
     }
     
-    public func config(image: UIImage){
+    public func configExample(image: UIImage){
         AlbumImage.image = image
+    }
+    public func config(data : GenrePreferenceResponseDTO){
+        AlbumImage.kf.setImage(with: URL(string: data.name))
     }
 }

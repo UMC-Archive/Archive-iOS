@@ -40,8 +40,8 @@ public final class UserService: NetworkManager {
     }
 
     // 로그인 API
-    public func login(parameter: LoginRequestDTO, completion: @escaping (Result<LoginResponseDTO, NetworkError>) -> Void) {
-        request(target: .login(parameter: parameter), decodingType: LoginResponseDTO.self, completion: completion)
+    public func login(parameter: LoginRequestDTO, completion: @escaping (Result<String?, NetworkError>) -> Void) {
+        request(target: .login(parameter: parameter), decodingType: String?.self, completion: completion)
     }
 
     // 음악 재생 기록 API
@@ -57,5 +57,15 @@ public final class UserService: NetworkManager {
     // 사용자 정보 불러오기
     public func userInfo(completion: @escaping (Result<UserInfoResponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .info, decodingType: UserInfoResponseDTO.self, completion: completion)
+    }
+    // 로그인 API
+    public func postHistory(parameter: PostHistoryRequestDTO, completion: @escaping (Result<PostHistoryResponseDTO, NetworkError>) -> Void) {
+        request(target: .postHistory(date: parameter), decodingType: PostHistoryResponseDTO.self, completion: completion)
+    }
+    public func getRecap(completion: @escaping (Result<[RecapResponseDTO]?, NetworkError>) -> Void){
+        requestOptional(target: .getRecap, decodingType: [RecapResponseDTO].self, completion: completion)
+    }
+    public func getGenrePreference(completion: @escaping (Result<[GenrePreferenceResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .preference, decodingType: [GenrePreferenceResponseDTO].self, completion: completion)
     }
 }

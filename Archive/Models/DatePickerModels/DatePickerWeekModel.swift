@@ -11,6 +11,6 @@ struct DatePickerWeekModel {
     let week: [String]
     
     init() {
-        self.week = ["1st", "2st", "3st", "4st"]
+        self.week = ["1st", "2nd", "3rd", "4th"]
     }
 }

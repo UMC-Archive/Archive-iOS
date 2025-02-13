@@ -16,6 +16,9 @@ public enum UserTargetType {
     case userPlayingRecord(parameter: UserPlayingRecordRequestDTO) // 재생 기록
     case getHistory // 최근 탐색 연도 불러오기 API
     case info // 사용자 정보 불러오기
+    case postHistory(date: PostHistoryRequestDTO)
+    case getRecap
+    case preference
    }
 
 extension UserTargetType: TargetType {
@@ -42,6 +45,12 @@ extension UserTargetType: TargetType {
             return "history"
         case .info:
             return "info"
+        case .postHistory:
+            return "history"
+        case .getRecap:
+            return "recap"
+        case .preference:
+            return "genre/preference"
         }
     }
     
@@ -51,6 +60,12 @@ extension UserTargetType: TargetType {
             return .get
         case .checkVerificationCode, .signUp, .login, .userPlayingRecord:
             return .post
+        case .postHistory:
+            return .post
+        case .getRecap:
+            return .get
+        case .preference:
+            return .get
         }
     }
     
@@ -99,6 +114,12 @@ extension UserTargetType: TargetType {
         case .userPlayingRecord(parameter: let parameter):
             return .requestJSONEncodable(parameter)
         case .getHistory, .info:
+            return .requestPlain
+        case .postHistory(date: let parameter):
+            return .requestJSONEncodable(parameter)
+        case .getRecap:
+            return .requestPlain
+        case .preference:
             return .requestPlain
         }
     }
