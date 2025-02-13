@@ -18,6 +18,8 @@ class ArtistViewController: UIViewController {
     private var data: ArtistInfoReponseDTO?
     private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]?
     
+    private var libraryService = LibraryService()
+    
     init(artist: String, album: String) {
         self.artist = artist
         self.album = album
@@ -76,6 +78,25 @@ class ArtistViewController: UIViewController {
     @objc private func tapHeartButton() {
         // 좋아요 API 연결
         print("tapHeartButton")
+        guard let artist = data else {
+            print("album data is nil")
+            return
+        }
+        libraryService.artistPost(artistId: artist.id ){[weak self] result in
+            guard let self = self else{return}
+            switch result {
+            case .success(let response):
+                print(response)
+                Task {
+                    print("-----------------albumPost 성공")
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                print("-----------fail")
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     private func setDataSource() {
