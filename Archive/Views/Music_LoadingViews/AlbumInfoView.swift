@@ -30,23 +30,34 @@ class AlbumInfoView: UIView {
     // 재생 버튼
     lazy var playButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "play.fill"), for: .normal)
+        var config = UIButton.Configuration.plain()
+        
+        config.image = UIImage(systemName: "play.fill")
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        button.configuration = config
+        button.clipsToBounds = true
         button.tintColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
 
     // 겹치는 사각형 아이콘
-    lazy var overlappingSquaresView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "rectangle.on.rectangle")
-        imageView.tintColor = .white
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    lazy var overlappingSquaresButton: UIButton = {
+        let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        
+        config.image = .playlist
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        button.configuration = config
+        button.clipsToBounds = true
+        button.tintColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .black
+        backgroundColor = .black_70
         setupViews()
         setupConstraints()
     }
@@ -60,37 +71,38 @@ class AlbumInfoView: UIView {
         addSubview(songTitleLabel)
         addSubview(artistLabel)
         addSubview(playButton)
-        addSubview(overlappingSquaresView)
+        addSubview(overlappingSquaresButton)
     }
 
     private func setupConstraints() {
         albumImageView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview().offset(10)
-            make.width.height.equalTo(60)
+            make.leading.equalToSuperview().offset(25)
+            make.centerY.equalToSuperview()
+            make.width.height.equalTo(50)
         }
 
         songTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(albumImageView.snp.top)
-            make.leading.equalTo(albumImageView.snp.trailing).offset(10)
-            make.trailing.equalTo(playButton.snp.leading).offset(-10)
+            make.top.equalTo(albumImageView).offset(6)
+            make.leading.equalTo(albumImageView.snp.trailing).offset(14)
+            make.trailing.equalTo(playButton.snp.leading).offset(-40)
         }
 
         artistLabel.snp.makeConstraints { make in
-            make.top.equalTo(songTitleLabel.snp.bottom).offset(5)
+            make.bottom.equalToSuperview().inset(14)
             make.leading.equalTo(songTitleLabel)
             make.trailing.equalTo(songTitleLabel)
         }
 
         playButton.snp.makeConstraints { make in
             make.centerY.equalTo(albumImageView)
-            make.trailing.equalToSuperview().offset(-40)
+            make.trailing.equalTo(overlappingSquaresButton.snp.leading).offset(-25)
             make.width.height.equalTo(30)
         }
 
-        overlappingSquaresView.snp.makeConstraints { make in
-            make.centerY.equalTo(albumImageView)
-            make.trailing.equalToSuperview().offset(-10)
-            make.width.height.equalTo(30)
+        overlappingSquaresButton.snp.makeConstraints { make in
+            make.centerY.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-25)
+            make.width.height.equalTo(20)
         }
     }
 
@@ -99,6 +111,11 @@ class AlbumInfoView: UIView {
         albumImageView.image = albumImage
         songTitleLabel.text = songTitle
         artistLabel.text = artistName
+    }
+    
+    public func playingMusic(isPlay: Bool) {
+        // 플레이 버튼 이미지 변경
+        playButton.configuration?.image = UIImage(systemName: isPlay ? "pause.fill" : "play.fill")
     }
 }
 
