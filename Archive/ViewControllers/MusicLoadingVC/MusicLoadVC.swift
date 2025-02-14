@@ -99,7 +99,7 @@ class MusicLoadVC: UIViewController {
     }
 
     // 다음 트랙 화면으로 이동
-    @objc private func goToNextTrack() {
+    @objc public func goToNextTrack() {
         let nextTrackVC = MusicSegmentVC()
         present(nextTrackVC, animated: true)
     }

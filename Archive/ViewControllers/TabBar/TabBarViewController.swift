@@ -54,10 +54,14 @@ class TabBarViewController: UITabBarController {
     }
     
     
-    // 재생 목록 버튼을 눌렀을 때
+    // 플레이 리스트 버튼을 눌렀을 때
     @objc private func touchUpInsidePlaylist() {
         // songList로 화면 이동
         print("touchUpInsidePlaylist()")
+        guard let musicLoadVC = musicLoadVC else { return }
+        musicLoadVC.modalPresentationStyle = .fullScreen
+        self.present(musicLoadVC, animated: false)
+        musicLoadVC.goToNextTrack()
     }
     
     // 노래 재생 버튼을 눌렀을 때
