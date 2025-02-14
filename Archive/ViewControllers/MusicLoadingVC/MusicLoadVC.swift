@@ -14,24 +14,35 @@ class MusicLoadVC: UIViewController {
     private var player: AVPlayer?
     private let musiceservice = MusicService()
     private var musicInfo : MusicInfoResponseDTO?
+    private var music: String
+    private var artist: String
+    
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
     }
-
+    
+    init(artist: String = "NewJeans", music: String = "Supernatural") {
+        self.artist = artist
+        self.music = music
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActions()
             musicLoad()
     }
     
-  
-    
-   
-    private func musicLoad() {
-            let artist = "NewJeans" // 임시 데이터
-            let song = "Supernatural"
 
-        musiceservice.musicInfo(artist: artist, music: song) { [weak self] (result: Result<MusicInfoResponseDTO?, NetworkError>) in
+    private func musicLoad() {
+//            let artist = "NewJeans" // 임시 데이터
+//            let song = "Supernatural"
+
+        musiceservice.musicInfo(artist: artist, music: music) { [weak self] (result: Result<MusicInfoResponseDTO?, NetworkError>) in
                 switch result {
                 case .success(let response):
                     guard let data = response else { return }
@@ -80,8 +91,8 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc private func goToNextTrack() {
-        let nextTrackVC = NextTrackVC()
-        self.navigationController?.pushViewController(nextTrackVC, animated: true)
+        let nextTrackVC = MusicSegmentVC()
+        present(nextTrackVC, animated: true)
     }
 
     // 가사 화면으로 이동

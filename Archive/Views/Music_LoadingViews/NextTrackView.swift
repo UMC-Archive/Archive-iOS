@@ -55,7 +55,7 @@ class NextTrackView: UIView {
          segmentedControl.backgroundColor = .black
          segmentedControl.selectedSegmentTintColor = .clear // 투명 배경
 
-         // 선택된 텍스트 스타일
+         // 선택된 텍스트 스타
          segmentedControl.setTitleTextAttributes([
              .foregroundColor: UIColor.white, // 선택된 텍스트 흰색
              .font: UIFont.boldSystemFont(ofSize: 16) // 굵은 텍스트

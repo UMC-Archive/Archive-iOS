@@ -14,9 +14,9 @@ final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
         return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTUwODM1NywiZXhwIjoxNzM5NTIyNzU3fQ.uaHNgLGJIG75C0GbmaQBVkglsT8X1Uw7jZP3YpHzdp4"
 
-
-
-
+        
+        
+        
 //        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
     }
     

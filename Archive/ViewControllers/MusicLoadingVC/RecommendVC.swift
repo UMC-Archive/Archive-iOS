@@ -6,16 +6,17 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
     // 네트워크 요청을 담당하는 서비스 객체 추가
         private let musicService = MusicService()
         private let albumService = AlbumService()
-        // ✅ API에서 가져온 트랙 리스트 (하드코딩 제거)
-    private var tracks: [(id: String, title: String, releaseTime: String, image: String)] = []
+        //  API에서 가져온 트랙 리스트 (하드코딩 제거)
+    private var tracks: [AlbumRecommendAlbumResponseDTO] = []
+    private var recommendedAlbums: [RecommendMusicResponseDTO] = []
+
 
  //   private let recommendedAlbums: [(image: String, title: String, artist: String)] = [
    //     ("album1", "NewJeans 2nd EP", "NewJeans"),
      //   ("album2", "NewJeans 1st EP", "NewJeans"),
       //  ("album3", "NewJeans Special", "NewJeans")
     //]
-    private var recommendedAlbums: [(image: String, title: String, artist: String)] = []
-  //  private let tracks: [(image: String, title: String, artist: String, year: /String)] = [
+   //  private let tracks: [(image: String, title: String, artist: String, year: /String)] = [
       //  ("aespa", "How Sweet", "NewJeans", "2024"),
        // ("aespa","Attention", "NewJeans", "2022"),
         //("aespa","Ditto", "NewJeans", "2022"),
@@ -33,14 +34,56 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         view.backgroundColor = .black
         setupCollectionView()
         // 추천 음악 가져오기
+        setupActions()
         fetchRecommendMusic()
+        fetchNextTrackMusic()
         recommendView.configure(
             albumImage: UIImage(named: "aespa"),
             songTitle: "NOW OR NEVER",
             artistName: "ZERO BASE ONE"
         )
     }
-  
+    private func setupActions() {
+        recommendView.tabBar.addTarget(self, action: #selector(tabBarValueChanged(_:)), for: .valueChanged)
+    }
+
+@objc private func tabBarValueChanged(_ sender: UISegmentedControl) {
+    switch sender.selectedSegmentIndex {
+    case 0:
+        print("다음 트랙 선택됨")
+        goToNextTrack()
+    case 1:
+        print("가사 선택됨")
+        goToLyrics()
+    case 2:
+        print("추천 콘텐츠 선택됨")
+        goToRecommend()
+    default:
+        break
+    }
+}
+@objc private func goToNextTrack() {
+    print("다음 트랙으로 이동")
+    // 다음 트랙 로직 실행
+    let nextTrackVC = NextTrackVC()
+    navigationController?.pushViewController(nextTrackVC, animated: true)
+    
+}
+
+@objc private func goToLyrics() {
+    print("가사 화면으로 이동")
+    // 가사 뷰로 이동하는 로직 (예: 새 화면 push, present 등)
+    let lyricsVC = LyricsVC()
+     navigationController?.pushViewController(lyricsVC, animated: true)
+}
+
+@objc private func goToRecommend() {
+    print("추천 콘텐츠 화면으로 이동")
+    // 추천 콘텐츠 뷰로 이동하는 로직
+    let recommendVC = RecommendVC()
+     navigationController?.pushViewController(recommendVC, animated: true)
+}
+
     private func fetchRecommendMusic() {
         musicService.homeRecommendMusic { [weak self] (result: Result<[RecommendMusicResponseDTO]?, NetworkError>) in
             switch result {
@@ -48,10 +91,8 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 guard let data = response else { return }
                 
                 // API 응답 데이터를 recommendedAlbums에 저장
-                self?.recommendedAlbums = data.map { album in
-                    return (image: album.album.image, title: album.album.title, artist: album.artist)
-                }
-                
+                self?.recommendedAlbums = data
+
                 // UI 업데이트 (메인 스레드에서 실행)
                 DispatchQueue.main.async {
                     self?.recommendView.albumRecommendCollectionView.reloadData()
@@ -68,10 +109,8 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             switch result {
             case .success(let response):
                 guard let data = response else { return }
-                self?.tracks = data.map { albumResponse in
-                    let album = albumResponse.album
-                    return (id: album.id, title: album.title, releaseTime: album.releaseTime, image: album.image)
-                }
+                self?.tracks = data
+
                 DispatchQueue.main.async {
                     self?.recommendView.albumCollectionView.reloadData()
                 }
@@ -111,15 +150,16 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackCell.identifier, for: indexPath) as? TrackCell else {
                 fatalError("Unable to dequeue TrackCell")
             }
+            
             let track = tracks[indexPath.item]
-            cell.configure(imageName: track.image, title: track.title, releaseTime: track.releaseTime)
+            cell.configure(dto: track)
             return cell
         } else if collectionView == recommendView.albumRecommendCollectionView {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumCell.identifier, for: indexPath) as? AlbumCell else {
                 fatalError("Unable to dequeue AlbumCell")
             }
             let album = recommendedAlbums[indexPath.item]
-            cell.configure(imageName: album.image, title: album.title, artist: album.artist)
+            cell.configure(dto: album)
             return cell
         }
         return UICollectionViewCell()
@@ -139,7 +179,7 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         
         private let titleLabel: UILabel = {
             let label = UILabel()
-            label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+            label.font = UIFont.systemFont(ofSize: 18, weight: .bold)
             label.textColor = .white
             return label
         }()
@@ -204,12 +244,13 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 moreButton.heightAnchor.constraint(equalToConstant: 30),
             ])
         }
-        
-        func configure(imageName: String, title: String, releaseTime: String) {
-            albumImageView.image = UIImage(named: imageName)
-            titleLabel.text = title
-            artistLabel.text = releaseTime // 아티스트 자리에 발매년도 넣기
+        func configure(dto: AlbumRecommendAlbumResponseDTO) {
+            let album = dto.album
+            titleLabel.text = album.title
+            artistLabel.text = "\(dto.artist) · \(album.releaseTime.prefixBeforeDash())"
+            albumImageView.kf.setImage(with: URL(string: album.image))
         }
+
 
     }
 
@@ -285,11 +326,16 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             ])
         }
         
-        func configure(imageName: String, title: String, artist: String) {
-            albumImageView.image = UIImage(named: imageName) // 전달된 이미지 이름으로 설정
-            titleLabel.text = title // 전달된 제목 설정
-            artistLabel.text = artist // 전달된 아티스트 설정
+        func configure(dto: RecommendMusicResponseDTO) {
+            let music = dto.music
+            titleLabel.text = music.title
+            titleLabel.lineBreakMode = .byTruncatingTail // 말줄임표 설정
+              titleLabel.numberOfLines = 1 // 한 줄만 표시
+
+            artistLabel.text = dto.artist
+            albumImageView.kf.setImage(with: URL(string: music.image))
         }
+
 
     }
     

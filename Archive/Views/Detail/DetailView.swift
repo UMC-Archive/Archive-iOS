@@ -62,7 +62,7 @@ class DetailView: UIView {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(navigationBarView.snp.bottom).offset(30)
             make.horizontalEdges.equalToSuperview().inset(19)
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(FloatingViewHeight)
         }
     }
     

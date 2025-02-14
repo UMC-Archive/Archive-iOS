@@ -75,7 +75,8 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         songAlbumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
-            $0.size.equalTo(constant.playListAlbumImageSize)
+            $0.width.height.equalTo(50)
+//            $0.size.equalTo(constant.playListAlbumImageSize)
         }
         
         playListLabelStackView.snp.makeConstraints{
