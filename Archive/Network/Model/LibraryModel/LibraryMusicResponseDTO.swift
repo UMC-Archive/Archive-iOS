@@ -9,6 +9,7 @@ import Foundation
 
 
 public struct LibraryMusicResponseDTO: Decodable {
+    let id: String
     let title: String
     let releaseTime: Int
     let image: String

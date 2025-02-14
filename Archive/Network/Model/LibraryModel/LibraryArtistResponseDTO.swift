@@ -10,6 +10,7 @@ public struct LibraryArtistResponseDTO: Decodable {
     //    let code : String
     //    let message : String
     //    let result: [LibraryArtistInfo]
+    let id: String
     let name: String
     let image: String
 }
