@@ -24,7 +24,7 @@ class HomeViewController: UIViewController {
     private var archiveData: [(AlbumRecommendAlbum, String)]? // 당신을 위한 아카이브
     private var fastSelectionData: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 빠른 선곡
     private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]? // 당신을 위한 추천곡
-    private var pointOfViewData: [GetHistoryResponseDTO]? // 탐색했던 시점
+    private var pointOfViewData: [(UserHistoryResponseDTO, String)]? // 탐색했던 시점
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -54,6 +54,7 @@ class HomeViewController: UIViewController {
         }
     }
     
+    // 제스처 설정 (overflowView - hidden 처리)
     private func setGesture() {
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
@@ -62,13 +63,18 @@ class HomeViewController: UIViewController {
         homeView.addGestureRecognizer(tapGesture)
     }
     
+    // 액션 처리
     private func setAction(){
-        homeView.topView.exploreIconButton.addTarget(self, action: #selector(exploreIconTapped), for: .touchUpInside)
+        homeView.topView.exploreIconButton.addTarget(self, action: #selector(touchUpInsideExploreIcon), for: .touchUpInside)
     }
-    @objc func exploreIconTapped(){
+    
+    
+    // 상단 탐색 버튼을 눌렀을 때 액션
+    @objc func touchUpInsideExploreIcon(){
         let viewController = DatePickerViewController()
         self.navigationController?.pushViewController(viewController, animated: true)
     }
+    
     
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: homeView.collectionView, cellProvider: {[weak self] collectionView, indexPath, itemIdentifier in
@@ -89,9 +95,15 @@ class HomeViewController: UIViewController {
                 (cell as? BigBannerCell)?.artistLabel.addGestureRecognizer(artistGesture)
                 
                 return cell
-            case .PointItem(let item): // 탐색했던 시점
+            case let .PointItem(userHistory, imageURL): // 탐색했던 시점
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: PointOfViewCell.id, for: indexPath)
-                (cell as? PointOfViewCell)?.config(data: item)
+                (cell as? PointOfViewCell)?.config(userHistory: userHistory, imageURL: imageURL)
+                
+                // 셀 제스처 추가
+                let tapGesture = CustomTapGesture(target: self, action: #selector(self?.historyTapGeustre(_:)))
+                tapGesture.history = userHistory.history
+                cell.addGestureRecognizer(tapGesture)
+                
                 return cell
             case let .FastSelectionItem(music, album, artist): // 빠른 선곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -207,6 +219,13 @@ class HomeViewController: UIViewController {
         
     }
     
+    // 탐색했던 시점 탭 제스처
+    @objc private func historyTapGeustre(_ sender: CustomTapGesture){
+        // postHistory API 로직
+        guard let history = sender.history else {return}
+        postHistory(history: history) // 탐색 시점 저장
+    }
+    
     // overflow 버튼 클릭 시 실행될 메서드
     @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
         // 버튼의 superview를 통해 셀 찾기
@@ -253,31 +272,6 @@ class HomeViewController: UIViewController {
             }
         }
     }
-//    @objc private func deleteMusic(_ sender: CustomTapGesture) {
-//        guard let musicId = sender.musicId else {
-//            print("nil")
-//            return }
-//        print("-------musicId\(musicId)")
-//        
-//        libraryService.musicDelete(musicId: musicId){ [weak self] result in
-//            guard let self = self else { return }
-//            
-//            switch result {
-//            case .success(let response):
-//                print("deleteMusicInfo() 성공")
-//                print(response)
-//                Task{
-//                    print("-----------------musicPost 성공")
-//                }
-//            case .failure(let error):
-//                // 네트워크 연결 실패 얼럿
-//                print("-----------fail")
-//                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-//                self.present(alert, animated: true)
-//            }
-//        }
-//    }
-//
     
     // 노래 재생 제스처
     @objc private func musicPlayingGesture(_ sender: CustomTapGesture) {
@@ -341,7 +335,7 @@ class HomeViewController: UIViewController {
         
         // 최근 탐색 시점
         if let pointOfViewData = pointOfViewData {
-            let pointItem = pointOfViewData.map{Item.PointItem($0)}
+            let pointItem = pointOfViewData.map{Item.PointItem($0.0, $0.1)}
             snapshot.appendItems(pointItem, toSection: pointOfViewSection)
         }
         
@@ -367,6 +361,28 @@ class HomeViewController: UIViewController {
         dataSource?.apply(snapshot)
     }
     
+    // 탐색년도 설정 API
+    private func postHistory(history: String) {
+        let param = PostHistoryRequestDTO(history: history)
+        userService.postHistory(parameter: param) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                let history = response.history.getWeekTuple() // 2025-02-14T06:51:33.841Z ->  (year: 2025, month: 02, week: 1st)
+                /// 키 체인 저장
+                KeychainService.shared.save(account: .userInfo, service: .timeHistory, value: "\(history.year)년 \(history.month)월 \(history.week)")
+                
+                DispatchQueue.main.async {
+                    self.tabBarController?.selectedIndex = 1 // 탐색 뷰로 이동
+                }
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
     // 당신을 위한 아카이브 API
     private func getArchive() {
         albumService.albumRecommendAlbum { [weak self] result in
@@ -378,28 +394,6 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-            }
-        }
-    }
-    
-    
-    private func postMusicInfo(artist: String, music: String) {
-        musicService.musicInfo(artist: artist, music: music){ [weak self] result in
-            guard let self = self else { return }
-            
-            switch result {
-            case .success(let response):
-                print("postMusicInfo() 성공")
-                print(response?.music)
-                Task{
-//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-//                    self.goToNextView()
-                }
-            case .failure(let error):
-                // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -430,7 +424,8 @@ class HomeViewController: UIViewController {
             guard let self = self else {return }
             switch result {
             case .success(let response):
-                self.pointOfViewData = response
+                guard let response = response else { return } // 탐색했던 시점이 없을 때
+                self.pointOfViewData = response.map{($0.userHistory, $0.historyImage ?? "")}
                 setDataSource()
                 setSnapShot()
             case .failure(let error):
