@@ -157,6 +157,13 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.text = "\(music.artist) ⦁ \(music.releaseTime)"
     }
     
+    // 아티스트 인기곡
+    public func configPopularMusic(music: MusicInfoResponseDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
     public func setOverflowView(type: OverflowType){
         overflowView.setType(type: type)
         switch type {
