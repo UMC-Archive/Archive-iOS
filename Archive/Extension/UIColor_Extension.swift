@@ -97,6 +97,24 @@ extension UIColor {
     // Login
     static let alertRed = UIColor(hex: "#FF483B")
     static let alertRedGreen = UIColor(hex: "#2BD918")
+    
+    //genre
+    static let Pop = UIColor(hex: "#FF54EE")      
+    static let HipHop = UIColor(hex: "#0265FE")
+    static let Afrobeats = UIColor(hex: "#DAA520")
+    static let Ballad = UIColor(hex: "#8B4513")
+    static let Disco = UIColor(hex: "#B0C4DE")
+    static let Electronic = UIColor(hex: "#00DE01")
+    static let Funk = UIColor(hex: "#FF620D")
+    static let Indie = UIColor(hex: "#23EEFF")
+    static let Jazz = UIColor(hex: "#FFDD11")
+    static let Latin = UIColor(hex: "#EE2201")
+    static let Phonk = UIColor(hex: "#093E90")
+    static let Punk = UIColor(hex: "#FF1493")
+    static let Rock = UIColor(hex: "#FF7F50")
+    static let Trot = UIColor(hex: "#29F2D0")
+    static let Other = UIColor(hex: "#EEFEFF")
+
 }
 // Example
 // let buttonColor = .lightOrange // Hex: #FFFDF3
