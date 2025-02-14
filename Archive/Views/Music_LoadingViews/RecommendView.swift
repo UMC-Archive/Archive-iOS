@@ -76,7 +76,7 @@ class RecommendView: UIView {
     lazy var tabBar: UISegmentedControl = {
         let items = ["다음 트랙", "가사", "추천 콘텐츠"]
         let segmentedControl = UISegmentedControl(items: items)
-        segmentedControl.selectedSegmentIndex = 0 // "다음 트랙" 기본 선택
+        segmentedControl.selectedSegmentIndex = 2 // "다음 트랙" 기본 선택
         
         // 배경 색상 및 선택된 색상 설정
         segmentedControl.backgroundColor = .black
@@ -127,12 +127,14 @@ class RecommendView: UIView {
     lazy var albumRecommendCollectionView : UICollectionView = {
         let layout = UICollectionViewFlowLayout()
                 layout.scrollDirection = .horizontal // 수평 스크롤
-                layout.itemSize = CGSize(width: 120, height: 160) // 카드 크기
+                layout.itemSize = CGSize(width: 140, height: 186) // 카드 크기
                 layout.minimumLineSpacing = 10 // 카드 간 간격
                 layout.sectionInset = UIEdgeInsets(top: 0, left: 10, bottom: 0, right: 10) // 컬렉션 뷰 여백
                 
                 let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
                 collectionView.backgroundColor = .clear
+                collectionView.isScrollEnabled = true
+
                 collectionView.showsHorizontalScrollIndicator = false
                 return collectionView
     }()
@@ -151,33 +153,26 @@ class RecommendView: UIView {
         backgroundColor = .black
 
         // ScrollView와 ContentView 추가
-        addSubview(scrollView)
-        scrollView.addSubview(contentView)
+       
         
         // ContentView에 뷰 추가
-        contentView.addSubview(albumInfoView)
-        contentView.addSubview(bottomLine)
-        contentView.addSubview(tabBar)
-        contentView.addSubview(albumCollectionView)
-        contentView.addSubview(sectionTitleLabel)
-        contentView.addSubview(seeMoreButton)
-        contentView.addSubview(albumRecommendCollectionView)
+       addSubview(albumInfoView)
+        addSubview(bottomLine)
+        addSubview(tabBar)
+        addSubview(albumCollectionView)
+        addSubview(sectionTitleLabel)
+        addSubview(seeMoreButton)
+        addSubview(albumRecommendCollectionView)
     }
 
     
     private func setupConstraints() {
         
-        scrollView.snp.makeConstraints { make in
-               make.edges.equalToSuperview()
-           }
-           contentView.snp.makeConstraints { make in
-               make.edges.equalToSuperview()
-               make.width.equalToSuperview()
-           }
-
+       
+       
            // ContentView에 추가된 뷰들의 제약 조건 설정
            albumInfoView.snp.makeConstraints { make in
-               make.top.equalTo(contentView).offset(20)
+               make.top.equalTo(safeAreaLayoutGuide).offset(20)
                make.leading.trailing.equalToSuperview().inset(16)
                make.height.equalTo(70)
            }
@@ -187,7 +182,7 @@ class RecommendView: UIView {
             make.leading.trailing.equalToSuperview()
         }
         tabBar.snp.makeConstraints{make in
-            make.top.equalTo(albumInfoView.snp.bottom).offset(20)
+            make.top.equalTo(albumInfoView.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
             make.height.equalTo(44)
         }
@@ -209,8 +204,10 @@ class RecommendView: UIView {
         albumRecommendCollectionView.snp.makeConstraints{make in
             make.top.equalTo(sectionTitleLabel.snp.bottom).offset(10)
             make.leading.equalTo(sectionTitleLabel)
-            make.trailing.equalToSuperview().offset(-10)
+//            make.width.equalTo(3000)
             make.height.equalTo(250)
+            make.trailing.equalToSuperview()
+         
         }
         
         

@@ -18,9 +18,49 @@ class LyricsVC: UIViewController, UICollectionViewDelegate, UICollectionViewData
 
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        setupActions()
         setupCollectionView()
     }
+    private func setupActions() {
+        lyricsView.tabBar.addTarget(self, action: #selector(tabBarValueChanged(_:)), for: .valueChanged)
+    }
+
+@objc private func tabBarValueChanged(_ sender: UISegmentedControl) {
+    switch sender.selectedSegmentIndex {
+    case 0:
+        print("다음 트랙 선택됨")
+        goToNextTrack()
+    case 1:
+        print("가사 선택됨")
+        goToLyrics()
+    case 2:
+        print("추천 콘텐츠 선택됨")
+        goToRecommend()
+    default:
+        break
+    }
+}
+@objc private func goToNextTrack() {
+    print("다음 트랙으로 이동")
+    // 다음 트랙 로직 실행
+    let nextTrackVC = NextTrackVC()
+    navigationController?.pushViewController(nextTrackVC, animated: true)
+    
+}
+
+@objc private func goToLyrics() {
+    print("가사 화면으로 이동")
+    // 가사 뷰로 이동하는 로직 (예: 새 화면 push, present 등)
+    let lyricsVC = LyricsVC()
+     navigationController?.pushViewController(lyricsVC, animated: true)
+}
+
+@objc private func goToRecommend() {
+    print("추천 콘텐츠 화면으로 이동")
+    // 추천 콘텐츠 뷰로 이동하는 로직
+    let recommendVC = RecommendVC()
+     navigationController?.pushViewController(recommendVC, animated: true)
+}
 
     private func setupCollectionView() {
         lyricsView.lyricsCollectionView.delegate = self
