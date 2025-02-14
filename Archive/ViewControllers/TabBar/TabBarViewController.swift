@@ -74,12 +74,14 @@ class TabBarViewController: UITabBarController {
     // 노래 재생 (musicInfoResponseDTO를 파라미터로 받아도 됨)
     public func playingMusic(musicId: String, imageURL: String, musicTitle: String, artist: String) {
         floatingView.configure(albumImage: imageURL, songTitle: musicTitle, artistName: artist)
+        
+        let nextVC = MusicLoadVC(artist: artist, music: musicTitle)
+        nextVC.modalPresentationStyle = .fullScreen
+        self.present(nextVC, animated: true)
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
     public func setFloatingView() {
-        print("setFloatingView() 호출")
-        
         // 키체인에 저장된 음악 정보 가져오기
         guard let musicId = KeychainService.shared.load(account: .musicInfo, service: .musicId),
               let musicTitle = KeychainService.shared.load(account: .musicInfo, service: .musicTitle),
@@ -91,7 +93,7 @@ class TabBarViewController: UITabBarController {
         }
         
         hiddenView(isNullData: false)
-        floatingView.configure(albumImage: musicImageURL, songTitle: musicTitle, artistName: artist)
+        self.playingMusic(musicId: musicId, imageURL: musicImageURL, musicTitle: musicTitle, artist: artist)
     }
     
     // 음악 재생 정보에 따른 히든 처리

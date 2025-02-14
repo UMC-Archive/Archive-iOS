@@ -34,7 +34,7 @@ class MusicLoadVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupActions()
-            musicLoad()
+        musicLoad()
     }
     
 
@@ -87,6 +87,15 @@ class MusicLoadVC: UIViewController {
         let recommendTapGesture = UITapGestureRecognizer(target: self, action: #selector(goToRecommend))
         bottomMenuSubviews[2].isUserInteractionEnabled = true
         bottomMenuSubviews[2].addGestureRecognizer(recommendTapGesture)
+        
+        
+        // 뒤로 가기
+        musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+    }
+    
+    // 뒤로 가기 액션
+    @objc private func popButton() {
+        self.dismiss(animated: true)
     }
 
     // 다음 트랙 화면으로 이동

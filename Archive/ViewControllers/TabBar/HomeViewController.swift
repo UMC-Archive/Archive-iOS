@@ -281,7 +281,6 @@ class HomeViewController: UIViewController {
     
     // 노래 재생 제스처
     @objc private func musicPlayingGesture(_ sender: CustomTapGesture) {
-        print("musicPlayingGesture() 제스처 호출")
         guard let musicId = sender.musicId,
               let musicTitle = sender.musicTitle,
               let musicImageURL = sender.musicImageURL,
