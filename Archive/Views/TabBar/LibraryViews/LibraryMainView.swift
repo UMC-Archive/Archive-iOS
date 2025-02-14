@@ -18,12 +18,12 @@ class LibraryMainView : UIView {
         
         static let myPageIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 25, height: 25) : CGSize(width: 25, height: 25)
         
-        static let playlistCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 50) : CGSize(width: 355, height: 50)
+        static let playlistCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 50) : CGSize(width: 335, height: 50)
         
-        static let playlistCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 422) : CGSize(width: 355, height: 422)
+        static let playlistCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
         
-        static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 355, height: 422) : CGSize(width: 355, height: 422)
-        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 206) : CGSize(width: 160, height: 206)
+        static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
+        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 206) : CGSize(width: 160, height: 206)
       }
     
     
@@ -189,25 +189,32 @@ class LibraryMainView : UIView {
             $0.height.equalTo(1)
         }
         playlistCollectionView.snp.makeConstraints{
-            $0.size.equalTo(constant.playlistCollectionViewSize)
+//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-            $0.leading.equalTo(librarySegmentControl.snp.leading)
+//            $0.leading.equalTo(librarySegmentControl.snp.leading)
+            $0.horizontalEdges.equalTo(librarySegmentControl)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
         songCollectionView.snp.makeConstraints{
-            $0.size.equalTo(constant.playlistCollectionViewSize)
+//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-            $0.leading.equalTo(librarySegmentControl.snp.leading)
+//            $0.leading.equalTo(librarySegmentControl.snp.leading)
+            $0.horizontalEdges.equalTo(librarySegmentControl)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
         albumCollectionView.snp.makeConstraints{
-            $0.size.equalTo(constant.albumCollectionViewSize)
+//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-            $0.leading.equalTo(librarySegmentControl.snp.leading)
+//            $0.leading.equalTo(librarySegmentControl.snp.leading)
+            $0.horizontalEdges.equalTo(librarySegmentControl)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
         artistCollectionView.snp.makeConstraints{
-            $0.size.equalTo(constant.playlistCollectionViewSize)
+//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-            $0.leading.equalTo(librarySegmentControl.snp.leading)
+//            $0.leading.equalTo(librarySegmentControl.snp.leading)
+            $0.horizontalEdges.equalTo(librarySegmentControl)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
-        
     }
 }
