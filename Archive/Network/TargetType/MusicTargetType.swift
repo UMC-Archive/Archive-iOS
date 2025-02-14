@@ -14,6 +14,7 @@ enum MusicTargetType {
     case albumCuration(albumId: String)     // 앨범 큐레이션
     case artistInfo(artist: String, album: String) // 아티스트 정보 가져오기
     case artistCuration(artistId: String)   // 아티스트 큐레이션
+    case artistPopularMusic(artistId: String) // 아티스트 인기곡
     case musicHidden // 숨겨진 명곡
     case chooseGenreInfo // 선택 장르 정보 가져오기
     case chooseArtistInfo // 선택 아티스트 정보 가져오기
@@ -64,6 +65,8 @@ extension MusicTargetType: TargetType {
             return "all/info"
         case .selection:
             return "selection"
+        case .artistPopularMusic(artistId: let artistId):
+            return "artist/\(artistId)/toptracks"
         }
     }
     
@@ -71,7 +74,7 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection, .artistPopularMusic:
             return .get
         }
     }
@@ -84,7 +87,7 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .artistInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic:
             return .requestPlain
         case .allInfo(music: let music, artist: let artist, album: let album):
             return .requestParameters(parameters: ["music" : music ?? "", "album" : album ?? "", "artist": artist ?? ""], encoding: URLEncoding.queryString)

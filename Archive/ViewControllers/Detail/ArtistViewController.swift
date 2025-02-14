@@ -16,7 +16,9 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var data: ArtistInfoReponseDTO?
-    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]?
+    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
+    private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
+    
     
     private var libraryService = LibraryService()
     
@@ -102,9 +104,9 @@ class ArtistViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: artistView.collectionView, cellProvider: { collectionView, indexPath, itemIdentifier in
             switch itemIdentifier {
-            case .ArtistPopularMusic(let item):     // 아티스트 인기곡
+            case let .ArtistPopularMusic(music, album, artist):     // 아티스트 인기곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.config(data: item)
+                (cell as? VerticalCell)?.configPopularMusic(music: music, artist: artist)
                 return cell
             case .SameArtistAnotherAlbum(let item): // 앨범 둘러보기
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
@@ -181,15 +183,21 @@ class ArtistViewController: UIViewController {
         
         snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, musicVideoSection, similarArtistSection])
         
-        let popularMusicItem = artistData.popularMusicList.map{Item.ArtistPopularMusic($0)}
-        snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
+        // 아티스트 인기곡
+        if let popularMusic = popularMusic {
+            let popularMusicItem = popularMusic.map{Item.ArtistPopularMusic($0.0, $0.1, $0.2)}
+            snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
+        }
         
+        // 앨범 둘러보기
         let anotherAlbumItem = artistData.albumList.map{Item.SameArtistAnotherAlbum($0)}
         snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
         
+        // 뮤직 비디오
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
+        // 다른 비슷한 아티스트
         if let similarArtist = similarArtist {
             let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
             snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
@@ -230,6 +238,9 @@ class ArtistViewController: UIViewController {
                 
                 // 비슷한 아티스트 조회
                 getSimilarArtist(artistId: response.id)
+                
+                // 아티스트 인기곡
+                getArtistPopularMusic(artistId: response.id)
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -269,6 +280,25 @@ class ArtistViewController: UIViewController {
                 self.similarArtist = response.map{($0.artist, $0.album)}
                 self.setDataSource()
                 self.setSnapshot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 아티스트 인기곡 API
+    private func getArtistPopularMusic(artistId: String) {
+        musicService.artistPopularMusic(artistId: artistId) { [weak self] result in
+            guard let self = self else {return}
+            
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                popularMusic = response.map{($0.music, $0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapshot()
+                
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
