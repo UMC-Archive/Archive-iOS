@@ -13,18 +13,16 @@ class MusicLoadVC: UIViewController {
     private let musicLoadView = MusicLoadView()
     private var player: AVPlayer?
     private let musiceservice = MusicService()
-    private var musicInfo : MusicInfoResponseDTO?
-    private var music: String
-    private var artist: String
+    public var musicInfo : MusicInfoResponseDTO?
     
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
     }
     
-    init(artist: String = "NewJeans", music: String = "Supernatural") {
-        self.artist = artist
-        self.music = music
+    init() {
         super.init(nibName: nil, bundle: nil)
+        
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -33,12 +31,10 @@ class MusicLoadVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupActions()
-        musicLoad()
     }
     
 
-    public func musicLoad() {
+    public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
 
@@ -58,7 +54,10 @@ class MusicLoadVC: UIViewController {
                         )
                     }
 
-                    self?.playPauseMusic()
+                    if playMusic {
+                        self?.player = nil
+                        self?.playPauseMusic()
+                    }
                 case .failure(let error):
                     print(" 음악 정보 API 오류: \(error)")
                 }
@@ -116,6 +115,7 @@ class MusicLoadVC: UIViewController {
         let recommendVC = RecommendVC()
         self.navigationController?.pushViewController(recommendVC, animated: true)
     }
+    
     // 재생 버튼 누를 시에 음악 재생하기
     @objc public func playPauseMusic() {
             guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {

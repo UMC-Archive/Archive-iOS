@@ -11,9 +11,7 @@ class TabBarViewController: UITabBarController {
     private let userService = UserService()
     private let floatingView = AlbumInfoView()
     private var musicLoadVC: MusicLoadVC? // 음악 재생 화면
-    public var isPlay = false
-    public var artist: String?
-    public var music: String?
+    public var isPlaying = false
     
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
     private let exploreVC = UINavigationController(rootViewController: ExploreViewController())
@@ -64,18 +62,31 @@ class TabBarViewController: UITabBarController {
     
     // 노래 재생 버튼을 눌렀을 때
     @objc private func touchUpInsidePlayButton() {
-        // 노래 재생 중일 때 -> 노래 멈춤, 버튼 이미지 변경
-        // 노래 재생 중이지 않을 때,
-        isPlay.toggle()
-        floatingView.playingMusic(isPlay: isPlay)
+
+        // 처음 재생 버튼을 눌렀을 때 (기존 키체인에 저장되었던: musicLoad() 안 했을 떄) -> MusicLoadVC에 musicInfo가 존재하지 않음
+        // musicLoad()를 한 번이라도 호출 했을 때 -> 재생 / 정지
+        isPlaying.toggle() // 노래 재생 중인지, 아닌지
+        floatingView.playingMusic(isPlaying: isPlaying) // 버튼 이미지 변경
         
-        // 노래 멈추기 / 재생 로직 구현
+        if musicLoadVC?.musicInfo == nil {
+            guard let artist = KeychainService.shared.load(account: .musicInfo, service: .artist),
+                  let music = KeychainService.shared.load(account: .musicInfo, service: .musicTitle)
+            else {
+                return
+            }
+            musicLoadVC?.musicLoad(playMusic: true, artist: artist, music: music)
+        } else {
+            musicLoadVC?.playPauseMusic()
+        }
+
     }
     
     // 노래 재생 (musicInfoResponseDTO를 파라미터로 받아도 됨)
     public func playingMusic(musicId: String, imageURL: String, musicTitle: String, artist: String) {
         guard let musicLoadVC = musicLoadVC else { return }
-        musicLoadVC.musicLoad() // 백그라운드에서 음악 재생만 진행
+        musicLoadVC.musicLoad(playMusic: true, artist: artist, music: musicTitle) // 백그라운드에서 음악 재생만 진행
+        self.isPlaying = true
+        floatingView.playingMusic(isPlaying: true)
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
@@ -97,8 +108,7 @@ class TabBarViewController: UITabBarController {
             self.playingMusic(musicId: musicId, imageURL: musicImageURL, musicTitle: musicTitle, artist: artist)
         } else {
             // MusicLoadVC를 미리 생성해두고 백그라운드에서 음악 재생만 실행
-            let musicPlayVC = MusicLoadVC(artist: artist, music: musicTitle)
-            self.musicLoadVC = musicPlayVC
+            self.musicLoadVC = MusicLoadVC()
         }
     }
     

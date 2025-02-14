@@ -141,9 +141,9 @@ class AlbumInfoView: UIView {
         artistLabel.text = artistName
     }
     
-    public func playingMusic(isPlay: Bool) {
+    public func playingMusic(isPlaying: Bool) {
         // 플레이 버튼 이미지 변경
-        playButton.configuration?.image = UIImage(systemName: isPlay ? "pause.fill" : "play.fill")
+        playButton.configuration?.image = UIImage(systemName: isPlaying ? "pause.fill" : "play.fill")
     }
 }
 
