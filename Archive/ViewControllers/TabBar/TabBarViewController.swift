@@ -10,6 +10,7 @@ import UIKit
 class TabBarViewController: UITabBarController {
     private let userService = UserService()
     private let floatingView = AlbumInfoView()
+    public var isPlay = false
     
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
     private let exploreVC = UINavigationController(rootViewController: ExploreViewController())
@@ -21,16 +22,45 @@ class TabBarViewController: UITabBarController {
 
         setTabBarItem()
         setFloatingView()
+        setAction()
+    }
+    
+    private func setAction() {
+        floatingView.playButton.addTarget(self, action: #selector(touchUpInsidePlayButton), for: .touchUpInside)
+        floatingView.overlappingSquaresButton.addTarget(self, action: #selector(touchUpInsidePlaylist), for: .touchUpInside)
+    }
+    
+    // 재생 목록 버튼을 눌렀을 때
+    @objc private func touchUpInsidePlaylist() {
+        // songList로 화면 이동
+        print("touchUpInsidePlaylist()")
+    }
+    
+    // 노래 재생 버튼을 눌렀을 때
+    @objc private func touchUpInsidePlayButton() {
+        // 노래 재생 중일 때 -> 노래 멈춤, 버튼 이미지 변경
+        // 노래 재생 중이지 않을 때,
+        isPlay.toggle()
+        floatingView.playingMusic(isPlay: isPlay)
+        
+        // 노래 멈추기 / 재생 로직 구현
+    }
+    
+    // 노래 재생 (musicInfoResponseDTO를 파라미터로 받아도 됨)
+    public func playingMusic(musicId: String) {
+        floatingView.configure(albumImage: .BTOB, songTitle: "POWER", artistName: "G-Dragon")
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
     private func setFloatingView() {
+        // 재생 중인 곡이 없으면 안 띄우기 (키체인 사용)
+        
         view.addSubview(floatingView)
         
         floatingView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(tabBar.snp.top) // 탭 바 위에 배치
-            make.height.equalTo(66)
+            make.height.equalTo(FloatingViewHeight)
          }
         
         floatingView.configure(albumImage: .BTOB, songTitle: "POWER", artistName: "G-Dragon")

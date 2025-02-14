@@ -33,6 +33,7 @@ class PlayListCollectionViewCell: UICollectionViewCell {
     private let playListLabelStackView = UIStackView().then{
         $0.axis = .vertical
         $0.alignment = .leading
+        $0.spacing = 2
     }
     
     private let playListLabel = UILabel().then{

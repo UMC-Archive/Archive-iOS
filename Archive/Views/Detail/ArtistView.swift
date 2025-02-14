@@ -157,7 +157,7 @@ class ArtistView: UIView {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(40)
             make.leading.equalToSuperview().inset(20)
-            make.trailing.bottom.equalToSuperview()
+            make.trailing.equalToSuperview()
             make.height.equalTo(1100)
         }
     }

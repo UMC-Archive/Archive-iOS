@@ -57,7 +57,8 @@ class HomeView: UIView {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(topView.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(20)
-            make.bottom.trailing.equalToSuperview()
+            make.trailing.equalToSuperview()
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(FloatingViewHeight)
         }
     }
     

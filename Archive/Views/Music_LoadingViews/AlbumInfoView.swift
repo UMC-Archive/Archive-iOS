@@ -42,12 +42,17 @@ class AlbumInfoView: UIView {
     }()
 
     // 겹치는 사각형 아이콘
-    lazy var overlappingSquaresView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.image = .playlist
-        imageView.tintColor = .white
-        imageView.contentMode = .scaleAspectFit
-        return imageView
+    lazy var overlappingSquaresButton: UIButton = {
+        let button = UIButton()
+        var config = UIButton.Configuration.plain()
+        
+        config.image = .playlist
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        button.configuration = config
+        button.clipsToBounds = true
+        button.tintColor = .white
+        button.translatesAutoresizingMaskIntoConstraints = false
+        return button
     }()
 
     override init(frame: CGRect) {
@@ -66,7 +71,7 @@ class AlbumInfoView: UIView {
         addSubview(songTitleLabel)
         addSubview(artistLabel)
         addSubview(playButton)
-        addSubview(overlappingSquaresView)
+        addSubview(overlappingSquaresButton)
     }
 
     private func setupConstraints() {
@@ -90,11 +95,11 @@ class AlbumInfoView: UIView {
 
         playButton.snp.makeConstraints { make in
             make.centerY.equalTo(albumImageView)
-            make.trailing.equalTo(overlappingSquaresView.snp.leading).offset(-25)
+            make.trailing.equalTo(overlappingSquaresButton.snp.leading).offset(-25)
             make.width.height.equalTo(30)
         }
 
-        overlappingSquaresView.snp.makeConstraints { make in
+        overlappingSquaresButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-25)
             make.width.height.equalTo(20)
@@ -106,6 +111,11 @@ class AlbumInfoView: UIView {
         albumImageView.image = albumImage
         songTitleLabel.text = songTitle
         artistLabel.text = artistName
+    }
+    
+    public func playingMusic(isPlay: Bool) {
+        // 플레이 버튼 이미지 변경
+        playButton.configuration?.image = UIImage(systemName: isPlay ? "pause.fill" : "play.fill")
     }
 }
 
