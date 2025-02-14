@@ -51,15 +51,20 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white.withAlphaComponent(0.7)
     }
     
-    private let etcImage = UIImageView().then{
+    public let etcImage = UIImageView().then{
         $0.image = UIImage(named: "etc")
+    }
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
     }
     
     private func setComponent(){
         [
             songAlbumImage,
             playListLabelStackView,
-            etcImage
+            etcImage,
+            overflowView
         ].forEach{
             addSubview($0)
         }
@@ -89,6 +94,14 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
         }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(etcImage).offset(-7)
+        }
 
     }
     
@@ -101,5 +114,16 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         
         let updatedText = "\(artist) · \(year)"
         artistYearLabel.text = updatedText
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+        default:
+            return
+        }
     }
 }

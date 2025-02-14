@@ -49,12 +49,16 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
     }
-    
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
+    }
     
     private func setComponent(){
         [
             albumImage,
             albumLabelStackView,
+            overflowView
         ].forEach{
             addSubview($0)
         }
@@ -81,6 +85,14 @@ class AlbumCollectionViewCell: UICollectionViewCell {
             $0.top.equalTo(albumNameLabel.snp.bottom)
             $0.width.equalTo(160)
         }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(albumLabelStackView).offset(7)
+        }
 
     }
     
@@ -89,5 +101,16 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         albumImage.kf.setImage(with: imageUrl)
         albumNameLabel.text = albumName
         artistLabel.text = artist
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+        default:
+            return
+        }
     }
 }

@@ -63,4 +63,8 @@ public final class UserService: NetworkManager {
     public func getGenrePreference(completion: @escaping (Result<[GenrePreferenceResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .preference, decodingType: [GenrePreferenceResponseDTO].self, completion: completion)
     }
+    // 회원가입 API
+    public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO, NetworkError>) -> Void) {
+        request(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
+    }
 }
