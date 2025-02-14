@@ -18,6 +18,7 @@ class ArtistViewController: UIViewController {
     private var data: ArtistInfoReponseDTO?
     private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
     private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
+    private var sameArtistAnoterAlbum: [SameArtistAnotherAlbumResponseDTO]? // 앨범 둘러보기
     
     
     private var libraryService = LibraryService()
@@ -108,9 +109,9 @@ class ArtistViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configPopularMusic(music: music, artist: artist)
                 return cell
-            case .SameArtistAnotherAlbum(let item): // 앨범 둘러보기
+            case .SameArtistAnotherAlbum(let album): // 앨범 둘러보기
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbum(data: item)
+                (cell as? BannerCell)?.configSameArtistAlbum(album:album, artist: self.artist)
                 return cell
             case .MusicVideo(let item):  // 아티스트 뮤직 비디오
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MusicVideoCell.id, for: indexPath)
@@ -190,8 +191,10 @@ class ArtistViewController: UIViewController {
         }
         
         // 앨범 둘러보기
-        let anotherAlbumItem = artistData.albumList.map{Item.SameArtistAnotherAlbum($0)}
-        snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
+        if let sameArtistAnoterAlbum = sameArtistAnoterAlbum {
+            let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0)}
+            snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
+        }
         
         // 뮤직 비디오
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
@@ -317,9 +320,9 @@ class ArtistViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else { return }
-                print("getSameArtistAnotherAlbum() 성공")
-//                self.setDataSource()
-//                self.setSnapshot()
+                sameArtistAnoterAlbum = response
+                self.setDataSource()
+                self.setSnapshot()
                 
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)

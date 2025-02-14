@@ -48,7 +48,7 @@ enum Item: Hashable {
     case AnotherAlbum(AnotherAlbumResponseDTO)               // 이 아티스트의 다른 앨범
     case HiddenMusic(HiddenMusicResponse, ExploreRecommendAlbum, String)         // 숨겨진 명곡
     case ArtistPopularMusic(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)        // 아티스트 인기곡
-    case SameArtistAnotherAlbum(AlbumDummyModel)     // 앨범 둘러보기
+    case SameArtistAnotherAlbum(SameArtistAnotherAlbumResponseDTO)     // 앨범 둘러보기
     case MusicVideo(MusicVideoModel)                // 아티스트 뮤직비디오
     case SimilarArtist(ArtistInfoReponseDTO, AlbumInfoReponseDTO)          // 다른 비슷한 아티스트
 }
