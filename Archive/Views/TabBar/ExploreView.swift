@@ -8,8 +8,7 @@
 import UIKit
 
 class ExploreView: UIView {
-    private let topView = TopView(type: .explore)
-    
+    public let topView = TopView(type: .explore)
     
     // 탐색 시기 그룹
     private let timeGroupView = UIView()
@@ -210,5 +209,10 @@ class ExploreView: UIView {
         let header = NSCollectionLayoutBoundarySupplementaryItem(layoutSize: headerSize, elementKind: UICollectionView.elementKindSectionHeader, alignment: .topLeading)
         header.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 20, trailing: 0)
         return header
+    }
+    
+    // 년도 설정
+    public func config(time: String) {
+        self.timeLabel.text = time
     }
 }

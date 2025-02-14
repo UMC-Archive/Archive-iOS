@@ -78,6 +78,8 @@ class DatePickerWeekViewController : UIViewController {
                 let requestDTO = PostHistoryRequestDTO(history: dateString)
                 postHistory(date: requestDTO)
                 
+                // 키체인 저장
+                KeychainService.shared.save(account: .userInfo, service: .timeHistory, value: "\(year)년 \(month)월 \(data ?? "")")
                 
                 async {
                     // 탭 전환
