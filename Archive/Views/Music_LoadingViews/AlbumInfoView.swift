@@ -2,6 +2,19 @@ import UIKit
 import SnapKit
 
 class AlbumInfoView: UIView {
+    
+    // 재생 중인 음악이 없을 떄 뷰
+    public let emptyLabel = UILabel().then { lbl in
+        lbl.text = "재생 중인 음악이 없습니다."
+        lbl.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 700)
+        lbl.textColor = .white
+        lbl.textAlignment = .center
+        lbl.isHidden = true
+    }
+    
+    // 음악 정보 그룹 뷰
+    public let musicInfoGroupView = UIView()
+    
     // 앨범 이미지
     lazy var albumImageView: UIImageView = {
         let imageView = UIImageView()
@@ -67,14 +80,29 @@ class AlbumInfoView: UIView {
     }
 
     private func setupViews() {
-        addSubview(albumImageView)
-        addSubview(songTitleLabel)
-        addSubview(artistLabel)
+        [
+            albumImageView,
+            songTitleLabel,
+            artistLabel
+        ].forEach{musicInfoGroupView.addSubview($0)}
+        
+        addSubview(musicInfoGroupView)
         addSubview(playButton)
         addSubview(overlappingSquaresButton)
+        addSubview(emptyLabel)
     }
 
     private func setupConstraints() {
+        
+        emptyLabel.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
+        
+        musicInfoGroupView.snp.makeConstraints { make in
+            make.leading.verticalEdges.equalToSuperview()
+            make.trailing.equalTo(playButton.snp.leading).offset(-20)
+        }
+        
         albumImageView.snp.makeConstraints { make in
             make.leading.equalToSuperview().offset(25)
             make.centerY.equalToSuperview()
@@ -84,7 +112,7 @@ class AlbumInfoView: UIView {
         songTitleLabel.snp.makeConstraints { make in
             make.top.equalTo(albumImageView).offset(6)
             make.leading.equalTo(albumImageView.snp.trailing).offset(14)
-            make.trailing.equalTo(playButton.snp.leading).offset(-40)
+            make.trailing.equalToSuperview()
         }
 
         artistLabel.snp.makeConstraints { make in
@@ -107,8 +135,8 @@ class AlbumInfoView: UIView {
     }
 
     // `configure` 메서드로 데이터 설정
-    func configure(albumImage: UIImage?, songTitle: String, artistName: String) {
-        albumImageView.image = albumImage
+    func configure(albumImage: String, songTitle: String, artistName: String) {
+        albumImageView.kf.setImage(with: URL(string: albumImage))
         songTitleLabel.text = songTitle
         artistLabel.text = artistName
     }

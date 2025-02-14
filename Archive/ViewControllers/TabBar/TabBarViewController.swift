@@ -11,6 +11,8 @@ class TabBarViewController: UITabBarController {
     private let userService = UserService()
     private let floatingView = AlbumInfoView()
     public var isPlay = false
+    public var artist: String?
+    public var music: String?
     
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
     private let exploreVC = UINavigationController(rootViewController: ExploreViewController())
@@ -26,9 +28,24 @@ class TabBarViewController: UITabBarController {
     }
     
     private func setAction() {
+        
+        // 재생 버튼
         floatingView.playButton.addTarget(self, action: #selector(touchUpInsidePlayButton), for: .touchUpInside)
+        
+        // 플레이 리스트 버튼
         floatingView.overlappingSquaresButton.addTarget(self, action: #selector(touchUpInsidePlaylist), for: .touchUpInside)
+        
+        // 음악 정보 뷰 터치
+        let musicInfoGeture = UITapGestureRecognizer(target: self, action: #selector(musicInfoTapGesture(_:)))
+        floatingView.musicInfoGroupView.addGestureRecognizer(musicInfoGeture)
     }
+    
+    // 음악 정보 뷰 탭 제스처
+    @objc private func musicInfoTapGesture(_ sender: UITapGestureRecognizer) {
+     
+        let nextVC = MusicLoadVC()
+    }
+    
     
     // 재생 목록 버튼을 눌렀을 때
     @objc private func touchUpInsidePlaylist() {
@@ -47,14 +64,12 @@ class TabBarViewController: UITabBarController {
     }
     
     // 노래 재생 (musicInfoResponseDTO를 파라미터로 받아도 됨)
-    public func playingMusic(musicId: String) {
-        floatingView.configure(albumImage: .BTOB, songTitle: "POWER", artistName: "G-Dragon")
+    public func playingMusic(musicId: String, imageURL: String, musicTitle: String, artist: String) {
+        floatingView.configure(albumImage: imageURL, songTitle: musicTitle, artistName: artist)
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
     private func setFloatingView() {
-        // 재생 중인 곡이 없으면 안 띄우기 (키체인 사용)
-        
         view.addSubview(floatingView)
         
         floatingView.snp.makeConstraints { make in
@@ -63,7 +78,26 @@ class TabBarViewController: UITabBarController {
             make.height.equalTo(FloatingViewHeight)
          }
         
-        floatingView.configure(albumImage: .BTOB, songTitle: "POWER", artistName: "G-Dragon")
+        
+        // 키체인에 저장된 음악 정보 가져오기
+        guard let musicId = KeychainService.shared.load(account: .musicInfo, service: .musicId),
+              let musicTitle = KeychainService.shared.load(account: .musicInfo, service: .musicTitle),
+              let musicImageURL = KeychainService.shared.load(account: .musicInfo, service: .musicImageURL),
+              let artist = KeychainService.shared.load(account: .musicInfo, service: .artist)
+        else { // 재생 중인 곡이 없으면 emptyView 보이기
+            hiddenView(isNullData: true)
+            return
+        }
+        
+        hiddenView(isNullData: false)
+        floatingView.configure(albumImage: musicImageURL, songTitle: musicTitle, artistName: artist)
+    }
+    
+    // 음악 재생 정보에 따른 히든 처리
+    private func hiddenView(isNullData: Bool) {
+        floatingView.emptyLabel.isHidden = !isNullData
+        floatingView.playButton.isHidden = isNullData
+        floatingView.overlappingSquaresButton.isHidden = isNullData
     }
     
     // 탭 바 설정

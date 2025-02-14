@@ -19,15 +19,11 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
 
-        let musicLoadVC = MusicLoadVC()
-        let navigationController = UINavigationController(rootViewController: musicLoadVC)
-        window?.rootViewController = navigationController
 //        let musicLoadVC = MusicLoadVC()
-  //      let navigationController = UINavigationController(rootViewController: musicLoadVC)
-    //    window?.rootViewController = navigationController
-
-//        let navigationController = UINavigationController(rootViewController: LoginVC())
+//        let navigationController = UINavigationController(rootViewController: musicLoadVC)
 //        window?.rootViewController = navigationController
+
+        window?.rootViewController = TabBarViewController()
         window?.makeKeyAndVisible()
       
     }
