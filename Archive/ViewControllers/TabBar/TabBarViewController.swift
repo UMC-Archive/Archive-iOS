@@ -21,6 +21,14 @@ class TabBarViewController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        view.addSubview(floatingView)
+        
+        floatingView.snp.makeConstraints { make in
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalTo(tabBar.snp.top) // 탭 바 위에 배치
+            make.height.equalTo(FloatingViewHeight)
+         }
 
         setTabBarItem()
         setFloatingView()
@@ -69,15 +77,8 @@ class TabBarViewController: UITabBarController {
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
-    private func setFloatingView() {
-        view.addSubview(floatingView)
-        
-        floatingView.snp.makeConstraints { make in
-            make.horizontalEdges.equalToSuperview()
-            make.bottom.equalTo(tabBar.snp.top) // 탭 바 위에 배치
-            make.height.equalTo(FloatingViewHeight)
-         }
-        
+    public func setFloatingView() {
+        print("setFloatingView() 호출")
         
         // 키체인에 저장된 음악 정보 가져오기
         guard let musicId = KeychainService.shared.load(account: .musicInfo, service: .musicId),
