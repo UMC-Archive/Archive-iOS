@@ -15,13 +15,14 @@ enum MusicTargetType {
     case artistInfo(artist: String, album: String) // 아티스트 정보 가져오기
     case artistCuration(artistId: String)   // 아티스트 큐레이션
     case artistPopularMusic(artistId: String) // 아티스트 인기곡
+    case sameArtistAnotherAlbum(artistId: String) // 앨범 둘러보기
     case musicHidden // 숨겨진 명곡
     case chooseGenreInfo // 선택 장르 정보 가져오기
     case chooseArtistInfo // 선택 아티스트 정보 가져오기
     case ExploreRecommendMusic // 당신을 위한 추천곡(탐색뷰)
     case recommendMusic // 홈 - 당신을 위한 추천곡
     case similarArtist(artistId: String) // 비슷한 아티스트 가져오기
-    case anotherAlbum(artistId: String, albumId: String) // 이 아티스트의 다른 앨범
+    case anotherAlbum(artistId: String, albumId: String) // 이 아티스트의 다른 앨범 (앨범 뷰)
     case allInfo(music: String?, artist: String?, album: String?) // 노래, 앨범, 아티스트 조회
     case selection // 빠른 선곡, 다음 트랙
 }
@@ -67,6 +68,8 @@ extension MusicTargetType: TargetType {
             return "selection"
         case .artistPopularMusic(artistId: let artistId):
             return "artist/\(artistId)/toptracks"
+        case .sameArtistAnotherAlbum(artistId: let artistId):
+            return "artist/\(artistId)/topalbum"
         }
     }
     
@@ -74,7 +77,7 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection, .artistPopularMusic:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection, .artistPopularMusic, .sameArtistAnotherAlbum:
             return .get
         }
     }
@@ -87,7 +90,7 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .artistInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic, .sameArtistAnotherAlbum:
             return .requestPlain
         case .allInfo(music: let music, artist: let artist, album: let album):
             return .requestParameters(parameters: ["music" : music ?? "", "album" : album ?? "", "artist": artist ?? ""], encoding: URLEncoding.queryString)

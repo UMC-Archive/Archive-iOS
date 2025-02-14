@@ -241,6 +241,9 @@ class ArtistViewController: UIViewController {
                 
                 // 아티스트 인기곡
                 getArtistPopularMusic(artistId: response.id)
+                
+                // 앨범 둘러보기
+                getSameArtistAnotherAlbum(artistId: response.id)
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -298,6 +301,25 @@ class ArtistViewController: UIViewController {
                 popularMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapshot()
+                
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 앨범 둘러보기 API
+    private func getSameArtistAnotherAlbum(artistId: String) {
+        musicService.sameArtistAnotherAlbum(artistId: artistId) { [weak self] result in
+            guard let self = self else {return}
+            
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                print("getSameArtistAnotherAlbum() 성공")
+//                self.setDataSource()
+//                self.setSnapshot()
                 
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
