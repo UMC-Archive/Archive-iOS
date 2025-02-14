@@ -5,6 +5,16 @@ import Then
 import Kingfisher
 
 class MusicLoadView: UIView {
+    
+    // popButton
+    public let popButton = UIButton().then { button in
+        var config = UIButton.Configuration.plain()
+        config.image = UIImage(systemName: "chevron.down")
+        config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+        config.imagePadding = 0
+        button.configuration = config
+        button.tintColor = .white
+    }
 
     // 앨범 이미지
     lazy var albumImageView = UIImageView().then { make in
@@ -130,12 +140,13 @@ class MusicLoadView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        self.backgroundColor = .black
+        self.backgroundColor = .black_100
         setupViews()
         setupConstraints()
     }
 
     private func setupViews() {
+        addSubview(popButton)
         addSubview(albumImageView)
         addSubview(albumInfoStackView)
         addSubview(progressSlider)
@@ -150,9 +161,16 @@ class MusicLoadView: UIView {
     }
 
     private func setupConstraints() {
+        // 뒤로 가기 버튼
+        popButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(15)
+            make.trailing.equalToSuperview().inset(40)
+            make.width.height.equalTo(30)
+        }
+        
         // 앨범 이미지
         albumImageView.snp.makeConstraints { make in
-            make.top.equalTo(self.safeAreaLayoutGuide).offset(20)
+            make.top.equalTo(self.safeAreaLayoutGuide).offset(91)
             make.centerX.equalToSuperview()
             make.width.height.equalTo(300)
         }

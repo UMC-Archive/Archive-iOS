@@ -98,6 +98,14 @@ class MyPageViewController: UIViewController {
         rootView.CDView.layer.addSublayer(gradient)
     }
     
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            rootView.topView.config(profileImage: profileImage)
+        }
+    }
+    
 }
 extension MyPageViewController : UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
@@ -135,13 +143,5 @@ extension MyPageViewController : UICollectionViewDataSource {
             
         }
         
-    }
-    
-    
-    // 프로필 이미지 설정 함수
-    private func setProfileImage() {
-        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
-            rootView.topView.config(profileImage: profileImage)
-        }
     }
 }

@@ -10,4 +10,5 @@ import Foundation
 public enum KeychainAccountType : String {
     case userInfo = "userInfo"
     case token = "token"
+    case musicInfo = "musicInfo"
 }
