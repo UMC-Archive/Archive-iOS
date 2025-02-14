@@ -38,7 +38,7 @@ class MusicLoadVC: UIViewController {
     }
     
 
-    private func musicLoad() {
+    public func musicLoad() {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
 
@@ -58,6 +58,7 @@ class MusicLoadVC: UIViewController {
                         )
                     }
 
+                    self?.playPauseMusic()
                 case .failure(let error):
                     print(" 음악 정보 API 오류: \(error)")
                 }
@@ -116,7 +117,7 @@ class MusicLoadVC: UIViewController {
         self.navigationController?.pushViewController(recommendVC, animated: true)
     }
     // 재생 버튼 누를 시에 음악 재생하기
-    @objc private func playPauseMusic() {
+    @objc public func playPauseMusic() {
             guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {
                 print("❌ 음악 URL이 유효하지 않습니다.")
                 return

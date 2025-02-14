@@ -10,6 +10,7 @@ import UIKit
 class TabBarViewController: UITabBarController {
     private let userService = UserService()
     private let floatingView = AlbumInfoView()
+    private var musicLoadVC: MusicLoadVC? // 음악 재생 화면
     public var isPlay = false
     public var artist: String?
     public var music: String?
@@ -50,8 +51,8 @@ class TabBarViewController: UITabBarController {
     
     // 음악 정보 뷰 탭 제스처
     @objc private func musicInfoTapGesture(_ sender: UITapGestureRecognizer) {
-     
-        let nextVC = MusicLoadVC()
+        guard let musicLoadVC = musicLoadVC else { return }
+        self.present(musicLoadVC, animated: true)
     }
     
     
@@ -73,11 +74,8 @@ class TabBarViewController: UITabBarController {
     
     // 노래 재생 (musicInfoResponseDTO를 파라미터로 받아도 됨)
     public func playingMusic(musicId: String, imageURL: String, musicTitle: String, artist: String) {
-        floatingView.configure(albumImage: imageURL, songTitle: musicTitle, artistName: artist)
-        
-        let nextVC = MusicLoadVC(artist: artist, music: musicTitle)
-        nextVC.modalPresentationStyle = .fullScreen
-        self.present(nextVC, animated: true)
+        guard let musicLoadVC = musicLoadVC else { return }
+        musicLoadVC.musicLoad() // 백그라운드에서 음악 재생만 진행
     }
     
     // 플로팅 뷰 (음악 재생뷰) 설정
@@ -87,13 +85,21 @@ class TabBarViewController: UITabBarController {
               let musicTitle = KeychainService.shared.load(account: .musicInfo, service: .musicTitle),
               let musicImageURL = KeychainService.shared.load(account: .musicInfo, service: .musicImageURL),
               let artist = KeychainService.shared.load(account: .musicInfo, service: .artist)
-        else { // 재생 중인 곡이 없으면 emptyView 보이기
+        else { // 키 체인에 저장된 재생 중인 곡이 없으면 emptyView 보이기
             hiddenView(isNullData: true)
             return
         }
-        
         hiddenView(isNullData: false)
-        self.playingMusic(musicId: musicId, imageURL: musicImageURL, musicTitle: musicTitle, artist: artist)
+        
+        floatingView.configure(albumImage: musicImageURL, songTitle: musicTitle, artistName: artist)
+        
+        if self.musicLoadVC != nil {
+            self.playingMusic(musicId: musicId, imageURL: musicImageURL, musicTitle: musicTitle, artist: artist)
+        } else {
+            // MusicLoadVC를 미리 생성해두고 백그라운드에서 음악 재생만 실행
+            let musicPlayVC = MusicLoadVC(artist: artist, music: musicTitle)
+            self.musicLoadVC = musicPlayVC
+        }
     }
     
     // 음악 재생 정보에 따른 히든 처리
