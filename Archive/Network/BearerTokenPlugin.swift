@@ -13,12 +13,8 @@ import Moya
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
 
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTUyMjg1NCwiZXhwIjoxNzM5NTM3MjU0fQ.GeLD0dJ2lrUJ-aDEPLPX6VanEOeerURBh1xXAg4eqNs"
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTU1MDIzOSwiZXhwIjoxNzM5NTY0NjM5fQ.9YtjaoBokPyr2kQm5zi_nRogALGx-hJNYefgci-PUFU"
 
-
-        
-        
-        
 //        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
     }
     

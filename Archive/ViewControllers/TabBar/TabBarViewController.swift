@@ -9,7 +9,7 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
     private let userService = UserService()
-    private let floatingView = AlbumInfoView()
+    public let floatingView = AlbumInfoView()
     private var musicLoadVC: MusicLoadVC? // 음악 재생 화면
     public var isPlaying = false
     

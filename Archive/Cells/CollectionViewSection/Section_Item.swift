@@ -37,7 +37,7 @@ enum Section: Hashable {
 
 enum Item: Hashable {
     case ArchiveItem(AlbumRecommendAlbum, String)                // 아카이브 아이템
-    case PointItem(GetHistoryResponseDTO)            // 탐색했던 시점 아이템
+    case PointItem(UserHistoryResponseDTO, String)            // 탐색했던 시점 아이템
     case FastSelectionItem(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)          // 빠른 선곡
     case RecommendMusic(RecommendMusic, RecommendAlbum, String)       // 당신을 위한 추천곡 (홈 뷰)
     case RecommendAlbum(AlbumRecommendAlbum, String)       // 당신을 위한 앨범 추천(앨범 뷰)

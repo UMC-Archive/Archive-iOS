@@ -54,21 +54,27 @@ public final class UserService: NetworkManager {
         requestOptional(target: .getHistory, decodingType: [GetHistoryResponseDTO].self, completion: completion)
     }
     
+    // 탐색 연도 저장 API
+    public func postHistory(parameter: PostHistoryRequestDTO, completion: @escaping (Result<PostHistoryResponseDTO, NetworkError>) -> Void) {
+        request(target: .postHistory(date: parameter), decodingType: PostHistoryResponseDTO.self, completion: completion)
+    }
+    
     // 사용자 정보 불러오기
     public func userInfo(completion: @escaping (Result<UserInfoResponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .info, decodingType: UserInfoResponseDTO.self, completion: completion)
     }
-    // 로그인 API
-    public func postHistory(parameter: PostHistoryRequestDTO, completion: @escaping (Result<PostHistoryResponseDTO, NetworkError>) -> Void) {
-        request(target: .postHistory(date: parameter), decodingType: PostHistoryResponseDTO.self, completion: completion)
-    }
+    
+    // recap 가져오기 API
     public func getRecap(completion: @escaping (Result<[RecapResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .getRecap, decodingType: [RecapResponseDTO].self, completion: completion)
     }
+    
+    // 선호 장르 가져오기 API
     public func getGenrePreference(completion: @escaping (Result<[GenrePreferenceResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .preference, decodingType: [GenrePreferenceResponseDTO].self, completion: completion)
     }
-    // 회원가입 API
+    
+    // 프로필 변경 API
     public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO, NetworkError>) -> Void) {
         request(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
     }
