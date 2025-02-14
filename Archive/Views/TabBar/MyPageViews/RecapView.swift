@@ -37,7 +37,7 @@ class RecapView: UIView {
     public var contentView = UIView()
     
     public var genreInfoLabel = UILabel().then{
-        $0.text = "2024 상반기 유저 닉네임님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
+        $0.text = "2025 상반기 유저 닉네임님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
         $0.textAlignment = .center
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400)
         $0.textColor = .white
@@ -49,7 +49,7 @@ class RecapView: UIView {
         $0.scrollDirection = .horizontal
     }).then{
         $0.backgroundColor = UIColor.black_100
-        $0.isScrollEnabled = false
+        $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
         $0.register(GenreRecommendedCollectionViewCell.self, forCellWithReuseIdentifier: "genreRecommendedCollectionViewIdentifier")
         $0.backgroundColor = .black_100
@@ -66,7 +66,7 @@ class RecapView: UIView {
         $0.numberOfLines = 2
     }
     public var genreTasteLabel2 = UILabel().then{
-        $0.text = "Dance Pop · 2000년대"
+        $0.text = "Dance Pop"
         $0.textAlignment = .center
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.75)

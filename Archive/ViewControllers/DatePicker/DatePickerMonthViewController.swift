@@ -16,8 +16,9 @@ class DatePickerMonthViewController : UIViewController {
         view.backgroundColor = UIColor.black_100
         controlTapped()
         setDataSourceAndDelegate()
-        self.navigationController?.navigationBar.isHidden = true
     }
+ 
+    
     private func controlTapped(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(weekTapped))
         rootView.week.isUserInteractionEnabled = true // 제스처 인식 활성화
@@ -94,6 +95,8 @@ class DatePickerMonthViewController : UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     @objc func XButtonTapped(){
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
         navigationController?.popToRootViewController(animated: true)
     }
     

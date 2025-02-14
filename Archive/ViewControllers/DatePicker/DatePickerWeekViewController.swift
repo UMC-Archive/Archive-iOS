@@ -20,6 +20,11 @@ class DatePickerWeekViewController : UIViewController {
         setDataSourceAndDelegate()
         self.navigationController?.navigationBar.isHidden = true
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
+    }
     private func controlTapped(){
         rootView.button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         rootView.backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
@@ -99,6 +104,8 @@ class DatePickerWeekViewController : UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     @objc func XButtonTapped(){
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
         navigationController?.popToRootViewController(animated: true)
     }
     private func postHistory(date: PostHistoryRequestDTO){

@@ -9,7 +9,7 @@ import UIKit
 
 class TabBarViewController: UITabBarController {
     private let userService = UserService()
-    private let floatingView = AlbumInfoView()
+    public let floatingView = AlbumInfoView()
     public var isPlay = false
     
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
@@ -24,6 +24,7 @@ class TabBarViewController: UITabBarController {
         setFloatingView()
         setAction()
     }
+    
     
     private func setAction() {
         floatingView.playButton.addTarget(self, action: #selector(touchUpInsidePlayButton), for: .touchUpInside)
