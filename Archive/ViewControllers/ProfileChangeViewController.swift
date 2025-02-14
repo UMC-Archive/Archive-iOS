@@ -11,6 +11,7 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
     let rootView = ProfileChangeView()
     private let userService = UserService()
     private let nickName: ProfileChangePostRequestDTO? = nil
+    private var profileImage = UIImage()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -21,16 +22,36 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
     }
     private func controlTapped() {
         rootView.navigationView.popButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
-        rootView.button.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+
         
         let profileChangeGesture = UITapGestureRecognizer(target: self, action: #selector(showImagePicker))
         rootView.profileImage.isUserInteractionEnabled = true
         rootView.profileImage.addGestureRecognizer(profileChangeGesture)
+        
+        rootView.button.addTarget(self, action: #selector(saveButtonTapped), for: .touchUpInside)
     }
 
     @objc func backButtonTapped(){
         self.navigationController?.popViewController(animated: true)
         print("1")
+    }
+    @objc func saveButtonTapped(){
+        let requestDTO = ProfileChangePostRequestDTO(nickname: rootView.nicknameLabel.text ?? "error")
+        userService.profileChange(image: profileImage, parameter: requestDTO) { [weak self] result in
+                guard let self = self else { return }
+                
+                switch result {
+                case .success(let response):
+                    print("post profile() 성공")
+                    print(response)
+                    KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response.profileImage)
+                    self.navigationController?.popViewController(animated: true)
+                case .failure(let error):
+                    // 네트워크 연결 실패 얼럿
+                    let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                    self.present(alert, animated: true)
+            }
+        }
     }
     private func setupActions() {
         // 프로필 이미지 선택 이벤트
@@ -51,24 +72,9 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         if let selectedImage = info[.originalImage] as? UIImage {
             rootView.profileImage.image = selectedImage
-            let requestDTO = ProfileChangePostRequestDTO(nickname: "닉네임")
+            profileImage = selectedImage
+    
             
-            userService.profileChange(image: selectedImage, parameter: requestDTO) { [weak self] result in
-                    guard let self = self else { return }
-                    
-                    switch result {
-                    case .success(let response):
-                        print("post profile() 성공")
-                        print(response)
-                        Task{
-                            
-                        }
-                    case .failure(let error):
-                        // 네트워크 연결 실패 얼럿
-                        let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                        self.present(alert, animated: true)
-                }
-            }
             
         }
         dismiss(animated: true)

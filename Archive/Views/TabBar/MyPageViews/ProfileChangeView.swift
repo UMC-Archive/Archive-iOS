@@ -33,8 +33,12 @@ class ProfileChangeView : UIView {
         $0.textColor = .white
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 700)
     }
-    private let nicknameLabel = UILabel().then{
-        $0.text = "혀콩"
+    public let nicknameLabel = UITextField().then{
+        $0.placeholder = "혀콩"
+        $0.attributedPlaceholder = NSAttributedString(
+            string: "혀콩",
+            attributes: [.foregroundColor: UIColor.white]
+        )
         $0.textColor = .white
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400)
     }
@@ -90,7 +94,7 @@ class ProfileChangeView : UIView {
             $0.height.equalTo(1)
         }
         button.snp.makeConstraints{
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-46)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-(40 + FloatingViewHeight))
             $0.centerX.equalToSuperview()
             $0.size.equalTo(CGSize(width: 335, height: 50))
         }

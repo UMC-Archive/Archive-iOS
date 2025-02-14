@@ -39,6 +39,39 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
         AlbumImage.image = image
     }
     public func config(data : GenrePreferenceResponseDTO){
-        AlbumImage.kf.setImage(with: URL(string: data.name))
+        let genre = data.name
+        switch genre {
+        case "Pop":
+            AlbumImage.image = .popPattern
+        case "Hip hop":
+            AlbumImage.image = .hiphopPattern
+        case "Afrobeats":
+            AlbumImage.image = .afrobeatsPattern
+        case "Ballad":
+            AlbumImage.image = .balladPattern
+        case "Disco":
+            AlbumImage.image = .discoPattern
+        case "Electronic":
+            AlbumImage.image = .electronicPattern
+        case "Funk":
+            AlbumImage.image = .funkPattern
+        case "Indie":
+            AlbumImage.image = .indiePattern
+        case "Jazz":
+            AlbumImage.image = .jazzPattern
+        case "Latin":
+            AlbumImage.image = .latinPattern
+        case "Phonk":
+            AlbumImage.image = .phonkPattern
+        case "Punk":
+            AlbumImage.image = .punkPattern
+        case "Rock":
+            AlbumImage.image = .rockPattern
+        case "Trot":
+            AlbumImage.image = .trotPattern
+        default:
+            AlbumImage.image = .otherPattern
+        }
+
     }
 }

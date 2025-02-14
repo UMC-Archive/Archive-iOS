@@ -19,7 +19,10 @@ class DatePickerViewController : UIViewController {
         setDataSourceAndDelegate()
         self.navigationController?.navigationBar.isHidden = true
 
+        self.tabBarController?.tabBar.isHidden = true
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = true
     }
+
     private func controlTapped(){
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(monthTapped))
         rootView.month.isUserInteractionEnabled = true // 제스처 인식 활성화
@@ -31,6 +34,8 @@ class DatePickerViewController : UIViewController {
     }
     
     @objc func backButtonTapped() {
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
         self.navigationController?.popViewController(animated: true)
     }
     @objc func monthTapped() {
