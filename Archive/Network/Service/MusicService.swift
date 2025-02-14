@@ -84,6 +84,11 @@ public final class MusicService: NetworkManager {
     public func anotherAlbum(artistId: String, albumId: String, completion: @escaping(Result<[AnotherAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .anotherAlbum(artistId: artistId, albumId: albumId), decodingType: [AnotherAlbumResponseDTO].self, completion: completion)
     }
+    
+    // 아티스트 인기곡
+    public func artistPopularMusic(artistId: String, completion: @escaping(Result<[ArtistPopularMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .artistPopularMusic(artistId: artistId), decodingType: [ArtistPopularMusicResponseDTO].self, completion: completion)
+    }
 
     // 모든 정보 조회
     public func allInfo(music: String? = nil, album: String? = nil, artist: String? = nil, completion: @escaping(Result<AllInfoResponseDTO, NetworkError>) -> Void) {
