@@ -13,14 +13,14 @@ public struct AlbumInfoReponseDTO: Decodable, Hashable {
     let title: String
     let releaseTime: String
     let image: String
-//    let artist: String
+ //   let artist: String
     
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case releaseTime 
         case image
-//        case artist
+   //     case artist
     }
     
     public init(from decoder: any Decoder) throws {
@@ -29,6 +29,6 @@ public struct AlbumInfoReponseDTO: Decodable, Hashable {
         self.title = try container.decode(String.self, forKey: .title)
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
-//        self.artist = try container.decode(String.self, forKey: .artist)
+     //   self.artist = try container.decode(String.self, forKey: .artist)
     }
 }

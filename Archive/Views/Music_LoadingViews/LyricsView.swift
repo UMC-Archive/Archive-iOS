@@ -12,7 +12,7 @@ class LyricsView: UIView {
     lazy var tabBar: UISegmentedControl = {
         let items = ["다음 트랙", "가사", "추천 콘텐츠"]
         let segmentedControl = UISegmentedControl(items: items)
-         segmentedControl.selectedSegmentIndex = 0 // "다음 트랙" 기본 선택
+         segmentedControl.selectedSegmentIndex = 1 // "다음 트랙" 기본 선택
 
          // 배경 색상 및 선택된 색상 설정
          segmentedControl.backgroundColor = .black
