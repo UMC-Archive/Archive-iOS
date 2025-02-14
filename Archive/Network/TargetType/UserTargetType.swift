@@ -20,6 +20,8 @@ public enum UserTargetType {
     case getRecap
     case preference
     case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO)
+    case getRecentMusic
+    case gerRecentlyPlayedMusic
    }
 
 extension UserTargetType: TargetType {
@@ -54,6 +56,10 @@ extension UserTargetType: TargetType {
             return "genre/preference"
         case .profileChange:
             return "profile_image"
+        case .getRecentMusic:
+            return "recent"
+        case .gerRecentlyPlayedMusic:
+            return "play"
         }
     }
     
@@ -71,6 +77,10 @@ extension UserTargetType: TargetType {
             return .get
         case .profileChange:
             return .post
+        case .getRecentMusic:
+            return .get
+        case .gerRecentlyPlayedMusic:
+            return .get
         }
     }
     
@@ -158,6 +168,10 @@ extension UserTargetType: TargetType {
             
             return .uploadMultipart(formData)
             
+        case .getRecentMusic:
+            return .requestPlain
+        case .gerRecentlyPlayedMusic:
+            return .requestPlain
         }
     }
     

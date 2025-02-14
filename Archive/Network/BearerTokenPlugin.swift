@@ -12,7 +12,7 @@ import Moya
 // 라이브러리 : Moya, KeychainSwift 사용
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTUyMjg1NCwiZXhwIjoxNzM5NTM3MjU0fQ.GeLD0dJ2lrUJ-aDEPLPX6VanEOeerURBh1xXAg4eqNs"
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTU1NjIwNiwiZXhwIjoxNzM5NTcwNjA2fQ.9D4jTqNLjI2M6vh6KHY8WeSayvLeGHs2ju6IeQwgHu0"
 
         
         

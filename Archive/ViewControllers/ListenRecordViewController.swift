@@ -42,7 +42,7 @@ extension ListenRecordViewController : UICollectionViewDataSource {
         }
         let dummy = GenreModel.dummy()
         
-        cell.config(image: dummy[indexPath.row].albumImage, songName: dummy[indexPath.row].songName, artist: dummy[indexPath.row].artist, year: dummy[indexPath.row].year)
+//        cell.config(image: dummy[indexPath.row].albumImage, songName: dummy[indexPath.row].songName, artist: dummy[indexPath.row].artist, year: dummy[indexPath.row].year)
         
        return cell
     }

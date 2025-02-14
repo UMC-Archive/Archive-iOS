@@ -33,17 +33,17 @@ public final class UserService: NetworkManager {
     public func checkVerificationCode(parameter: CheckVerificationCodeRequestDTO, completion: @escaping (Result<Bool?, NetworkError>) -> Void) {
         requestOptional(target: .checkVerificationCode(parameter: parameter), decodingType: Bool.self, completion: completion)
     }
-
+    
     // 회원가입 API
     public func signUp(image: UIImage, parameter: SignUpRequestDTO, completion: @escaping (Result<SignUpResponseDTO, NetworkError>) -> Void) {
         request(target: .signUp(image: image, parameter: parameter), decodingType: SignUpResponseDTO.self, completion: completion)
     }
-
+    
     // 로그인 API
     public func login(parameter: LoginRequestDTO, completion: @escaping (Result<String?, NetworkError>) -> Void) {
         request(target: .login(parameter: parameter), decodingType: String?.self, completion: completion)
     }
-
+    
     // 음악 재생 기록 API
     public func playingRecord(parameter: UserPlayingRecordRequestDTO, completion: @escaping (Result<UserPlayingRecordResponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .userPlayingRecord(parameter: parameter), decodingType: UserPlayingRecordResponseDTO.self, completion: completion)
@@ -71,5 +71,8 @@ public final class UserService: NetworkManager {
     // 회원가입 API
     public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO, NetworkError>) -> Void) {
         request(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
+    }
+    public func RecentlyPlayedMusic(completion: @escaping(Result<[RecentPlayMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .gerRecentlyPlayedMusic, decodingType: [RecentPlayMusicResponseDTO].self, completion: completion)
     }
 }

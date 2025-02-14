@@ -11,12 +11,19 @@ class MyPageViewController: UIViewController {
     
     let rootView = MyPageView()
     let gradient = CAGradientLayer()
+    let userService = UserService()
+    let musicService = MusicService()
+    public var genreResponseDate: [GenrePreferenceResponseDTO]?
+    var musicInfo: MusicInfoResponseDTO? = nil
+    var recentlyPlayData: [RecentPlayMusicResponseDTO]? = nil
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setProfileImage() // 프로필 설정 함수
+//        getRecentlyPlayedMusic()
+        getGenre()
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -27,15 +34,37 @@ class MyPageViewController: UIViewController {
         buildGradient()
         controlTapped()
         setDataSource()
+        
         self.view.layoutIfNeeded()
         
     }
     
     override func viewDidLayoutSubviews() {
-           super.viewDidLayoutSubviews()
-           // rootView의 크기가 업데이트된 후 gradient의 프레임을 설정
+        super.viewDidLayoutSubviews()
+        // rootView의 크기가 업데이트된 후 gradient의 프레임을 설정
         gradient.frame = rootView.CDView.bounds
-       }
+    }
+    private func getGenre(){
+        userService.getGenrePreference(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("------------- 장르")
+                print(response)
+                Task{
+                    
+                    self.genreResponseDate = response
+                    
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
     private func setDataSource(){
         rootView.recordCollectionView.dataSource = self
         rootView.recentCollectionView.dataSource = self
@@ -63,7 +92,7 @@ class MyPageViewController: UIViewController {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc func recapButtonTapped(){
-        let viewController = RecapViewController()
+        let viewController = RecapViewController(data: genreResponseDate ?? [])
         
         self.navigationController?.pushViewController(viewController, animated: true)
     }
@@ -83,27 +112,63 @@ class MyPageViewController: UIViewController {
     }
     func buildGradient() {
         
+        
         gradient.type = .conic
-        gradient.colors = [
-            UIColor.dance_100?.cgColor ?? UIColor.red,
-            UIColor.hiphop_100?.cgColor ?? UIColor.red,
-            UIColor.RnB_100?.cgColor ?? UIColor.red,
-            UIColor.dance_100?.cgColor ?? UIColor.red
-        ]
-        gradient.locations = [0.0, 0.17, 0.5, 0.84, 1.0]
+        if let data = genreResponseDate, data.count == 5 {
+            gradient.colors = [
+                UIColor(named: "\(data[0].name)") ?? .white,
+                UIColor(named: "\(data[1].name)") ?? .white,
+                UIColor(named: "\(data[2].name)") ?? .white,
+                UIColor(named: "\(data[3].name)") ?? .white,
+                UIColor(named: "\(data[4].name)") ?? .white,
+                UIColor(named: "\(data[0].name)") ?? .white,
+            ]
+        }else{
+            gradient.colors = [
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.hiphop_100?.cgColor,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.RnB_100?.cgColor,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor
+            ]
+        }
+       
+        
+        gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.5) // 중심점
-        gradient.endPoint = CGPoint(x: 01.0, y: 1.0)   // conic 그라데이션은 중심을 공유
+        gradient.endPoint = CGPoint(x: 1.0, y: 1.0)   // conic 그라데이션은 중심을 공유
         
         
         rootView.CDView.layer.addSublayer(gradient)
     }
-    
+    private func getRecentlyPlayedMusic(){
+        userService.RecentlyPlayedMusic(){[weak self] result in
+            guard let self else {return}
+            switch result {
+            case .success(let response):
+                print("------------- 최근들은 노래")
+                print(response)
+                Task{
+                    
+                    self.recentlyPlayData = response
+                    
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
 }
+    
+
 extension MyPageViewController : UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView{
         case rootView.recordCollectionView :
-            return ListenRecordModel.dummy().count
+            return recentlyPlayData?.count ?? 0
         case rootView.recentCollectionView :
             return ListenRecordModel.dummy().count
         default :
@@ -118,6 +183,9 @@ extension MyPageViewController : UICollectionViewDataSource {
                 fatalError("Failed to dequeue ListenRecordCollectionViewCell")
             }
             let dummy = ListenRecordModel.dummy()
+//            guard let data = recentlyPlayData else {
+//                return UICollectionViewCell()
+//            }
             
             cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
             return cell
@@ -142,6 +210,7 @@ extension MyPageViewController : UICollectionViewDataSource {
     private func setProfileImage() {
         if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
             rootView.topView.config(profileImage: profileImage)
+            self.rootView.profileView.kf.setImage(with: URL(string: profileImage))
         }
     }
 }

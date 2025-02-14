@@ -52,12 +52,18 @@ class RecapCollectionViewVerticalCell: UICollectionViewCell {
     private let etcImage = UIImageView().then{
         $0.image = UIImage(named: "etc")
     }
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
+    }
     
     private func setComponent(){
         [
             genreImage,
             genreLabelStackView,
-            etcImage
+            etcImage,
+            overflowView
+
         ].forEach{
             addSubview($0)
         }
@@ -87,6 +93,16 @@ class RecapCollectionViewVerticalCell: UICollectionViewCell {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
         }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(etcImage).offset(-7)
+        }
+
+        
 
     }
     
@@ -100,5 +116,16 @@ class RecapCollectionViewVerticalCell: UICollectionViewCell {
         print("---------123")
         print(updatedText)
         artistYearLabel.text = updatedText
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+        default:
+            return
+        }
     }
 }

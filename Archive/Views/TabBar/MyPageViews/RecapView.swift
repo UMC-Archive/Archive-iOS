@@ -184,7 +184,8 @@ class RecapView: UIView {
                 
         scrollView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom) // scrollView는 navigationView 아래에 위치
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
                 
                 
@@ -264,7 +265,8 @@ class RecapView: UIView {
         collectionView.snp.makeConstraints{
             $0.top.equalTo(headerView.snp.bottom).offset(20)
             $0.leading.equalTo(headerView)
-            $0.width.equalToSuperview()
+//            $0.width.equalToSuperview()
+            $0.trailing.equalToSuperview()
             $0.height.equalTo(317)
         }
     }

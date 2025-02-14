@@ -34,6 +34,7 @@ class MyPageView: UIView {
     public let profileView = UIImageView().then{
         $0.image = UIImage(named: "test1")
         $0.clipsToBounds = true
+        $0.layer.cornerRadius = 25
         
     }
     
