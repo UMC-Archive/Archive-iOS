@@ -72,4 +72,11 @@ class RecapCollectionViewCell: UICollectionViewCell {
         print(updatedText)
         artist.text = updatedText
     }
+    
+    // mainCD
+    public func configMainCD(data: MainCDResponseDTO) {
+        cdView.config(albumImageURL: data.album.image)
+        song.text = data.music.title
+        artist.text = "\(data.artist) · \(data.music.releaseTime.prefixBeforeDash())"
+    }
 }

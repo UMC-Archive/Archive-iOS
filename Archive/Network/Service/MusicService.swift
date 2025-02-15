@@ -97,7 +97,7 @@ public final class MusicService: NetworkManager {
     public func anotherAlbum(artistId: String, albumId: String, completion: @escaping(Result<[AnotherAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .anotherAlbum(artistId: artistId, albumId: albumId), decodingType: [AnotherAlbumResponseDTO].self, completion: completion)
     }
-
+    
     // 모든 정보 조회
     public func allInfo(music: String? = nil, album: String? = nil, artist: String? = nil, completion: @escaping(Result<AllInfoResponseDTO, NetworkError>) -> Void) {
         request(target: .allInfo(music: music, artist: artist, album: album), decodingType: AllInfoResponseDTO.self, completion: completion)
@@ -106,5 +106,10 @@ public final class MusicService: NetworkManager {
     // 빠른 선곡 - 다음 트랙
     public func selection(completion: @escaping (Result<[SelectionResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .selection, decodingType: [SelectionResponseDTO].self, completion: completion)
+    }
+    
+    // 메인 CD
+    public func mainCD(completion: @escaping(Result<[MainCDResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .mainCD, decodingType: [MainCDResponseDTO].self, completion: completion)
     }
 }

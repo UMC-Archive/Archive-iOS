@@ -16,9 +16,10 @@ class ExploreViewController: UIViewController {
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]?
-    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]?
-    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
+    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]? // 숨겨진 명곡 데이터
+    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]? // 추천 음악 데이터
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]? // 추천 앨범 데이터
+    private var mainCDData: [MainCDResponseDTO]? // 메인 CD 데이터
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -54,6 +55,9 @@ class ExploreViewController: UIViewController {
         
         // 당신을 위한 앨범 추천 API
         getRecommendAlbum()
+        
+        // 메인 CD API
+        getMainCD()
     }
     
     override func viewDidLayoutSubviews() {
@@ -264,7 +268,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 당신을 위한 추천곡 API
-    func getRecommendMusic() {
+    private func getRecommendMusic() {
         musicService.exploreRecommendMusic(){ [weak self] result in
             guard let self = self else { return }
             
@@ -286,7 +290,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 당신을 위한 앨범 추천 API
-    func getRecommendAlbum() {
+    private func getRecommendAlbum() {
         albumService.exploreRecommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
             guard let self = self else { return }
             switch result {
@@ -306,7 +310,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 숨겨진 명곡 조회 API
-    func getHiddenMusic() {
+    private func getHiddenMusic() {
         musicService.hiddenMusic(){ [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -321,6 +325,22 @@ class ExploreViewController: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
                 print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 메인 CD API
+    private func getMainCD() {
+        musicService.mainCD { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let response = response else {return}
+                self.mainCDData = response
+                self.exploreView.recapCollectionView.reloadData()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }
@@ -341,7 +361,12 @@ extension ExploreViewController: UICollectionViewDataSource {
         switch collectionView {
         case exploreView.recapCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
-            (cell as? RecapCollectionViewCell)?.config(data: musicData[indexPath.row])
+            
+            guard let mainCDData = mainCDData else {
+                return cell
+            }
+           
+            (cell as? RecapCollectionViewCell)?.configMainCD(data: mainCDData[indexPath.row])
             return cell
         default:
             return UICollectionViewCell()
