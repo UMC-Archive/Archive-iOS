@@ -16,9 +16,10 @@ class ExploreViewController: UIViewController {
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]?
-    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]?
-    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]?
+    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]? // 숨겨진 명곡 데이터
+    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]? // 추천 음악 데이터
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]? // 추천 앨범 데이터
+    private var mainCDData: [MainCDResponseDTO]? // 메인 CD 데이터
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -334,7 +335,9 @@ class ExploreViewController: UIViewController {
             guard let self = self else { return }
             switch result {
             case .success(let response):
-                print("getMainCD() 성공")
+                guard let response = response else {return}
+                self.mainCDData = response
+                self.exploreView.recapCollectionView.reloadData()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
@@ -358,7 +361,13 @@ extension ExploreViewController: UICollectionViewDataSource {
         switch collectionView {
         case exploreView.recapCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
-            (cell as? RecapCollectionViewCell)?.config(data: musicData[indexPath.row])
+            
+            guard let mainCDData = mainCDData else {
+                (cell as? RecapCollectionViewCell)?.config(data: musicData[indexPath.row])
+                return cell
+            }
+           
+            (cell as? RecapCollectionViewCell)?.configMainCD(data: mainCDData[indexPath.row])
             return cell
         default:
             return UICollectionViewCell()
