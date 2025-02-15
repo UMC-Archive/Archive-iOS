@@ -363,7 +363,6 @@ extension ExploreViewController: UICollectionViewDataSource {
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
             
             guard let mainCDData = mainCDData else {
-                (cell as? RecapCollectionViewCell)?.config(data: musicData[indexPath.row])
                 return cell
             }
            
