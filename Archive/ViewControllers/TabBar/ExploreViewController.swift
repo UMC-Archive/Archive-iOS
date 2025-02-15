@@ -54,6 +54,9 @@ class ExploreViewController: UIViewController {
         
         // 당신을 위한 앨범 추천 API
         getRecommendAlbum()
+        
+        // 메인 CD API
+        getMainCD()
     }
     
     override func viewDidLayoutSubviews() {
@@ -264,7 +267,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 당신을 위한 추천곡 API
-    func getRecommendMusic() {
+    private func getRecommendMusic() {
         musicService.exploreRecommendMusic(){ [weak self] result in
             guard let self = self else { return }
             
@@ -286,7 +289,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 당신을 위한 앨범 추천 API
-    func getRecommendAlbum() {
+    private func getRecommendAlbum() {
         albumService.exploreRecommendAlbum(){ [weak self] result in // 반환값 result의 타입은 Result<[RecommendAlbumResponseDTO]?, NetworkError>
             guard let self = self else { return }
             switch result {
@@ -306,7 +309,7 @@ class ExploreViewController: UIViewController {
     }
     
     // 숨겨진 명곡 조회 API
-    func getHiddenMusic() {
+    private func getHiddenMusic() {
         musicService.hiddenMusic(){ [weak self] result in
             guard let self = self else { return }
             switch result {
@@ -321,6 +324,20 @@ class ExploreViewController: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
                 print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 메인 CD API
+    private func getMainCD() {
+        musicService.mainCD { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                print("getMainCD() 성공")
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }

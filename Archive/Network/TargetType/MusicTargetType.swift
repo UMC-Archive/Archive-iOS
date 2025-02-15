@@ -25,6 +25,7 @@ enum MusicTargetType {
     case anotherAlbum(artistId: String, albumId: String) // 이 아티스트의 다른 앨범 (앨범 뷰)
     case allInfo(music: String?, artist: String?, album: String?) // 노래, 앨범, 아티스트 조회
     case selection // 빠른 선곡, 다음 트랙
+    case mainCD // 메인 CD
 }
 
 
@@ -70,6 +71,8 @@ extension MusicTargetType: TargetType {
             return "artist/\(artistId)/toptracks"
         case .sameArtistAnotherAlbum(artistId: let artistId):
             return "artist/\(artistId)/topalbum"
+        case .mainCD:
+            return "main"
         }
     }
     
@@ -77,7 +80,7 @@ extension MusicTargetType: TargetType {
         switch self {
         case .musicInfo, .albumInfo, .artistInfo, .albumCuration, .artistCuration:
             return .post
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection, .artistPopularMusic, .sameArtistAnotherAlbum:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .allInfo, .selection, .artistPopularMusic, .sameArtistAnotherAlbum, .mainCD:
             return .get
         }
     }
@@ -90,7 +93,7 @@ extension MusicTargetType: TargetType {
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
         case .artistInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding: URLEncoding.queryString)
-        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic, .sameArtistAnotherAlbum:
+        case .musicHidden, .chooseGenreInfo, .chooseArtistInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic, .sameArtistAnotherAlbum, .mainCD:
             return .requestPlain
         case .allInfo(music: let music, artist: let artist, album: let album):
             return .requestParameters(parameters: ["music" : music ?? "", "album" : album ?? "", "artist": artist ?? ""], encoding: URLEncoding.queryString)
