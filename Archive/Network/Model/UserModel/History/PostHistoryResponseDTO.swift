@@ -9,8 +9,6 @@ public struct PostHistoryResponseDTO: Decodable, Hashable {
     let id: String
     let userId: String
     let history: String
-//    let createdAt: String
-//    let updatedAt: String
     
     enum CodingKeys: CodingKey {
         case id

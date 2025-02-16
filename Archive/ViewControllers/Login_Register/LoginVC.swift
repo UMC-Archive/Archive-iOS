@@ -60,7 +60,11 @@ class LoginVC: UIViewController {
                 DispatchQueue.main.async {
                     // 다음 화면으로 전환
                 //토큰 추가해야함 keychain
-                   
+                    if let token = response {
+                        KeychainService.shared.save(account: .token, service: .serverAccessToken, value: token)
+                        print(" 토큰 저장 완료: \(token)")
+                    }
+
                     self?.navigateToNextScreen()
                     
                 }
@@ -79,7 +83,7 @@ class LoginVC: UIViewController {
 
     private func navigateToNextScreen() {
         // 로그인 성공 시 이동할 화면 여기를 다른거로 이으면 돼요
-        let nextVC = TabBarViewController()
+        let nextVC = OnBoarding2VC()
         self.present(nextVC, animated: true)
         //navigationController?.pushViewController(nextVC, animated: true)
     }

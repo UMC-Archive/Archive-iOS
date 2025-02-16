@@ -21,7 +21,7 @@ class RecapCollectionViewCell: UICollectionViewCell {
     }
     
     // CDView
-    private let cdView = CDView(imageWidthHeight: 258, holeWidthHeight: 40)
+    public let cdView = CDView(imageWidthHeight: 258, holeWidthHeight: 40)
     
     private let song = UILabel().then{
         $0.text = "Song Title"
@@ -29,11 +29,12 @@ class RecapCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white
         $0.textAlignment = .center
     }
-    private let artist = UILabel().then{
+    public let artist = UILabel().then{
         $0.text = "Artist · 9999"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = UIColor.white_70
         $0.textAlignment = .center
+        $0.isUserInteractionEnabled = true
     }
     
     private func setComponent(){
@@ -71,5 +72,12 @@ class RecapCollectionViewCell: UICollectionViewCell {
         print("---------123")
         print(updatedText)
         artist.text = updatedText
+    }
+    
+    // mainCD
+    public func configMainCD(data: MainCDResponseDTO) {
+        cdView.config(albumImageURL: data.album.image)
+        song.text = data.music.title
+        artist.text = "\(data.artist) · \(data.music.releaseTime.prefixBeforeDash())"
     }
 }
