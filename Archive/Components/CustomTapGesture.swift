@@ -11,5 +11,10 @@ class CustomTapGesture: UITapGestureRecognizer {
     var artist: String? = nil
     var album: String? = nil
     var musicId: String? = nil
+    var musicTitle: String? = nil
+    var musicImageURL: String? = nil
+    var artistId: String? = nil
+    var albumId: String? = nil
+    var history: String? = nil
 //    var recapDTO: [RecapResponseDTO]? = nil
 }

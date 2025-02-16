@@ -97,6 +97,8 @@ class RecapCollectionViewVerticalCell: UICollectionViewCell {
         songLabel.text = songName
         
         let updatedText = "\(artist) · \(year)"
+        print("---------123")
+        print(updatedText)
         artistYearLabel.text = updatedText
     }
 }

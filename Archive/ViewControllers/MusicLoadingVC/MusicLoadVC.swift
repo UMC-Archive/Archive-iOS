@@ -13,18 +13,16 @@ class MusicLoadVC: UIViewController {
     private let musicLoadView = MusicLoadView()
     private var player: AVPlayer?
     private let musiceservice = MusicService()
-    private var musicInfo : MusicInfoResponseDTO?
-    private var music: String
-    private var artist: String
+    public var musicInfo : MusicInfoResponseDTO?
     
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
     }
     
-    init(artist: String = "NewJeans", music: String = "Supernatural") {
-        self.artist = artist
-        self.music = music
+    init() {
         super.init(nibName: nil, bundle: nil)
+        
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -33,12 +31,10 @@ class MusicLoadVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupActions()
-            musicLoad()
     }
     
 
-    private func musicLoad() {
+    public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
 
@@ -58,6 +54,10 @@ class MusicLoadVC: UIViewController {
                         )
                     }
 
+                    if playMusic {
+                        self?.player = nil
+                        self?.playPauseMusic()
+                    }
                 case .failure(let error):
                     print(" 음악 정보 API 오류: \(error)")
                 }
@@ -87,6 +87,15 @@ class MusicLoadVC: UIViewController {
         let recommendTapGesture = UITapGestureRecognizer(target: self, action: #selector(goToRecommend))
         bottomMenuSubviews[2].isUserInteractionEnabled = true
         bottomMenuSubviews[2].addGestureRecognizer(recommendTapGesture)
+        
+        
+        // 뒤로 가기
+        musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+    }
+    
+    // 뒤로 가기 액션
+    @objc private func popButton() {
+        self.dismiss(animated: true)
     }
 
     // 다음 트랙 화면으로 이동
@@ -108,8 +117,9 @@ class MusicLoadVC: UIViewController {
         recommendVC.segmentIndexNum = 2
         present(recommendVC,animated: true)
     }
+    
     // 재생 버튼 누를 시에 음악 재생하기
-    @objc private func playPauseMusic() {
+    @objc public func playPauseMusic() {
             guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {
                 print(" 음악 URL이 유효하지 않습니다.")
                 return

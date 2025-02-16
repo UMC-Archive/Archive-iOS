@@ -20,6 +20,11 @@ class DatePickerWeekViewController : UIViewController {
         setDataSourceAndDelegate()
         self.navigationController?.navigationBar.isHidden = true
     }
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
+    }
     private func controlTapped(){
         rootView.button.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         rootView.backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
@@ -53,7 +58,7 @@ class DatePickerWeekViewController : UIViewController {
                 let data = cell.week.text // 셀에서 데이터 가져오기
                 
                 // 로그 출력
-                print("마지막 선택된 데이터: \(data)")
+//                print("마지막 선택된 데이터: \(data)")?\
                 //                KeychainService.shared.save(account: .userInfo, service: .week, value: data ?? "1st")
                 
                 let year = rootView.year.text ?? "0000"
@@ -68,8 +73,9 @@ class DatePickerWeekViewController : UIViewController {
                     week = 3
                 case "4st":
                     week = 4
-                default :
-                    print("유효하지 않은 데이터: \(data)")
+                default:
+                    break
+                   
                 }
                 let day = 1 + 7*(week - 1)
                 
@@ -99,6 +105,8 @@ class DatePickerWeekViewController : UIViewController {
         self.navigationController?.popViewController(animated: true)
     }
     @objc func XButtonTapped(){
+        self.tabBarController?.tabBar.isHidden = false
+        (self.tabBarController as? TabBarViewController)?.floatingView.isHidden = false
         navigationController?.popToRootViewController(animated: true)
     }
     private func postHistory(date: PostHistoryRequestDTO){

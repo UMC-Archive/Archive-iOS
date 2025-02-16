@@ -21,6 +21,7 @@ class RecapViewController: UIViewController {
     private let userService = UserService()
     public var recapResponseData: [RecapResponseDTO]?
     public var genreResponseDate: [GenrePreferenceResponseDTO]?
+    public var genreArray: [String]?
     
     
     
@@ -52,6 +53,29 @@ class RecapViewController: UIViewController {
         getGenre()
     }
     
+    private func updateGenreLabel() {
+        if let layout = rootView.genreCollectionView.collectionViewLayout as? CarouselLayout {
+            let centerX = rootView.genreCollectionView.contentOffset.x + rootView.genreCollectionView.bounds.width / 2
+            let visibleCellsAttributes = rootView.genreCollectionView.indexPathsForVisibleItems.compactMap { indexPath -> UICollectionViewLayoutAttributes? in
+                return layout.layoutAttributesForItem(at: indexPath)
+            }
+            
+            // 화면 중앙에 가장 가까운 셀을 찾음
+            if let closestAttributes = visibleCellsAttributes.min(by: {
+                abs($0.center.x - centerX) < abs($1.center.x - centerX)
+            }) {
+                
+                let indexPath = closestAttributes.indexPath
+                
+                // genreResponseDate가 nil이 아닌 경우에만 처리
+                if let genreResponseDate = genreResponseDate, indexPath.row < genreResponseDate.count {
+                    rootView.genreTasteLabel2.text = genreResponseDate[indexPath.row].name
+                }
+            }
+        }
+    }
+
+
     private func controlTapped(){
         rootView.navigationView.popButton.addTarget(self, action: #selector(recapButtonTapped), for: .touchUpInside)
         
@@ -59,7 +83,6 @@ class RecapViewController: UIViewController {
         rootView.headerButton.isUserInteractionEnabled = true // 제스처 인식 활성화
         rootView.headerButton.addGestureRecognizer(tapGesture)
         
-
         
     }
     @objc func recapButtonTapped(){
@@ -90,16 +113,32 @@ class RecapViewController: UIViewController {
     
     func buildGradient() {
         
+        
         gradient.type = .conic
-        gradient.colors = [
-            UIColor.dance_100?.cgColor ?? UIColor.red,
-            UIColor.hiphop_100?.cgColor,
-            UIColor.RnB_100?.cgColor,
-            UIColor.dance_100?.cgColor
-        ]
-        gradient.locations = [0.0, 0.17, 0.5, 0.84, 1.0]
+        if let data = genreResponseDate {
+            gradient.colors = [
+                UIColor(named: "\(data[0].name)") ?? .white,
+                UIColor(named: "\(data[1].name)") ?? .white,
+                UIColor(named: "\(data[2].name)") ?? .white,
+                UIColor(named: "\(data[3].name)") ?? .white,
+                UIColor(named: "\(data[4].name)") ?? .white,
+                UIColor(named: "\(data[0].name)") ?? .white,
+            ]
+        }else{
+            gradient.colors = [
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.hiphop_100?.cgColor,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.RnB_100?.cgColor,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor
+            ]
+        }
+       
+        
+        gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.5) // 중심점
-        gradient.endPoint = CGPoint(x: 01.0, y: 1.0)   // conic 그라데이션은 중심을 공유
+        gradient.endPoint = CGPoint(x: 1.0, y: 1.0)   // conic 그라데이션은 중심을 공유
         
         
         rootView.CDView.layer.addSublayer(gradient)
@@ -192,6 +231,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
                 return cell
             }
             cell.config(data: data[indexPath.row])
+            rootView.genreTasteLabel2.text = data[2].name
             return cell
         case rootView.collectionView:
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {
@@ -206,6 +246,10 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             fatalError("Unknown collection view")
         }
     }
+    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
+            updateGenreLabel()
+        }
+
 }
         
 

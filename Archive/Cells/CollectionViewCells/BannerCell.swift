@@ -113,4 +113,11 @@ class BannerCell: UICollectionViewCell {
         titleLabel.text = music.title
         artistLabel.text = artist
     }
+    
+    // 아티스트 - 앨범 둘러보기
+    public func configSameArtistAlbum(album: SameArtistAnotherAlbumResponseDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: album.image))
+        titleLabel.text = album.title
+        artistLabel.text = artist
+    }
 }

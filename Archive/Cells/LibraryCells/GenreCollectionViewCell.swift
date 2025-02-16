@@ -55,7 +55,7 @@ class GenreCollectionViewCell: UICollectionViewCell {
         [
             genreImage,
             genreLabelStackView,
-            etcImage
+            etcImage,
         ].forEach{
             addSubview($0)
         }
