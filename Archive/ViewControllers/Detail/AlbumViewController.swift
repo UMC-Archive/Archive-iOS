@@ -19,7 +19,7 @@ class AlbumViewController: UIViewController {
     private var albumData: AlbumInfoReponseDTO?
     private var trackListData: [TrackListResponse]? // 트랙 리스트 데이터
     private var recommendAlbumData: [(AlbumRecommendAlbum, String)]? // 추천 앨범
-    private var anotherAlbum: [AnotherAlbumResponseDTO]? // 이 아티스트의 다른 앨범
+    private var anotherAlbum: [(AnotherAlbumResponseDTO, String)]? // 이 아티스트의 다른 앨범
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     private var libraryService = LibraryService()
@@ -143,11 +143,11 @@ class AlbumViewController: UIViewController {
     private func setDataSource() {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: albumView.collectionView){ collectionView, indexPath, ItemIdentifier in
             switch ItemIdentifier {
-            case .AnotherAlbum(let album): // 이 아티스트의 다른 앨범
+            case let .AnotherAlbum(album, artist): // 이 아티스트의 다른 앨범
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 
                 guard let bannerCell = cell as? BannerCell else {return cell}
-                bannerCell.configAnotherAlbum(album: album, artist: self.artist)
+                bannerCell.configAnotherAlbum(album: album, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
@@ -218,7 +218,7 @@ class AlbumViewController: UIViewController {
         
         // 이 아티스트의 다른 앨범
         if let anotherAlbum = anotherAlbum {
-            let anotherAlbumItem = anotherAlbum.map{Item.AnotherAlbum($0)}
+            let anotherAlbumItem = anotherAlbum.map{Item.AnotherAlbum($0.0, $0.1)}
             snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
         }
         
@@ -317,15 +317,13 @@ class AlbumViewController: UIViewController {
             guard let self = self else {return }
             switch result {
             case .success(let response):
-                print("getAnotherAlbum() 성공")
-                self.anotherAlbum = response
+                guard let response = response else { return }
+                self.anotherAlbum = response.map{($0, self.artist)}
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
-                print("getAnotherAlbum() 실패")
-                print(error.description)
             }
         }
     }
