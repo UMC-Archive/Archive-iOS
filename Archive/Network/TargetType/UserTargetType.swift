@@ -21,7 +21,7 @@ public enum UserTargetType {
     case preference
     case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO)
     case getRecentMusic
-    case gerRecentlyPlayedMusic
+    case getRecentlyPlayedMusic
    }
 
 extension UserTargetType: TargetType {
@@ -58,7 +58,7 @@ extension UserTargetType: TargetType {
             return "profile_image"
         case .getRecentMusic:
             return "recent"
-        case .gerRecentlyPlayedMusic:
+        case .getRecentlyPlayedMusic:
             return "play"
         }
     }
@@ -79,7 +79,7 @@ extension UserTargetType: TargetType {
             return .post
         case .getRecentMusic:
             return .get
-        case .gerRecentlyPlayedMusic:
+        case .getRecentlyPlayedMusic:
             return .get
         }
     }
@@ -170,7 +170,7 @@ extension UserTargetType: TargetType {
             
         case .getRecentMusic:
             return .requestPlain
-        case .gerRecentlyPlayedMusic:
+        case .getRecentlyPlayedMusic:
             return .requestPlain
         }
     }

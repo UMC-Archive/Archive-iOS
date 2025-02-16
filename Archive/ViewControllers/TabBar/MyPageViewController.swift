@@ -15,13 +15,15 @@ class MyPageViewController: UIViewController {
     let musicService = MusicService()
     public var genreResponseDate: [GenrePreferenceResponseDTO]?
     var musicInfo: MusicInfoResponseDTO? = nil
-    var recentlyPlayData: [RecentPlayMusicResponseDTO]? = nil
+    var recentlyData: [RecentMusicResponseDTO]?
+    var recentlyPlayData: [RecentPlayMusicResponseDTO]?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         setProfileImage() // 프로필 설정 함수
-//        getRecentlyPlayedMusic()
         getGenre()
+        getRecentMusic()
+        getRecentlyPlayedMusic()
     }
     
     override func viewDidLoad() {
@@ -98,13 +100,17 @@ class MyPageViewController: UIViewController {
     }
     // 제스처에 대응하는 함수
     @objc private func headerButtonTapped() {
+        
         let viewController = ListenRecordViewController()
+        viewController.responseData = self.recentlyPlayData
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     // 제스처에 대응하는 함수
     @objc private func headerButtonTapped2() {
         let viewController = RecentMusicViewController()
+        viewController.responseData = self.recentlyData
         self.navigationController?.pushViewController(viewController, animated: true)
+        
     }
     @objc private func arrowButtonTapped() {
         let viewController = ProfileChangeViewController()
@@ -142,6 +148,28 @@ class MyPageViewController: UIViewController {
         
         rootView.CDView.layer.addSublayer(gradient)
     }
+    private func getRecentMusic(){
+        userService.RecentlyMusic(){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("------------- 최근추가 노래")
+                print(response)
+                Task{
+                    
+
+                    self.recentlyData = response
+                    self.rootView.recentCollectionView.reloadData()
+                  
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
     private func getRecentlyPlayedMusic(){
         userService.RecentlyPlayedMusic(){[weak self] result in
             guard let self else {return}
@@ -152,7 +180,7 @@ class MyPageViewController: UIViewController {
                 Task{
                     
                     self.recentlyPlayData = response
-                    
+                    self.rootView.recordCollectionView.reloadData()
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -170,7 +198,7 @@ extension MyPageViewController : UICollectionViewDataSource {
         case rootView.recordCollectionView :
             return recentlyPlayData?.count ?? 0
         case rootView.recentCollectionView :
-            return ListenRecordModel.dummy().count
+            return recentlyData?.count ?? 3
         default :
             return 0
         }
@@ -182,21 +210,26 @@ extension MyPageViewController : UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
                 fatalError("Failed to dequeue ListenRecordCollectionViewCell")
             }
-            let dummy = ListenRecordModel.dummy()
-//            guard let data = recentlyPlayData else {
-//                return UICollectionViewCell()
-//            }
-            
-            cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+            if let data = recentlyPlayData{
+                cell.configData(image: data[indexPath.row].musicImage, albumName: data[indexPath.row].musicTitle, artist: data[indexPath.row].artists.first?.artistName ?? "아티스트")
+            }else{
+                let dummy = ListenRecordModel.dummy()
+                
+                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+            }
             return cell
             
         case rootView.recentCollectionView :
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
                 fatalError("Failed to dequeue ListenRecordCollectionViewCell")
             }
-            let dummy = ListenRecordModel.dummy()
-            
-            cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+            if let data = recentlyData{
+                cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].music.artist.name)
+            }else{
+                let dummy = ListenRecordModel.dummy()
+                
+                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+            }
             return cell
         default :
             fatalError("Unknown collection view")

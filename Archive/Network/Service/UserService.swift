@@ -72,7 +72,10 @@ public final class UserService: NetworkManager {
     public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO, NetworkError>) -> Void) {
         request(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
     }
+    public func RecentlyMusic(completion: @escaping(Result<[RecentMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .getRecentMusic, decodingType: [RecentMusicResponseDTO].self, completion: completion)
+    }
     public func RecentlyPlayedMusic(completion: @escaping(Result<[RecentPlayMusicResponseDTO]?, NetworkError>) -> Void) {
-        requestOptional(target: .gerRecentlyPlayedMusic, decodingType: [RecentPlayMusicResponseDTO].self, completion: completion)
+        requestOptional(target: .getRecentlyPlayedMusic, decodingType: [RecentPlayMusicResponseDTO].self, completion: completion)
     }
 }

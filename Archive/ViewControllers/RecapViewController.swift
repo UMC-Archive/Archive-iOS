@@ -20,6 +20,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     private let rootView = RecapView()
     private let userService = UserService()
     public var recapResponseData: [RecapResponseDTO]?
+    public var recentResponseData: [RecentMusicResponseDTO]?
     public var genreResponseDate: [GenrePreferenceResponseDTO]?
     public var genreArray: [String]?
     private let libraryService = LibraryService()
@@ -208,7 +209,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             
             switch result {
             case .success(let response):
-                print("recapMusicInfo() 성공")
+                print("recentMusicInfo() 성공")
                 print(response)
                 Task{
                     
@@ -246,6 +247,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             }
         }
     }
+
     
 }
 
