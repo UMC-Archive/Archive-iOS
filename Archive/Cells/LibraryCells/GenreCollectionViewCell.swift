@@ -47,8 +47,12 @@ class GenreCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white.withAlphaComponent(0.7)
     }
     
-    private let etcImage = UIImageView().then{
+    public let etcImage = UIImageView().then{
         $0.image = UIImage(named: "etc")
+    }
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
     }
     
     private func setComponent(){
@@ -56,6 +60,7 @@ class GenreCollectionViewCell: UICollectionViewCell {
             genreImage,
             genreLabelStackView,
             etcImage,
+            overflowView
         ].forEach{
             addSubview($0)
         }
@@ -76,25 +81,52 @@ class GenreCollectionViewCell: UICollectionViewCell {
         }
         songLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.leading.equalTo(genreImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         artistYearLabel.snp.makeConstraints{
             $0.top.equalTo(songLabel.snp.bottom)
+            $0.leading.equalTo(genreImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         etcImage.snp.makeConstraints{
             $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
         }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(etcImage).offset(-7)
+        }
 
     }
     
-    public func config(image: UIImage, songName: String, artist: String, year: String){
-        genreImage.image = image
+    public func config(image: String, songName: String, artist: String, year: Int){
+        genreImage.kf.setImage(with: URL(string: image))
         songLabel.text = songName
         
         songLabel.text = songName
         
         let updatedText = "\(artist) · \(year)"
         artistYearLabel.text = updatedText
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+        case .recap:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(20)
+        }
+        default:
+            return
+        }
     }
 }

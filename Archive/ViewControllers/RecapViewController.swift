@@ -7,7 +7,7 @@
 
 import UIKit
 
-class RecapViewController: UIViewController {
+class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     private let dummyData = MusicDummyModel.dummy()
     let cellSize = CGSize(width: 258, height: 258)
     var minItemSpacing: CGFloat = 1
@@ -20,10 +20,19 @@ class RecapViewController: UIViewController {
     private let rootView = RecapView()
     private let userService = UserService()
     public var recapResponseData: [RecapResponseDTO]?
+    public var recentResponseData: [RecentMusicResponseDTO]?
     public var genreResponseDate: [GenrePreferenceResponseDTO]?
     public var genreArray: [String]?
+    private let libraryService = LibraryService()
     
+    init(data: [GenrePreferenceResponseDTO]){
+        self.genreResponseDate = data
+        super.init(nibName: nil, bundle: nil)
+    }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -84,6 +93,56 @@ class RecapViewController: UIViewController {
         rootView.headerButton.addGestureRecognizer(tapGesture)
         
         
+        // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
+        let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
+        overflowElseTapGesture.cancelsTouchesInView = false
+        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        rootView.addGestureRecognizer(overflowElseTapGesture)
+    }
+    // overflow 버튼 클릭 시 실행될 메서드
+    @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
+        // 버튼의 superview를 통해 셀 찾기
+        guard let cell = sender.superview as? MusicVerticalCell ?? sender.superview?.superview as? MusicVerticalCell else { return }
+
+        // isHidden 토글
+        cell.overflowView.isHidden.toggle()
+    }
+    // overflow 버튼 영역 외부 터치 실행될 메서드
+    @objc private func dismissOverflowView(_ gesture: UITapGestureRecognizer) {
+        let touchLocation = gesture.location(in: rootView)
+        
+        // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
+        for cell in rootView.collectionView.visibleCells {
+            if let verticalCell = cell as? MusicVerticalCell {
+                if !verticalCell.overflowView.frame.contains(touchLocation) {
+                    verticalCell.overflowView.isHidden = true
+                }
+            }
+        }
+    }
+    @objc private func goToLibrary(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId else {
+            print("nil")
+            return }
+        print("-------musicId\(musicId)")
+        
+        libraryService.musicPost(musicId: musicId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                print("postMusicInfo() 성공")
+                print(response)
+                Task{
+                    print("-----------------musicPost 성공")
+                }
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                print("-----------fail")
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
     }
     @objc func recapButtonTapped(){
         
@@ -115,7 +174,7 @@ class RecapViewController: UIViewController {
         
         
         gradient.type = .conic
-        if let data = genreResponseDate {
+        if let data = genreResponseDate, data.count == 5 {
             gradient.colors = [
                 UIColor(named: "\(data[0].name)") ?? .white,
                 UIColor(named: "\(data[1].name)") ?? .white,
@@ -150,7 +209,7 @@ class RecapViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("recapMusicInfo() 성공")
+                print("recentMusicInfo() 성공")
                 print(response)
                 Task{
                     
@@ -188,6 +247,7 @@ class RecapViewController: UIViewController {
             }
         }
     }
+
     
 }
 
@@ -241,6 +301,15 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             //            cell.config(albumURL: dummy[indexPath.row].albumURL, musicTitle: dummy[indexPath.row].musicTitle, artist: dummy[indexPath.row].artist, year: String(dummy[indexPath.row].year))
                
             cell.config(albumURL: recapResponseData?[indexPath.row].image ?? "CDSample", musicTitle: recapResponseData?[indexPath.row].title ?? "", artist: recapResponseData?[indexPath.row].artists ?? "", year:recapResponseData?[indexPath.row].releaseYear ?? 0)
+            
+            // overflow 버튼 로직 선택
+            cell.overflowButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+            cell.setOverflowView(type: .recap)
+            
+            // 노래 보관함으로 이동 탭 제스처
+            let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+            tapGoToLibraryGesture.musicId = recapResponseData?[indexPath.row].id
+            cell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
             return cell
         default:
             fatalError("Unknown collection view")

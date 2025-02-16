@@ -363,6 +363,7 @@ extension LibraryMainViewController: UICollectionViewDataSource {
                 year: String(musicResponse?[indexPath.row].releaseTime ?? 0 ) ?? ""
             )
             
+            
             let songEtcTapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpInsideOverflowButton(_:)))
             cell.etcImage.addGestureRecognizer(songEtcTapGesture)
             songEtcTapGesture.delegate = self

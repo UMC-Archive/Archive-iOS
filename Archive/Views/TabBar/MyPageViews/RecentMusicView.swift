@@ -30,7 +30,7 @@ class RecentMusicView: UIView {
         $0.backgroundColor = UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
-        $0.register(RecapCollectionViewVerticalCell.self, forCellWithReuseIdentifier: "recapCollectionViewVerticalCellIdentifier")
+//        $0.register(RecapCollectionViewVerticalCell.self, forCellWithReuseIdentifier: "recapCollectionViewVerticalCellIdentifier")
     }
     
     

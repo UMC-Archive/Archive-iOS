@@ -123,6 +123,10 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
             overflowView.snp.updateConstraints { make in
                 make.height.equalTo(26)
             }
+        case .inLibrary:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(20)
+            }
         default:
             return
         }

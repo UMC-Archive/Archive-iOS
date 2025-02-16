@@ -47,12 +47,14 @@ class RecapView: UIView {
     public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout().then{
         $0.itemSize = CGSize(width: 120, height: 120)
         $0.scrollDirection = .horizontal
+        
     }).then{
-        $0.backgroundColor = UIColor.black_100
+        $0.backgroundColor = .clear /*UIColor.black_100*/
         $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
         $0.register(GenreRecommendedCollectionViewCell.self, forCellWithReuseIdentifier: "genreRecommendedCollectionViewIdentifier")
-        $0.backgroundColor = .black_100
+        $0.backgroundColor = .clear /*UIColor.black_100*/
+        $0.showsHorizontalScrollIndicator = false
     }
     private let genreCollectionViewBackgound = UIImageView().then {
         $0.image = UIImage(named: "GenreCollectionViewBackground")
@@ -184,7 +186,8 @@ class RecapView: UIView {
                 
         scrollView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom) // scrollView는 navigationView 아래에 위치
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
                 
                 
@@ -217,11 +220,11 @@ class RecapView: UIView {
             $0.top.equalTo(CDBackgroundView.snp.bottom).offset(46)
             $0.centerX.equalToSuperview()
         }
-        genreCollectionViewBackgound.snp.makeConstraints{
-            $0.centerX.centerY.equalTo(genreCollectionView)
-            $0.width.equalTo(423)
-            $0.height.equalTo(58)
-        }
+//        genreCollectionViewBackgound.snp.makeConstraints{
+//            $0.centerX.centerY.equalTo(genreCollectionView)
+//            $0.width.equalTo(423)
+//            $0.height.equalTo(58)
+//        }
         
         // genreCollectionView 제약 조건
         genreCollectionView.snp.makeConstraints {
@@ -264,7 +267,8 @@ class RecapView: UIView {
         collectionView.snp.makeConstraints{
             $0.top.equalTo(headerView.snp.bottom).offset(20)
             $0.leading.equalTo(headerView)
-            $0.width.equalToSuperview()
+//            $0.width.equalToSuperview()
+            $0.trailing.equalToSuperview()
             $0.height.equalTo(317)
         }
     }
