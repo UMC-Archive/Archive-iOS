@@ -165,17 +165,34 @@ class ExploreViewController: UIViewController {
                 guard let verticalCell = cell as? VerticalCell else {return cell}
                 verticalCell.configHiddenMusic(music: music, artist: artist)
                 
+                // 노래 재생 제스처
+                let musicGesture = CustomTapGesture(target: self, action: #selector(self?.musicPlayingGesture(_:)))
+                musicGesture.musicTitle = music.title
+                musicGesture.musicId = music.id
+                musicGesture.musicImageURL = album.image
+                musicGesture.artist = artist
+                verticalCell.playMusicView.addGestureRecognizer(musicGesture)
+                
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.tapGoToAlbumGesture(_:)))
                 tapAlbumGesture.artist = artist
                 tapAlbumGesture.album = album.title
-                verticalCell.imageView.addGestureRecognizer(tapAlbumGesture)
+                verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = artist
                 tapArtistGesture.album = album.title
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                
+                // overflow 버튼 로직 선택
+                verticalCell.overflowButton.addTarget(self, action: #selector(self?.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+                verticalCell.setOverflowView(type: .other)
+                
+                // 노래 보관함으로 이동 탭 제스처
+                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self?.goToLibrary(_:)))
+                tapGoToLibraryGesture.musicId = music.id
+                verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
                 
                 return cell
             case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범
@@ -463,6 +480,21 @@ extension ExploreViewController: UICollectionViewDataSource {
             }
            
             (cell as? RecapCollectionViewCell)?.configMainCD(data: mainCDData[indexPath.row])
+            
+            // 노래 재생 제스처
+            let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+            musicGesture.musicTitle = mainCDData[indexPath.row].music.title
+            musicGesture.musicId = mainCDData[indexPath.row].music.id
+            musicGesture.musicImageURL = mainCDData[indexPath.row].music.image
+            musicGesture.artist = mainCDData[indexPath.row].artist
+            (cell as? RecapCollectionViewCell)?.cdView.addGestureRecognizer(musicGesture)
+            
+            // 아티스트 탭 제스처
+            let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+            tapArtistGesture.artist = mainCDData[indexPath.row].artist
+            tapArtistGesture.album = mainCDData[indexPath.row].album.title
+            (cell as? RecapCollectionViewCell)?.artist.addGestureRecognizer(tapArtistGesture)
+            
             return cell
         default:
             return UICollectionViewCell()
