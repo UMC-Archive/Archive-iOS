@@ -12,14 +12,14 @@ class MusicLoadView: UIView {
         make.layer.cornerRadius = 10
         make.clipsToBounds = true
         make.layer.borderWidth = 2
-        make.layer.borderColor = UIColor.blue.cgColor
+       
     }
 
     // 곡 제목
     lazy var titleLabel = UILabel().then { make in
         make.text = "Supernatural"
         make.textColor = .white
-        make.font = UIFont.boldSystemFont(ofSize: 24)
+        make.font = UIFont.boldSystemFont(ofSize: 28)
         make.textAlignment = .left
     }
 
@@ -60,7 +60,7 @@ class MusicLoadView: UIView {
     lazy var progressSlider = UISlider().then { slider in
         slider.minimumValue = 0
         slider.maximumValue = 1
-        slider.value = 0.23
+        slider.value = 0.0
         slider.minimumTrackTintColor = .white
         slider.maximumTrackTintColor = .gray
         slider.thumbTintColor = .white

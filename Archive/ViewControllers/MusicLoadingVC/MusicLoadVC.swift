@@ -91,25 +91,27 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc private func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC()
+        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0)
+        nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
     }
 
     // 가사 화면으로 이동
     @objc private func goToLyrics() {
-        let lyricsVC = LyricsVC()
-        self.navigationController?.pushViewController(lyricsVC, animated: true)
+        let lyricsVC = MusicSegmentVC(segmentIndexNum: 1)
+        present(lyricsVC, animated: true)
     }
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = RecommendVC()
-        self.navigationController?.pushViewController(recommendVC, animated: true)
+        let recommendVC = MusicSegmentVC(segmentIndexNum: 2)
+        recommendVC.segmentIndexNum = 2
+        present(recommendVC,animated: true)
     }
     // 재생 버튼 누를 시에 음악 재생하기
     @objc private func playPauseMusic() {
             guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {
-                print("❌ 음악 URL이 유효하지 않습니다.")
+                print(" 음악 URL이 유효하지 않습니다.")
                 return
             }
 

@@ -19,7 +19,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
 
-        let musicLoadVC = MusicLoadVC()
+        let musicLoadVC = OnBoarding2VC()
         let navigationController = UINavigationController(rootViewController: musicLoadVC)
         window?.rootViewController = navigationController
 //        let musicLoadVC = MusicLoadVC()
