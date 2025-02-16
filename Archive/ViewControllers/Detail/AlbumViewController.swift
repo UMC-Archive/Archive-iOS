@@ -73,36 +73,30 @@ class AlbumViewController: UIViewController {
         let popButton = UIBarButtonItem(image: .init(systemName: "chevron.left"), style: .plain, target: self, action: #selector(tapPopButton))
         self.navigationItem.leftBarButtonItem = popButton
         
-        // 좋이요
-        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
-        self.navigationItem.rightBarButtonItem = heartButton
+        // 저장 버튼
+        let addLibrayButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapAddLibrayButton))
+        self.navigationItem.rightBarButtonItem = addLibrayButton
+        
         self.navigationController?.navigationBar.tintColor = .white
     }
     
+    // 뒤로 가기 버튼
     @objc private func tapPopButton() {
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc private func tapHeartButton() {
-        // 좋아요 API 연결
-        print("tapHeartButton")
-        
-        guard let data = albumData else {
-            print("album data is nil")
-            return
-        }
+    // 라이브러리 추가 버튼
+    @objc private func tapAddLibrayButton() {
+        guard let data = albumData else { return }
         libraryService.albumPost(albumId: data.id ){[weak self] result in
             guard let self = self else{return}
             switch result {
-            case .success(let response):
-                print(response)
-                Task {
-                    print("-----------------albumPost 성공")
-                }
+            case .success:
+                let alert = LibraryAlert.shared.getAlertController(type: .album)
+                self.present(alert, animated: true)
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
