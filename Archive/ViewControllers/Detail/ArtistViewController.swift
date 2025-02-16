@@ -40,6 +40,7 @@ class ArtistViewController: UIViewController {
         setAction()
         setDataSource()
         setSnapshot()
+        setGesture()
         
         // 아티스트 정보 조회
         postArtistInfo(artist: artist, album: album)
@@ -81,11 +82,7 @@ class ArtistViewController: UIViewController {
     
     // 라이브러리 추가 버튼
     @objc private func tapAddLibrayButton() {
-        // 좋아요 API 연결
-        guard let artist = artistInfo else {
-            print("album data is nil")
-            return
-        }
+        guard let artist = artistInfo else { return }
         
         libraryService.artistPost(artistId: artist.id ){[weak self] result in
             guard let self = self else{return}

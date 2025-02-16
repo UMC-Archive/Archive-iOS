@@ -170,9 +170,9 @@ class AlbumTrackView: UIView {
             }
         }
         trackTitleLabel.text = data.album.title
-        artistImageView.kf.setImage(with: URL(string: data.album.image))
+        artistImageView.kf.setImage(with: URL(string: data.album.artistImage))
         trackArtist.text = data.album.artist
-        trackDetailLabel.text = "\(data.album.artist) • \(data.tracks.count)곡 • 13분"
+        trackDetailLabel.text = "\(data.album.artist) • \(data.album.trackCount)곡 • \(data.album.totalDuration)분"
         
         pageControl.numberOfPages = data.tracks.count / 4 + 1
     }
