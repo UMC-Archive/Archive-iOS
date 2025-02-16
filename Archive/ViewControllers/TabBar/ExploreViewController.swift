@@ -28,6 +28,11 @@ class ExploreViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         setProfileImage() // 프로필 설정
         setTime() // 년도 설정
+    
+        getHiddenMusic()    // 숨겨진 명곡 조회 API
+        getRecommendMusic() // 추천 음악 API
+        getRecommendAlbum() // 당신을 위한 앨범 추천 API
+        getMainCD()         // 메인 CD API
     }
     
     // 프로필 이미지 설정 함수
@@ -35,31 +40,20 @@ class ExploreViewController: UIViewController {
         if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
             exploreView.topView.config(profileImage: profileImage)
         }
-
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
         
-        view = exploreView
-
         setDataSource()
+        setSnapShot()
         setDelegate()
         setRecapIndex()
         setGesture()
-        
-        // 숨겨진 명곡 조회 API
-        getHiddenMusic()
-        
-        // 추천 음악 API
-        getRecommendMusic()
-        
-        // 당신을 위한 앨범 추천 API
-        getRecommendAlbum()
-        
-        // 메인 CD API
-        getMainCD()
+        setTarget()
+
+        view = exploreView
     }
     
     override func viewDidLayoutSubviews() {
@@ -71,6 +65,18 @@ class ExploreViewController: UIViewController {
         }
         
         exploreView.layoutIfNeeded()
+    }
+    
+    // 타겟 설정
+    private func setTarget() {
+        exploreView.resetButton.addTarget(self, action: #selector(touchUpInsideResetButton), for: .touchUpInside)
+    }
+    
+    // 년도 설정 버튼 액션
+    @objc private func touchUpInsideResetButton() {
+        print("touchUpInsideResetButton")
+        let nextVC = DatePickerViewController()
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 선택 년도 가져오기
@@ -92,23 +98,21 @@ class ExploreViewController: UIViewController {
         return totalCollectionViewHeight
     }
     
-    // 스크롤 뷰의 높이 구하는 ㅇ함수
+    // 스크롤 뷰의 높이 구하는 함수
     private func calculateScrollViewHeight() -> CGFloat {
         // collectionView 전체 높이 계산
         let collectionViewHeight = calculateCollectionViewHeight()
-
+        
         // recapCollectionView 높이
         let recapCollectionViewHeight: CGFloat = 333
-
+        
         // recapCollectionView와 collectionView 사이 간격
         let gapBetweenRecapAndCollectionView: CGFloat = 17
-
+        
         // scrollView 전체 높이
         let totalHeight = recapCollectionViewHeight + gapBetweenRecapAndCollectionView + collectionViewHeight
         return totalHeight
     }
-
-
     
     private func setRecapIndex(){
         // 뷰가 로드된 직후 1번 인덱스로 이동
