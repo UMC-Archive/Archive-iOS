@@ -25,6 +25,8 @@ class HomeViewController: UIViewController {
     private var fastSelectionData: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 빠른 선곡
     private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]? // 당신을 위한 추천곡
     private var pointOfViewData: [(UserHistoryResponseDTO, String)]? // 탐색했던 시점
+    private var recentlyAddMusic: [RecentMusicDTO]? // 최근 추가한 노래
+    private var recentlyPlayedMusic: [RecentPlayMusicResponseDTO]? // 최근 들은 노래
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,6 +42,8 @@ class HomeViewController: UIViewController {
         getSelection() // 빠른 선곡
         getRecommendMusic() // 당신을 위한 추천곡
         getHistory() // 최근 탐색 연도 불러오기
+        getRecentlyPlayingMusic() // 최근 들은 노래
+        getRecentlyAddMusic() // 최근 추가한 노래
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -157,24 +161,24 @@ class HomeViewController: UIViewController {
             case .RecentlyAddMusicItem(let item): //  최근 추가 노래
                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 guard let verticalCell = cell as? VerticalCell else {return cell}
-               verticalCell.config(data: item)
+               verticalCell.configRecentlyAddMusic(music: item)
                
                // 아티스트 탭 제스처
-               let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
-               tapArtistGesture.artist = item.artist
-                tapArtistGesture.album = item.albumTitle
-               verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+//               let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
+//               tapArtistGesture.artist = item.artist
+//                tapArtistGesture.album = item.albumTitle
+//               verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
                return cell
-            case .RecentlyListendMusicItem(let item): // 최근 들은 노래
+            case .RecentlyPlayedMusicItem(let item): // 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 guard let bannerCell = cell as? BannerCell else {return cell}
                 
-                bannerCell.configMusic(data: item)
+                bannerCell.configRecentlyPlayedMusic(music: item)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = item.artist
-                tapArtistGesture.album = item.albumTitle
+                tapArtistGesture.artist = item.artists.first?.artistName
+//                tapArtistGesture.album = item.albumTitle
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
                 return cell
@@ -318,13 +322,13 @@ class HomeViewController: UIViewController {
         let pointOfViewSection = Section.PointOfView(.PointOfView) // 탐색했던 시점
         let fastSelectionSection = Section.Banner(.FastSelection) // 빠른 선곡
         let recommendSection = Section.Vertical(.RecommendMusic) // 당신을 위한 추천곡
-        let RecentlyListendMusicSection = Section.Banner(.RecentlyListendMusic) // 최근 들은 노래
+        let RecentlyPlayedMusicSection = Section.Banner(.RecentlyPlayedMusic) // 최근 들은 노래
         let RecentlyAddMusicSection = Section.Vertical(.RecentlyAddMusic) // 최근 추가한 노래
         
         
         // 섹션 추가
         snapshot.appendSections([archiveSection, pointOfViewSection, fastSelectionSection,
-                                 recommendSection, RecentlyListendMusicSection,
+                                 recommendSection, RecentlyPlayedMusicSection,
                                  RecentlyAddMusicSection])
         
         // 당신을 위한 아카이브
@@ -351,12 +355,17 @@ class HomeViewController: UIViewController {
             snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
         }
         
-        
-        let RecentlyListendMusicItem = musicData.map{Item.RecentlyListendMusicItem($0)}
-        snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyListendMusicSection)
-        
-        let RecentlyAddMusicItem = musicData.map{Item.RecentlyAddMusicItem($0)}
-        snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
+        // 최근 들은 노래
+        if let recentlyPlayedMusic = recentlyPlayedMusic {
+            let RecentlyListendMusicItem = recentlyPlayedMusic.map{Item.RecentlyPlayedMusicItem($0)}
+            snapshot.appendItems(RecentlyListendMusicItem, toSection: RecentlyPlayedMusicSection)
+        }
+
+        // 최근 추가한 노래
+        if let recentlyAddMusic = recentlyAddMusic {
+            let RecentlyAddMusicItem = recentlyAddMusic.map{Item.RecentlyAddMusicItem($0)}
+            snapshot.appendItems(RecentlyAddMusicItem, toSection: RecentlyAddMusicSection)
+        }
         
         dataSource?.apply(snapshot)
     }
@@ -444,6 +453,39 @@ class HomeViewController: UIViewController {
                 print("getSelection() 성공")
                 guard let response = response else {return}
                 self.fastSelectionData = response.map{($0.music, $0.album, $0.artist)}
+                self.setDataSource()
+                self.setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 최근 들은 노래 볼러 오기 API
+    private func getRecentlyPlayingMusic() {
+        userService.RecentlyPlayedMusic { [weak self] result in
+            guard let self = self else {return }
+            switch result {
+            case .success(let response):
+                self.recentlyPlayedMusic = response
+                self.setDataSource()
+                self.setSnapShot()
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 최근 추가한 노래 불러오기 API
+    private func getRecentlyAddMusic() {
+        userService.RecentlyMusic { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                self.recentlyAddMusic = response.map{$0.music}
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):

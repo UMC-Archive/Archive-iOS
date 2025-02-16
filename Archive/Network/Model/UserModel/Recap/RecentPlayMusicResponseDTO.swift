@@ -4,9 +4,9 @@
 //
 //  Created by 송재곤 on 2/15/25.
 //
+import Foundation
 
-public struct RecentPlayMusicResponseDTO: Decodable {
-    
+public struct RecentPlayMusicResponseDTO: Decodable, Hashable {
     let id: String
     let userId: String
     let musicId: String
@@ -17,7 +17,7 @@ public struct RecentPlayMusicResponseDTO: Decodable {
     let updatedAt: String
 }
 
-struct recentArtistDTO: Decodable {
+struct recentArtistDTO: Decodable, Hashable {
     let artistId: String
     let artistName: String
     let artistImage: String

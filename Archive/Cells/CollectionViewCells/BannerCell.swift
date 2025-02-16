@@ -120,4 +120,11 @@ class BannerCell: UICollectionViewCell {
         titleLabel.text = album.title
         artistLabel.text = artist
     }
+    
+    // 홈뷰 - 최근 들은 노래
+    public func configRecentlyPlayedMusic(music: RecentPlayMusicResponseDTO) {
+        imageView.kf.setImage(with: URL(string: music.musicImage))
+        titleLabel.text = music.musicTitle
+        artistLabel.text = music.artists.first?.artistName
+    }
 }

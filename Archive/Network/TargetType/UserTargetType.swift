@@ -20,8 +20,8 @@ public enum UserTargetType {
     case getRecap
     case preference
     case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO)
-    case getRecentMusic
-    case getRecentlyPlayedMusic
+    case getRecentMusic // 최근 추가한 노래
+    case getRecentlyPlayedMusic // 최근 들은 노래, 청취 기록
    }
 
 extension UserTargetType: TargetType {

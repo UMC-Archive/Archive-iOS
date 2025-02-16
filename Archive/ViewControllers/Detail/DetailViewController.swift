@@ -71,9 +71,9 @@ class DetailViewController: UIViewController {
                 tapArtistGesture.album = album.title
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 return cell
-            case .RecentlyListendMusicItem(let data): // 최근 들은 노래
+            case .RecentlyPlayedMusicItem(let data): // 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configMusic(data: data)
+                (cell as? BannerCell)?.configRecentlyPlayedMusic(music: data)
                 return cell
             case let .RecommendMusic(music, album, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -112,7 +112,7 @@ class DetailViewController: UIViewController {
                 return cell
             case  .RecentlyAddMusicItem(let data): // 최근 추가한 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.config(data: data)
+                (cell as? VerticalCell)?.configRecentlyAddMusic(music: data)
                 return cell
                 
                 // 앨범 뷰
