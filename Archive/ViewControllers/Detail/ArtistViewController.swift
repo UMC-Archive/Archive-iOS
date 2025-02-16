@@ -15,7 +15,7 @@ class ArtistViewController: UIViewController {
     private let gradientLayer = CAGradientLayer()
     private let artist: String
     private let album: String
-    private var data: ArtistInfoReponseDTO?
+    private var artistInfo: ArtistInfoReponseDTO?
     private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
     private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
     private var sameArtistAnoterAlbum: [SameArtistAnotherAlbumResponseDTO]? // 앨범 둘러보기
@@ -67,35 +67,35 @@ class ArtistViewController: UIViewController {
         let popButton = UIBarButtonItem(image: .init(systemName: "chevron.left"), style: .plain, target: self, action: #selector(tapPopButton))
         self.navigationItem.leftBarButtonItem = popButton
         
-        // 좋이요
-        let heartButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapHeartButton))
-        self.navigationItem.rightBarButtonItem = heartButton
+        // 저장 버튼
+        let addLibrayButton = UIBarButtonItem(image: .addLibrary, style: .done, target: self, action: #selector(tapAddLibrayButton))
+        self.navigationItem.rightBarButtonItem = addLibrayButton
+        
         self.navigationController?.navigationBar.tintColor = .white
     }
     
+    // 뒤로 가기 버튼
     @objc private func tapPopButton() {
         self.navigationController?.navigationBar.isHidden = false
         self.navigationController?.popViewController(animated: true)
     }
     
-    @objc private func tapHeartButton() {
+    // 라이브러리 추가 버튼
+    @objc private func tapAddLibrayButton() {
         // 좋아요 API 연결
-        print("tapHeartButton")
-        guard let artist = data else {
+        guard let artist = artistInfo else {
             print("album data is nil")
             return
         }
+        
         libraryService.artistPost(artistId: artist.id ){[weak self] result in
             guard let self = self else{return}
             switch result {
-            case .success(let response):
-                print(response)
-                Task {
-                    print("-----------------albumPost 성공")
-                }
+            case .success:
+                let alert = LibraryAlert.shared.getAlertController(type: .artist)
+                self.present(alert, animated: true)
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -255,7 +255,7 @@ class ArtistViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else {return}
-                self.data = response
+                self.artistInfo = response
                 
                 // 아티스트 큐레이션
                 postArtistCuration(artistId: response.id)
@@ -285,7 +285,7 @@ class ArtistViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                guard let response = response, let artistData = data else {return}
+                guard let response = response, let artistData = artistInfo else {return}
                 artistView.config(artistInfo: artistData, curation: response)
 
             case .failure(let error):
@@ -325,6 +325,15 @@ class ArtistViewController: UIViewController {
                 popularMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapshot()
+                
+                
+                // 아티스트 이미지 옆 재생 버튼 탭 제스처
+                let playTabGesture = CustomTapGesture(target: self, action: #selector(musicPlayingGesture(_:)))
+                playTabGesture.musicTitle = response.first?.music.title
+                playTabGesture.musicId = response.first?.music.id
+                playTabGesture.musicImageURL = response.first?.music.image
+                playTabGesture.artist = self.artist
+                artistView.playButton.addGestureRecognizer(playTabGesture)
                 
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
