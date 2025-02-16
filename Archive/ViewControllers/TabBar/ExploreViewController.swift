@@ -235,7 +235,7 @@ class ExploreViewController: UIViewController {
             // 버튼에 UIAction 추가
             (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
                 guard let self = self else { return }
-                self.handleDetailButtonTap(for: section, item: item)
+                self.tapDetailButton(for: section, item: item)
             }), for: .touchUpInside)
 
             switch section {
@@ -457,7 +457,7 @@ extension ExploreViewController: UIGestureRecognizerDelegate  {
     }
     
     // 자세히 보기 버튼
-    private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
+    private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
