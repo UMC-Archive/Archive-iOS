@@ -134,10 +134,18 @@ class ArtistViewController: UIViewController {
                 verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
                 
                 return cell
-                
+        
             case .SameArtistAnotherAlbum(let album): // 앨범 둘러보기
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configSameArtistAlbum(album:album, artist: self.artist)
+                guard let bannerCell = cell as? BannerCell else {return cell}
+                bannerCell.configSameArtistAlbum(album: album, artist: self.artist)
+                
+                // 앨범 탭 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                tapAlbumGesture.artist = self.artist
+                tapAlbumGesture.album = album.title
+                bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
+
                 return cell
             case .MusicVideo(let item):  // 아티스트 뮤직 비디오
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: MusicVideoCell.id, for: indexPath)
