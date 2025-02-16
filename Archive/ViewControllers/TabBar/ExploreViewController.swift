@@ -393,9 +393,10 @@ extension ExploreViewController: UIGestureRecognizerDelegate  {
             guard let self = self else { return }
             
             switch result {
-            case .success(let response):
+            case .success:
                 // 성공 alert 띄우기
-                break
+                let alert = LibraryAlert.shared.getAlertController(type: .music)
+                self.present(alert, animated: true)
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
