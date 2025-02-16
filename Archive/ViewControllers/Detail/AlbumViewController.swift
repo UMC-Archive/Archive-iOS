@@ -44,6 +44,7 @@ class AlbumViewController: UIViewController {
         setDataSource()
         setSnapshot()
         setProtocol()
+        setGesture()
         
         // 앨범 정보 API
         postAlbumInfo(artist: artist, album: album)
@@ -383,7 +384,7 @@ extension AlbumViewController: UIGestureRecognizerDelegate  {
         let touchLocation = gesture.location(in: albumView)
         
         // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
-        for cell in albumView.collectionView.visibleCells {
+        for cell in albumView.trackView.trackCollectionView.visibleCells {
             if let verticalCell = cell as? VerticalCell {
                 if !verticalCell.overflowView.frame.contains(touchLocation) {
                     verticalCell.overflowView.isHidden = true
@@ -464,6 +465,30 @@ extension AlbumViewController: UICollectionViewDataSource {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell, let trackListData = trackListData else {return UICollectionViewCell()
         }
         cell.configTrackList(music: trackListData[indexPath.row])
+        
+        // 노래 재생 제스처
+        let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+        musicGesture.musicTitle = trackListData[indexPath.row].title
+        musicGesture.musicId = trackListData[indexPath.row].id
+        musicGesture.musicImageURL = trackListData[indexPath.row].image
+        musicGesture.artist = artist
+        cell.playMusicView.addGestureRecognizer(musicGesture)
+        
+        // 아티스트 탭 제스처
+        let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+        tapArtistGesture.artist = artist
+        tapArtistGesture.album = album
+        cell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+        
+        // overflow 버튼 로직 선택
+        cell.overflowButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+        cell.setOverflowView(type: .inAlbum)
+        
+        // 노래 보관함으로 이동 탭 제스처
+        let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+        tapGoToLibraryGesture.musicId = trackListData[indexPath.row].id
+        cell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
+             
         return cell
     }
 }
