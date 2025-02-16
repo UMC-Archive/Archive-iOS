@@ -50,6 +50,24 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .artistCuration(artistId: artistId), decodingType: ArtistCurationResponseDTO.self, completion: completion)
     }
     
+    
+    // 아티스트 인기곡
+    public func artistPopularMusic(artistId: String, completion: @escaping(Result<[ArtistPopularMusicResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .artistPopularMusic(artistId: artistId), decodingType: [ArtistPopularMusicResponseDTO].self, completion: completion)
+    }
+    
+    // 앨범 둘러보기
+    public func sameArtistAnotherAlbum(artistId: String, completion: @escaping(Result<[SameArtistAnotherAlbumResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .sameArtistAnotherAlbum(artistId: artistId), decodingType: [SameArtistAnotherAlbumResponseDTO].self, completion: completion)
+    }
+    
+    
+    // 비슷한 아티스트 조회
+    public func similarArtist(aristId: String, completion: @escaping(Result<[SimilarArtistResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .similarArtist(artistId: aristId), decodingType: [SimilarArtistResponseDTO].self, completion: completion)
+    }
+    
+    
     // 숨겨진 명곡 조회
     public func hiddenMusic(completion: @escaping(Result<[HiddenMusicResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .musicHidden, decodingType: [HiddenMusicResponseDTO].self, completion: completion)
@@ -75,16 +93,11 @@ public final class MusicService: NetworkManager {
         requestOptional(target: .recommendMusic, decodingType: [RecommendMusicResponseDTO].self, completion: completion)
     }
     
-    // 비슷한 아티스트 조회
-    public func similarArtist(aristId: String, completion: @escaping(Result<[SimilarArtistResponseDTO]?, NetworkError>) -> Void) {
-        requestOptional(target: .similarArtist(artistId: aristId), decodingType: [SimilarArtistResponseDTO].self, completion: completion)
-    }
-    
-    // 이 아티스트의 다른 앨범 조회
+    // 이 아티스트의 다른 앨범 조회 (앨범 뷰)
     public func anotherAlbum(artistId: String, albumId: String, completion: @escaping(Result<[AnotherAlbumResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .anotherAlbum(artistId: artistId, albumId: albumId), decodingType: [AnotherAlbumResponseDTO].self, completion: completion)
     }
-
+    
     // 모든 정보 조회
     public func allInfo(music: String? = nil, album: String? = nil, artist: String? = nil, completion: @escaping(Result<AllInfoResponseDTO, NetworkError>) -> Void) {
         request(target: .allInfo(music: music, artist: artist, album: album), decodingType: AllInfoResponseDTO.self, completion: completion)
@@ -93,5 +106,10 @@ public final class MusicService: NetworkManager {
     // 빠른 선곡 - 다음 트랙
     public func selection(completion: @escaping (Result<[SelectionResponseDTO]?, NetworkError>) -> Void){
         requestOptional(target: .selection, decodingType: [SelectionResponseDTO].self, completion: completion)
+    }
+    
+    // 메인 CD
+    public func mainCD(completion: @escaping(Result<[MainCDResponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .mainCD, decodingType: [MainCDResponseDTO].self, completion: completion)
     }
 }

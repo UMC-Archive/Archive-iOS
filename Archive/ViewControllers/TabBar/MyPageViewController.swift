@@ -148,6 +148,7 @@ class MyPageViewController: UIViewController {
         
         rootView.CDView.layer.addSublayer(gradient)
     }
+
     private func getRecentMusic(){
         userService.RecentlyMusic(){ [weak self] result in
             guard let self = self else { return }
@@ -189,6 +190,7 @@ class MyPageViewController: UIViewController {
             }
         }
     }
+
 }
     
 
@@ -237,6 +239,7 @@ extension MyPageViewController : UICollectionViewDataSource {
         }
         
     }
+
     
     
     // 프로필 이미지 설정 함수
@@ -246,4 +249,5 @@ extension MyPageViewController : UICollectionViewDataSource {
             self.rootView.profileView.kf.setImage(with: URL(string: profileImage))
         }
     }
+
 }

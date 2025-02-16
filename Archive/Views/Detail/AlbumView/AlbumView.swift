@@ -81,7 +81,8 @@ class AlbumView: UIView {
     
     private func setUI(){
         scrollView.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
+            make.horizontalEdges.top.equalToSuperview()
+            make.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
         
         contentView.snp.makeConstraints { make in
