@@ -10,21 +10,20 @@ import UIKit
 class ExploreView: UIView {
     public let topView = TopView(type: .explore)
     
-    // 탐색 시기 그룹
-    private let timeGroupView = UIView()
-    
     // 탐색 시기
     private let timeLabel = UILabel().then { lbl in
         lbl.text = "9999년 99월 1st"
         lbl.font = .customFont(font: .SFPro, ofSize: 21, rawValue: 700)
         lbl.textColor = .white
         lbl.numberOfLines = 1
+        lbl.sizeToFit()
     }
     
     // 탐색 설정 버튼 (재로드 버튼)
     public let resetButton = UIButton().then { btn in
         btn.setImage(.init(systemName: "gobackward"), for: .normal)
         btn.tintColor = .white_70
+        btn.isUserInteractionEnabled = true
     }
     
     public let scrollView = UIScrollView().then { view in
@@ -74,11 +73,6 @@ class ExploreView: UIView {
     
     private func setSubView() {
         [
-            timeLabel,
-            resetButton,
-        ].forEach{timeGroupView.addSubview($0)}
-        
-        [
             recapCollectionView,
             collectionView
         ].forEach{contentView.addSubview($0)}
@@ -87,7 +81,8 @@ class ExploreView: UIView {
         
         [
             topView,
-            timeGroupView,
+            timeLabel,
+            resetButton,
             scrollView
         ].forEach{self.addSubview($0)}
     }
@@ -101,16 +96,10 @@ class ExploreView: UIView {
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
-        // timeGroup
-        timeGroupView.snp.makeConstraints { make in
-            make.top.equalTo(topView.snp.bottom).offset(10)
-            make.leading.equalToSuperview().inset(20)
-        }
-        
         // timeLabel
         timeLabel.snp.makeConstraints { make in
-            make.verticalEdges.equalToSuperview()
-            make.leading.equalToSuperview()
+            make.top.equalTo(topView.snp.bottom).offset(10)
+            make.leading.equalToSuperview().inset(20)
         }
         
         // resetButton
@@ -122,7 +111,7 @@ class ExploreView: UIView {
         
         // scrollView
         scrollView.snp.makeConstraints { make in
-            make.top.equalTo(timeGroupView.snp.bottom).offset(25)
+            make.top.equalTo(timeLabel.snp.bottom).offset(25)
             make.horizontalEdges.bottom.equalToSuperview()
         }
         
