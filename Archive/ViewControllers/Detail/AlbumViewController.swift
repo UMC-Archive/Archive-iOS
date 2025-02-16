@@ -147,7 +147,7 @@ class AlbumViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 
                 guard let bannerCell = cell as? BannerCell else {return cell}
-                bannerCell.configAnotherAlbum(album: album, artist: self.artist)
+                bannerCell.configAnotherAlbum(album: album, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
