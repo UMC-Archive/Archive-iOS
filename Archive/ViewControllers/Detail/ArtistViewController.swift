@@ -9,6 +9,8 @@ import UIKit
 
 class ArtistViewController: UIViewController {
     private let musicService = MusicService()
+    private var libraryService = LibraryService()
+    
     private let artistView = ArtistView()
     private let artistData = ArtistDummyModel.dummy()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
@@ -19,10 +21,7 @@ class ArtistViewController: UIViewController {
     private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
     private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
     private var sameArtistAnoterAlbum: [SameArtistAnotherAlbumResponseDTO]? // 앨범 둘러보기
-    
-    
-    private var libraryService = LibraryService()
-    
+
     init(artist: String, album: String) {
         self.artist = artist
         self.album = album
@@ -176,7 +175,7 @@ class ArtistViewController: UIViewController {
             // 버튼에 UIAction 추가
             (headerView as? HeaderView)?.detailButton.addAction(UIAction(handler: { [weak self] _ in
                 guard let self = self else { return }
-                self.handleDetailButtonTap(for: section, item: item)
+                self.tapDetailButton(for: section, item: item)
             }), for: .touchUpInside)
 
             switch section {
@@ -446,7 +445,7 @@ extension ArtistViewController: UIGestureRecognizerDelegate  {
     }
     
     // 자세히 보기 버튼
-    private func handleDetailButtonTap(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
+    private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
