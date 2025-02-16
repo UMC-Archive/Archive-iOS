@@ -83,13 +83,13 @@ class HomeViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BigBannerCell.id, for: indexPath)
                 (cell as? BigBannerCell)?.config(album: album, artist: artist)
                 // 앨범 제스처
-                let albumGesture = CustomTapGesture(target: self, action: #selector(self?.TapGoToAlbumGesture(_:)))
+                let albumGesture = CustomTapGesture(target: self, action: #selector(self?.tapGoToAlbumGesture(_:)))
                 albumGesture.album = album.title
                 albumGesture.artist = artist
                 (cell as? BigBannerCell)?.CDImageView.addGestureRecognizer(albumGesture)
                 
                 // 아티스트 제스처
-                let artistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                let artistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                 artistGesture.album = album.title
                 artistGesture.artist = artist
                 (cell as? BigBannerCell)?.artistLabel.addGestureRecognizer(artistGesture)
@@ -112,7 +112,7 @@ class HomeViewController: UIViewController {
                 bannerCell.configFastSelection(music: music, artist: artist)
                 
                 // 아티스트 탭 제스처
-                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = artist
                 tapArtistGesture.album = album.title
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
@@ -133,13 +133,13 @@ class HomeViewController: UIViewController {
                 verticalCell.playMusicView.addGestureRecognizer(musicGesture)
                 
                 // 앨범 탭 제스처
-                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.TapGoToAlbumGesture(_:)))
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self?.tapGoToAlbumGesture(_:)))
                 tapAlbumGesture.artist = artist
                 tapAlbumGesture.album = album.title
                 verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
-                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = artist
                 tapArtistGesture.album = album.title
                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
@@ -160,7 +160,7 @@ class HomeViewController: UIViewController {
                verticalCell.config(data: item)
                
                // 아티스트 탭 제스처
-               let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+               let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                tapArtistGesture.artist = item.artist
                 tapArtistGesture.album = item.albumTitle
                verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
@@ -172,7 +172,7 @@ class HomeViewController: UIViewController {
                 bannerCell.configMusic(data: item)
                 
                 // 아티스트 탭 제스처
-                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.TapArtistLabelGesture(_:)))
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = item.artist
                 tapArtistGesture.album = item.albumTitle
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
@@ -248,25 +248,25 @@ class HomeViewController: UIViewController {
             }
         }
     }
+    
+    // 라이브러리로 이동 액션
     @objc private func goToLibrary(_ sender: CustomTapGesture) {
-        guard let musicId = sender.musicId else {
-            print("nil")
-            return }
-        print("-------musicId\(musicId)")
-        
+        guard let musicId = sender.musicId else { return }
+        postAddMusicInLibary(musicId: musicId)
+
+    }
+    
+    // 보관함 노래 추가 함수
+    private func postAddMusicInLibary(musicId: String) {
         libraryService.musicPost(musicId: musicId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print("postMusicInfo() 성공")
-                print(response)
-                Task{
-                    print("-----------------musicPost 성공")
-                }
+                break
+                // 성공 alert 띄우기
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -289,7 +289,7 @@ class HomeViewController: UIViewController {
     }
     
     // 앨범 버튼
-    @objc private func TapGoToAlbumGesture(_ sender: CustomTapGesture) {
+    @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
         print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
@@ -297,7 +297,7 @@ class HomeViewController: UIViewController {
     }
     
     // 아티스트 버튼
-    @objc private func TapArtistLabelGesture(_ sender: CustomTapGesture) {
+    @objc private func tapArtistLabelGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
         let nextVC = ArtistViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
