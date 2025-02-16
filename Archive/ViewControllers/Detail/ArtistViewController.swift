@@ -20,7 +20,7 @@ class ArtistViewController: UIViewController {
     private var artistInfo: ArtistInfoReponseDTO?
     private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
     private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
-    private var sameArtistAnoterAlbum: [SameArtistAnotherAlbumResponseDTO]? // 앨범 둘러보기
+    private var sameArtistAnoterAlbum: [(SameArtistAnotherAlbumResponseDTO, String)]? // 앨범 둘러보기
 
     init(artist: String, album: String) {
         self.artist = artist
@@ -131,10 +131,10 @@ class ArtistViewController: UIViewController {
                 
                 return cell
         
-            case .SameArtistAnotherAlbum(let album): // 앨범 둘러보기
+            case let .SameArtistAnotherAlbum(album, artist): // 앨범 둘러보기
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 guard let bannerCell = cell as? BannerCell else {return cell}
-                bannerCell.configSameArtistAlbum(album: album, artist: self.artist)
+                bannerCell.configSameArtistAlbum(album: album, artist: artist)
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
@@ -209,7 +209,7 @@ class ArtistViewController: UIViewController {
         
         // 앨범 둘러보기
         if let sameArtistAnoterAlbum = sameArtistAnoterAlbum {
-            let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0)}
+            let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0.0, $0.1)}
             snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
         }
         
@@ -346,7 +346,7 @@ class ArtistViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else { return }
-                sameArtistAnoterAlbum = response
+                sameArtistAnoterAlbum = response.map{($0, self.artist)}
                 self.setDataSource()
                 self.setSnapshot()
                 

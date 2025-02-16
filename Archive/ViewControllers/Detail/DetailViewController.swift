@@ -53,6 +53,7 @@ class DetailViewController: UIViewController {
         dataSource = UICollectionViewDiffableDataSource<Section, Item>(collectionView: detailView.collectionView, cellProvider: {collectionView, indexPath, itemIdentifier in
             
             switch itemIdentifier {
+                // 홈 뷰
             case let .FastSelectionItem(music, album, artist): // 빠른 탐색
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configFastSelection(music: music, artist: artist)
@@ -61,29 +62,44 @@ class DetailViewController: UIViewController {
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
                 (cell as? BannerCell)?.configMusic(data: data)
                 return cell
-            case let .RecommendMusic(music, album, artist): // 당신을 위한 노래 추천 (홈 뷰)
+            case let .RecommendMusic(music, album, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHomeRecommendMusic(music: music, artist: artist)
-                return cell
-            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범 (앨범 뷰)
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configAlbumRecommendAlbum(album: album, artist: artist)
-                return cell
-            case let .ExploreRecommendMusic(music, _, artist): // 당신을 위한 노래 추천 (탐색뷰)
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.configExploreRecommendMusic(music: music, artist: artist)
-                return cell
-            case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 추천 앨범 (탐색뷰)
-                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configExploreRecommendAlbum(album: album, artist: artist)
                 return cell
             case  .RecentlyAddMusicItem(let data): // 최근 추가한 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.config(data: data)
                 return cell
+                // 앨범 뷰
+            case let .AnotherAlbum(album, artist): // 이 아티스트의 다른 앨범
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.configAnotherAlbum(album: album, artist: artist)
+                return cell
+            case let .RecommendAlbum(album, artist): // 당신을 위한 추천 앨범 (앨범 뷰)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.configAlbumRecommendAlbum(album: album, artist: artist)
+                return cell
+                // 탐색 뷰
+            case let .ExploreRecommendMusic(music, _, artist): // 당신을 위한 추천곡 (탐색뷰)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+                (cell as? VerticalCell)?.configExploreRecommendMusic(music: music, artist: artist)
+                return cell
+            case let .ExploreRecommendAlbum(album, artist): // 당신을 위한 앨범 추천 (탐색뷰)
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.configExploreRecommendAlbum(album: album, artist: artist)
+                return cell
             case let .HiddenMusic(music, _, artist): // 숨겨진 명곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
                 (cell as? VerticalCell)?.configHiddenMusic(music: music, artist: artist)
+                return cell
+                // 아티스트 뷰
+            case let .ArtistPopularMusic(music, album, artist): // 아티스트 인기곡
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
+                (cell as? VerticalCell)?.configPopularMusic(music: music, artist: artist)
+                return cell
+            case let .SameArtistAnotherAlbum(album, artist): // 앨범 둘러보기
+                let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
+                (cell as? BannerCell)?.configSameArtistAlbum(album: album, artist: artist)
                 return cell
             default:
                 return UICollectionViewCell()
