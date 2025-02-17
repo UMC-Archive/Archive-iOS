@@ -62,9 +62,9 @@ extension ListenRecordViewController : UICollectionViewDataSource {
         ) as? GenreCollectionViewCell else {
             fatalError("Failed to dequeue genreCollectionViewCell")
         }
-        if let year = extractYear(from: responseData?[indexPath.row].createdAt ?? "2022") {
-            cell.config(image: responseData?[indexPath.row].musicImage ?? "", songName: responseData?[indexPath.row].musicTitle ?? "", artist: responseData?[indexPath.row].artists.first?.artistName ?? "", year: Int(year) ?? 2022)
-        }
+//        if let year = extractYear(from: responseData?[indexPath.row].createdAt ?? "2022") {
+//            cell.config(image: responseData?[indexPath.row].musicImage ?? "", songName: responseData?[indexPath.row].musicTitle ?? "", artist: responseData?[indexPath.row].artists.first?.artistName ?? "", year: Int(year) ?? 2022)
+//        }
         
         
        return cell

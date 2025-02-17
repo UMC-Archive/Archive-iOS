@@ -212,25 +212,25 @@ extension MyPageViewController : UICollectionViewDataSource {
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
                 fatalError("Failed to dequeue ListenRecordCollectionViewCell")
             }
-            if let data = recentlyPlayData{
-                cell.configData(image: data[indexPath.row].musicImage, albumName: data[indexPath.row].musicTitle, artist: data[indexPath.row].artists.first?.artistName ?? "아티스트")
-            }else{
-                let dummy = ListenRecordModel.dummy()
-                
-                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
-            }
+//            if let data = recentlyPlayData{
+//                cell.configData(image: data[indexPath.row].musicImage, albumName: data[indexPath.row].musicTitle, artist: data[indexPath.row].artists.first?.artistName ?? "아티스트")
+//            }else{
+//                let dummy = ListenRecordModel.dummy()
+//                
+//                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+//            }
             return cell
             
         case rootView.recentCollectionView :
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
                 fatalError("Failed to dequeue ListenRecordCollectionViewCell")
-            }
-            if let data = recentlyData{
-                cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].music.artist.name)
-            }else{
-                let dummy = ListenRecordModel.dummy()
-                
-                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+//            }
+//            if let data = recentlyData{
+//                cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].music.artist.name)
+//            }else{
+//                let dummy = ListenRecordModel.dummy()
+//                
+//                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
             }
             return cell
         default :

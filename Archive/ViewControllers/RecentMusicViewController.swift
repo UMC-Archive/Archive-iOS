@@ -69,8 +69,8 @@ extension RecentMusicViewController: UICollectionViewDataSource {
 //        guard let year = extractYear(from: releaseTime) else {
 //            return UICollectionViewCell() // year 추출이 실패하면 기본 셀 반환
 //        }
-        cell.config(image: responseData?[indexPath.row].music.image ?? "", songName: responseData?[indexPath.row].music.title ?? "", artist: responseData?[indexPath.row].music.artist.name ?? "", year: 2022)
-        
+//        cell.config(image: responseData?[indexPath.row].music.image ?? "", songName: responseData?[indexPath.row].music.title ?? "", artist: responseData?[indexPath.row].music.artist.name ?? "", year: 2022)
+//        
         return cell
     }
 }
