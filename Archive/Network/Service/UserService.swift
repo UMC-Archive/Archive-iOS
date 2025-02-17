@@ -78,9 +78,13 @@ public final class UserService: NetworkManager {
     public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO?, NetworkError>) -> Void) {
         requestOptional(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
     }
+    
+    // 최근 추가한 노래
     public func RecentlyMusic(completion: @escaping(Result<[RecentMusicResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .getRecentMusic, decodingType: [RecentMusicResponseDTO].self, completion: completion)
     }
+    
+    // 최근 들은 노래, 청취 기록 
     public func RecentlyPlayedMusic(completion: @escaping(Result<[RecentPlayMusicResponseDTO]?, NetworkError>) -> Void) {
         requestOptional(target: .getRecentlyPlayedMusic, decodingType: [RecentPlayMusicResponseDTO].self, completion: completion)
     }

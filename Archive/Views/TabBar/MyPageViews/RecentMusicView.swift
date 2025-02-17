@@ -20,7 +20,7 @@ class RecentMusicView: UIView {
     private let view = UIView().then{
         $0.backgroundColor = UIColor.black_100
     }
-    public let navigationView = NavigationBar(title: .RecentlyListendMusic)
+    public let navigationView = NavigationBar(title: .RecentlyPlayedMusic)
     
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical

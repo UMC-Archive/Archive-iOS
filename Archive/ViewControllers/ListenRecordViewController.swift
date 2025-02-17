@@ -116,6 +116,7 @@ extension ListenRecordViewController : UICollectionViewDataSource {
         ) as? GenreCollectionViewCell else {
             fatalError("Failed to dequeue genreCollectionViewCell")
         }
+
         let dateString = responseData?[indexPath.row].music.releaseTime ?? "2022"
         let date = Int(dateString.getWeekTuple().year)
         cell.config(image: responseData?[indexPath.row].music.image ?? "", songName: responseData?[indexPath.row].music.title ?? "", artist: responseData?[indexPath.row].artist.name ?? "", year: date ?? 2023)
@@ -135,6 +136,7 @@ extension ListenRecordViewController : UICollectionViewDataSource {
         tapAlbumGesture.artist = responseData?[indexPath.row].artist.name
         tapAlbumGesture.album = responseData?[indexPath.row].album.title
         cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+
         
         
        return cell

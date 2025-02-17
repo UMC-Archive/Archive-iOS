@@ -150,6 +150,13 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
+    // 홈 - 최근에 추가한 노래
+    public func configRecentlyAddMusic(music: RecentMusicDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
     // 트랙 리스트
     public func configTrackList(music: TrackListResponse){
         imageView.kf.setImage(with: URL(string: music.image))

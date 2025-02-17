@@ -143,6 +143,7 @@ extension RecentMusicViewController: UICollectionViewDataSource {
         cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
         
         
+
         return cell
     }
 }
