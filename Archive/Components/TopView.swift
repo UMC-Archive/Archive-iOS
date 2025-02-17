@@ -20,11 +20,16 @@ enum TopViewType: String{
 class TopView: UIView {
     private let type: TopViewType
     
-    // 타이틀 (홈, 마이페이지, 탐색 등)
+    // 타이틀 (마이페이지, 탐색 등)
     private lazy var titleLabel = UILabel().then { lbl in
         lbl.text = self.type.rawValue // enum 타입의 String 값으로 타이틀 설정
         lbl.font = UIFont.customFont(font: .SFPro, ofSize: 28, rawValue: 700)
         lbl.textColor = .white
+    }
+    
+    // 홈 뷰 앱 아이콘
+    private let appIcon = UIImageView().then { view in
+        view.image = .icon
     }
     
     // 프로필 이미지 버튼
@@ -63,6 +68,7 @@ class TopView: UIView {
     private func setSubView() {
         [
             titleLabel,
+            appIcon,
             exploreIconButton,
             searchIconButton,
             profileImageView,
@@ -74,6 +80,12 @@ class TopView: UIView {
         titleLabel.snp.makeConstraints { make in
             make.leading.verticalEdges.equalToSuperview()
             make.trailing.equalTo(exploreIconButton.snp.leading)
+        }
+        
+        // 홈 뷰 앱 아이콘
+        appIcon.snp.makeConstraints { make in
+            make.leading.centerY.equalToSuperview()
+            make.width.height.equalTo(25)
         }
         
         // 마이페이지
@@ -100,24 +112,9 @@ class TopView: UIView {
     
     // 각 화면에 따라 아이콘 유무 설정
     private func setIcon() {
-        switch type {
-        case .home:
-            self.profileImageView.isHidden = false  // 프로필 아이콘
-            self.exploreIconButton.isHidden = false // 탐색 아이콘
-            self.searchIconButton.isHidden = false  // 검색 아이콘
-        case .library:
-            self.profileImageView.isHidden = false  // 프로필 아이콘
-            self.exploreIconButton.isHidden = false // 탐색 아이콘
-            self.searchIconButton.isHidden = false  // 검색 아이콘
-        case .explore:
-            self.profileImageView.isHidden = false  // 프로필 아이콘
-            self.exploreIconButton.isHidden = true // 탐색 아이콘
-            self.searchIconButton.isHidden = false  // 검색 아이콘
-        case .myPage:
-            self.profileImageView.isHidden = false  // 프로필 아이콘
-            self.exploreIconButton.isHidden = false // 탐색 아이콘
-            self.searchIconButton.isHidden = false  // 검색 아이콘
-        }
+        self.exploreIconButton.isHidden = type == .explore ? true : false // 탐색 아이콘
+        self.appIcon.isHidden = type == .home ? false : true // 앱 아이콘 (홈에서만 띄움)
+        self.titleLabel.isHidden = type == .home ? true : false // 타이틀 라벨 (홈에서만 히든)
     }
     
     // 프로필 이미지 설정
