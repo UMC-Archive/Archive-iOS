@@ -24,6 +24,7 @@ class MyPageViewController: UIViewController {
         getGenre()
         getRecentMusic()
         getRecentlyPlayedMusic()
+        setData()
     }
     
     override func viewDidLoad() {
@@ -36,6 +37,7 @@ class MyPageViewController: UIViewController {
         buildGradient()
         controlTapped()
         setDataSource()
+        
         
         self.view.layoutIfNeeded()
         
@@ -71,6 +73,9 @@ class MyPageViewController: UIViewController {
     private func setDataSource(){
         rootView.recordCollectionView.dataSource = self
         rootView.recentCollectionView.dataSource = self
+    }
+    private func setData(){
+        rootView.profileLabel.text = KeychainService.shared.load(account: .userInfo, service: .nickname)
     }
     private func controlTapped(){
         rootView.goRecapButton.addTarget(self, action: #selector(recapButtonTapped), for: .touchUpInside)

@@ -53,6 +53,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         setDelegateAndDataSource()
         controlTapped()
         
+        
         self.view.layoutIfNeeded()
         
     }
@@ -60,6 +61,14 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         super.viewWillAppear(animated)
         getRecap()
         getGenre()
+        setData()
+    }
+    public func setData(){
+        let nickName = KeychainService.shared.load(account: .userInfo, service: .nickname) ?? "닉네임"
+        
+        rootView.genreInfoLabel.text = "2025 상반기 \(nickName)님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
+        rootView.genreTasteLabel.text = "\(nickName)님의 장르 취향은..."
+        rootView.CDInfoLabel.text = "\(nickName)님이 올해 상반기 가장 많이 들은 음악이에요"
     }
     
     private func updateGenreLabel() {
