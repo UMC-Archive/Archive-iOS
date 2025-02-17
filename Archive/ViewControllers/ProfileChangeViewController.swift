@@ -10,7 +10,6 @@ import UIKit
 class ProfileChangeViewController : UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     let rootView = ProfileChangeView()
     private let userService = UserService()
-    private let nickName: ProfileChangePostRequestDTO? = nil
     private var profileImage = UIImage()
     
     override func viewDidLoad() {
@@ -44,7 +43,8 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
                 case .success(let response):
                     print("post profile() 성공")
                     print(response)
-                    KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response.profileImage)
+                    KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response?.profileImage ?? "")
+                    KeychainService.shared.save(account: .userInfo, service: .nickname, value: response?.nickname ?? "닉네임")
                     self.navigationController?.popViewController(animated: true)
                 case .failure(let error):
                     // 네트워크 연결 실패 얼럿
@@ -52,6 +52,7 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
                     self.present(alert, animated: true)
             }
         }
+
     }
     private func setupActions() {
         // 프로필 이미지 선택 이벤트

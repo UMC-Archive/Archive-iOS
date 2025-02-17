@@ -10,7 +10,6 @@ import UIKit
 enum OverflowType {
     case inLibrary // 보관함에서 눌렀을 때 (앨범으로 이동, 보관함에서 삭제_
     case inAlbum   // 앨범에서 눌렀을 때 (보관함에 추가)
-    case recap
     case other     // 나머지 뷰 (앨범으로 이동, 보관함에 추가)
 }
 
@@ -90,20 +89,7 @@ class OverflowView: UIView {
                 make.horizontalEdges.centerY.equalToSuperview()
                 
             }
-        case .inLibrary:
-            goToAlbumButton.isHidden = true
-            seperatorLine.isHidden = true
-            libraryButton.snp.remakeConstraints { make in
-                make.horizontalEdges.centerY.equalToSuperview()
-                
-            }
-        case .recap:
-            goToAlbumButton.isHidden = true
-            seperatorLine.isHidden = true
-            libraryButton.snp.remakeConstraints { make in
-                make.horizontalEdges.centerY.equalToSuperview()
-                
-            }
+
         default:
             return
         }

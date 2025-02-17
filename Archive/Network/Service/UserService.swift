@@ -75,8 +75,8 @@ public final class UserService: NetworkManager {
     }
     
     // 프로필 변경 API
-    public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO, NetworkError>) -> Void) {
-        request(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
+    public func profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO, completion: @escaping (Result<ProfileChangeResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .profileChange(image: image, parameter: parameter), decodingType: ProfileChangeResponseDTO.self, completion: completion)
     }
     
     // 최근 추가한 노래

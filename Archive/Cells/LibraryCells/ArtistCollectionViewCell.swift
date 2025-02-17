@@ -45,6 +45,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    public let touchView = UIView()
     
     private let artistLabel = UILabel().then{
         $0.text = "아티스트"
@@ -64,6 +65,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         [
             artistImage,
             artistLabelStackView,
+            touchView,
             etcImage,
             overflowView
         ].forEach{
@@ -86,6 +88,8 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         }
         artistNameLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.leading.equalTo(artistImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         artistLabel.snp.makeConstraints{
             $0.top.equalTo(artistNameLabel.snp.bottom)
@@ -94,6 +98,11 @@ class ArtistCollectionViewCell: UICollectionViewCell {
             $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
+        }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(artistImage.snp.leading)
+            $0.trailing.equalTo(etcImage.snp.leading)
+            $0.height.equalToSuperview()
         }
         // 더보기 뷰
         overflowView.snp.makeConstraints { make in
@@ -118,10 +127,10 @@ class ArtistCollectionViewCell: UICollectionViewCell {
             overflowView.snp.updateConstraints { make in
                 make.height.equalTo(26)
             }
-        case .inLibrary:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(20)
-            }
+//        case .inLibrary:
+//            overflowView.snp.updateConstraints { make in
+//                make.height.equalTo(26)
+//            }
         default:
             return
         }

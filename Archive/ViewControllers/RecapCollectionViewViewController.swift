@@ -98,6 +98,33 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
             }
         }
     }
+    // 노래 재생 제스처
+    @objc private func musicPlayingGesture(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId,
+              let musicTitle = sender.musicTitle,
+              let musicImageURL = sender.musicImageURL,
+              let artist = sender.artist
+        else { return }
+        
+        KeychainService.shared.save(account: .musicInfo, service: .musicId, value: musicId)
+        KeychainService.shared.save(account: .musicInfo, service: .musicTitle, value: musicTitle)
+        KeychainService.shared.save(account: .musicInfo, service: .musicImageURL, value: musicImageURL)
+        KeychainService.shared.save(account: .musicInfo, service: .artist, value: artist)
+        (self.tabBarController as? TabBarViewController)?.setFloatingView()
+    }
+    // 아티스트 버튼
+    @objc private func tapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else {return }
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    // 앨범 버튼
+    @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else { return }
+        print("TapAlbumImageGesture: \(album), \(artist)")
+        let nextVC = AlbumViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
 }
 
 extension RecapCollectionViewViewController: UICollectionViewDataSource {
@@ -118,13 +145,38 @@ extension RecapCollectionViewViewController: UICollectionViewDataSource {
         cell.etcImage.addGestureRecognizer(songEtcTapGesture)
         songEtcTapGesture.delegate = self
         cell.etcImage.isUserInteractionEnabled = true
-        cell.setOverflowView(type: .recap)
+        cell.setOverflowView(type: .other)
         
         let songGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(goToLibrary))
         songGoToLibraryGesture.musicId = responseData?[indexPath.row].id ?? "0"
         cell.overflowView.libraryButton.addGestureRecognizer(songGoToLibraryGesture)
-
         
-       return cell
+        // 앨범 으로 이동 제스처
+        let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+        tapAlbumGesture.artist = responseData?[indexPath.row].artists
+        tapAlbumGesture.album = responseData?[indexPath.row].albumTitle
+        cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+        cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+        
+        // 노래 재생 제스처
+        let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+        musicGesture.musicTitle = responseData?[indexPath.row].title
+        musicGesture.musicId = responseData?[indexPath.row].id
+        musicGesture.musicImageURL = responseData?[indexPath.row].image
+        musicGesture.artist = responseData?[indexPath.row].artists
+        cell.touchView.isUserInteractionEnabled = true
+        cell.touchView.addGestureRecognizer(musicGesture)
+        
+        
+        // 아티스트 탭 제스처
+        let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+        tapArtistGesture.artist = responseData?[indexPath.row].artists
+        tapArtistGesture.album = responseData?[indexPath.row].albumTitle
+        cell.artistYearLabel.isUserInteractionEnabled = true
+        cell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+        
+        
+        
+        return cell
     }
 }

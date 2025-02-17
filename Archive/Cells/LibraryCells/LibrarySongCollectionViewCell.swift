@@ -34,18 +34,15 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         $0.clipsToBounds = true
     }
     
-    private let playListLabelStackView = UIStackView().then{
-        $0.axis = .vertical
-        $0.alignment = .leading
-    }
     
-    private let songLabel = UILabel().then{
+    public let songLabel = UILabel().then{
         $0.text = "노래 제목"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    public let touchView = UIView()
     
-    private let artistYearLabel = UILabel().then{
+    public let artistYearLabel = UILabel().then{
         $0.text = "아티스트 · 년도"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
@@ -61,16 +58,17 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
     
     private func setComponent(){
         [
+            
             songAlbumImage,
-            playListLabelStackView,
+            songLabel,
+            touchView,
+            artistYearLabel,
             etcImage,
             overflowView
         ].forEach{
             addSubview($0)
         }
-        
-        playListLabelStackView.addSubview(songLabel)
-        playListLabelStackView.addSubview(artistYearLabel)
+
         
         songAlbumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
@@ -79,21 +77,25 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
 //            $0.size.equalTo(constant.playListAlbumImageSize)
         }
         
-        playListLabelStackView.snp.makeConstraints{
-            $0.leading.equalTo(songAlbumImage.snp.trailing).offset(10 * UIScreen.main.screenWidth / 375)
-            $0.size.equalTo(constant.playListLabelStackViewSize)
-            $0.centerY.equalToSuperview()
-        }
         songLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.leading.equalTo(songAlbumImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         artistYearLabel.snp.makeConstraints{
             $0.top.equalTo(songLabel.snp.bottom)
+            $0.leading.equalTo(songAlbumImage.snp.trailing).offset(10)
+
         }
         etcImage.snp.makeConstraints{
             $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
+        }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(songAlbumImage.snp.leading)
+            $0.trailing.equalTo(etcImage.snp.leading)
+            $0.height.equalToSuperview()
         }
         // 더보기 뷰
         overflowView.snp.makeConstraints { make in
@@ -123,10 +125,10 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
             overflowView.snp.updateConstraints { make in
                 make.height.equalTo(26)
             }
-        case .inLibrary:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(20)
-            }
+//        case .inLibrary:
+//            overflowView.snp.updateConstraints { make in
+//                make.height.equalTo(26)
+//            }
         default:
             return
         }
