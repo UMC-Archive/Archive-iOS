@@ -217,6 +217,19 @@ class MyPageViewController: UIViewController {
             }
         }
     }
+    // 아티스트 버튼
+    @objc private func tapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else {return }
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    // 앨범 버튼
+    @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else { return }
+        print("TapAlbumImageGesture: \(album), \(artist)")
+        let nextVC = AlbumViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
     
 }
     
@@ -240,11 +253,26 @@ class MyPageViewController: UIViewController {
                 }
                 if let data = recentlyPlayData{
                     cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
+                    
+                    // 앨범 으로 이동 제스처
+                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                    tapAlbumGesture.artist = data[indexPath.row].artist.name
+                    tapAlbumGesture.album = data[indexPath.row].album.title
+                    cell.touchView.isUserInteractionEnabled = true
+                    cell.touchView.addGestureRecognizer(tapAlbumGesture)
+                    
+                    // 아티스트 탭 제스처
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+                    tapArtistGesture.artist = data[indexPath.row].artist.name
+                    tapArtistGesture.album = data[indexPath.row].album.title
+                    cell.artistLabel.isUserInteractionEnabled = true
+                    cell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 }else{
                     let dummy = ListenRecordModel.dummy()
                     
                     cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
                 }
+                
                 return cell
                 
             case rootView.recentCollectionView :
@@ -253,6 +281,19 @@ class MyPageViewController: UIViewController {
                 }
                 if let data = recentlyData{
                     cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
+                    // 앨범 으로 이동 제스처
+                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                    tapAlbumGesture.artist = data[indexPath.row].artist.name
+                    tapAlbumGesture.album = data[indexPath.row].album.title
+                    cell.touchView.isUserInteractionEnabled = true
+                    cell.touchView.addGestureRecognizer(tapAlbumGesture)
+                    
+                    // 아티스트 탭 제스처
+                    let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+                    tapArtistGesture.artist = data[indexPath.row].artist.name
+                    tapArtistGesture.album = data[indexPath.row].album.title
+                    cell.artistLabel.isUserInteractionEnabled = true
+                    cell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 }else{
                     let dummy = ListenRecordModel.dummy()
                     

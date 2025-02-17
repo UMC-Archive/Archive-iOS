@@ -52,7 +52,7 @@ class RecapCollectionViewView: UIView {
             $0.edges.equalToSuperview()
         }
         navigationView.snp.makeConstraints{
-            $0.top.equalTo(safeAreaLayoutGuide).offset(46)
+            $0.top.equalToSuperview().offset(46)
             $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(30)
         }

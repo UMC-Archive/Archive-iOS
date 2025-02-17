@@ -40,7 +40,7 @@ class ListenRecordCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white
     }
     
-    private let artistLabel = UILabel().then{
+    public let artistLabel = UILabel().then{
         $0.text = "Artist"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
@@ -58,9 +58,11 @@ class ListenRecordCollectionViewCell: UICollectionViewCell {
         }
         
         albumImage.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.leading.equalToSuperview()
-            $0.size.equalTo(constant.albumImageSize)
+//            $0.top.equalToSuperview()
+//            $0.leading.equalToSuperview()
+//            $0.size.equalTo(constant.albumImageSize)
+            $0.top.horizontalEdges.equalToSuperview()
+            $0.height.equalTo(albumImage.snp.width)
         }
         
         touchView.snp.makeConstraints{
@@ -69,13 +71,17 @@ class ListenRecordCollectionViewCell: UICollectionViewCell {
             $0.height.equalToSuperview()
         }
         songNameLabel.snp.makeConstraints{
+//            $0.top.equalTo(albumImage.snp.bottom).offset(6)
+//            $0.leading.equalTo(albumImage.snp.leading)
+//            $0.trailing.equalTo(albumImage.snp.trailing).offset(-10)
             $0.top.equalTo(albumImage.snp.bottom).offset(6)
-            $0.leading.equalTo(albumImage.snp.leading)
-            $0.trailing.equalTo(albumImage.snp.trailing).offset(-10)
+            $0.horizontalEdges.equalToSuperview().inset(3)
         }
         artistLabel.snp.makeConstraints{
-            $0.top.equalTo(songNameLabel.snp.bottom)
-            $0.leading.equalTo(albumImage.snp.leading)
+//            $0.top.equalTo(songNameLabel.snp.bottom)
+//            $0.leading.equalTo(albumImage.snp.leading)
+            $0.top.equalTo(songNameLabel.snp.bottom).offset(2)
+            $0.horizontalEdges.equalToSuperview().inset(3)
         }
 
     }
