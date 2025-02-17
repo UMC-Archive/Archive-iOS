@@ -23,7 +23,7 @@ class LibraryMainView : UIView {
         static let playlistCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
         
         static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
-        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 206) : CGSize(width: 160, height: 206)
+        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 170, height: 226) : CGSize(width: 160, height: 206)
       }
     
     
@@ -95,7 +95,7 @@ class LibraryMainView : UIView {
     public let albumCollectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical
         $0.itemSize = constant.albumCollectionViewIconSize
-        $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
+        $0.minimumInteritemSpacing = 12
     }).then{
         $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
