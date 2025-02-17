@@ -21,14 +21,36 @@ class MusicSegmentVC: UIViewController {
         super.viewDidLoad()
         setupSegmentActions()
         setupCollectionView()
+        segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
         setupInitialView(index: segmentIndexNum)
-
+        // 초기 언더바
+        // 언더바 초기 위치 설정 로직도 segmentChanged()와 똑같이
+        
         fetchLyrics()
         fetchNextTracks()
         fetchRecommendAlbums()
         fetchRecommendMusic()
         print(segmentIndexNum)
     }
+    private var isInitialLayoutSet = false
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        // 초기 위치 설정은 한 번만 하도록
+        if !isInitialLayoutSet {
+            let underbarWidth = segmentView.tabBar.frame.width / 3
+            let newLeading = CGFloat(segmentIndexNum) * underbarWidth
+
+            segmentView.selectedUnderbar.snp.updateConstraints {
+                $0.leading.equalTo(segmentView.tabBar.snp.leading).offset(newLeading)
+                $0.width.equalTo(underbarWidth)
+            }
+
+            isInitialLayoutSet = true // 다시 안 들어오게 설정
+        }
+    }
+
     init(segmentIndexNum: Int) {
         self.segmentIndexNum = segmentIndexNum
         super.init(nibName: nil, bundle: nil)
@@ -62,7 +84,7 @@ class MusicSegmentVC: UIViewController {
 
     }
 
-
+// 어떤 컬렉션 뷰 보여줄지
     private func setupInitialView(index: Int) {
         var index = index
         switch index {
@@ -82,7 +104,7 @@ class MusicSegmentVC: UIViewController {
             break
         }
     }
-
+// 컬렉션 뷰 연결 내부 셀들
     private func setupCollectionView() {
         segmentView.nextTrackCollectionView.delegate = self
         segmentView.nextTrackCollectionView.dataSource = self
@@ -100,7 +122,7 @@ class MusicSegmentVC: UIViewController {
         segmentView.albumRecommendCollectionView.dataSource = self
         segmentView.albumRecommendCollectionView.register(AlbumCell.self, forCellWithReuseIdentifier: AlbumCell.identifier)
     }
-
+// 가사 가져오는 api
     private func fetchLyrics() {
         lyrics = [
             "Stormy night", "Stormy night", "Stormy night",
@@ -109,7 +131,7 @@ class MusicSegmentVC: UIViewController {
         ]
         segmentView.lyricsCollectionView.reloadData()
     }
-
+// 트랙 가져오는 api
     private func fetchNextTracks() {
         musicService.selection { [weak self] result in
             switch result {
@@ -124,7 +146,7 @@ class MusicSegmentVC: UIViewController {
             }
         }
     }
-
+// 앨범 추천 
     private func fetchRecommendAlbums() {
         albumService.albumRecommendAlbum { [weak self] result in
             switch result {
@@ -139,7 +161,7 @@ class MusicSegmentVC: UIViewController {
             }
         }
     }
-
+// 추천 2
     private func fetchRecommendMusic() {
         musicService.homeRecommendMusic { [weak self] result in
             switch result {
