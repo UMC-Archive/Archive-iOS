@@ -27,23 +27,7 @@ class LibraryMainView : UIView {
       }
     
     
-    private let libraryLabel = UILabel().then{
-        $0.text = "보관함"
-        $0.font = UIFont.customFont(font: .SFPro, ofSize: 28, rawValue: 700)
-        $0.textColor = .white
-    }
-      
-    public let mypageIcon = UIImageView().then{
-        $0.image = UIImage(named: "myPageIcon")
-        $0.layer.cornerRadius = 25 / 2
-        $0.clipsToBounds = true
-    }
-    public let exploreIcon = UIImageView().then{
-        $0.image = UIImage(named: "exploreIcon")
-    }
-    private let searchIcon = UIImageView().then{
-        $0.image = UIImage(named: "searchIcon")
-    }
+    public let topView = TopView(type: .library)
     
     //상단 세그먼트
     public let librarySegmentControl = UISegmentedControl(items: ["재생목록", "노래", "앨범", "아티스트"]).then{
@@ -93,7 +77,7 @@ class LibraryMainView : UIView {
         $0.itemSize = constant.playlistCollectionViewIconSize
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
     }).then{
-        $0.backgroundColor = .black
+        $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(PlayListCollectionViewCell.self, forCellWithReuseIdentifier: "playListCollectionViewIdentifier")
     }
@@ -103,7 +87,7 @@ class LibraryMainView : UIView {
         $0.itemSize = constant.playlistCollectionViewIconSize
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
     }).then{
-        $0.backgroundColor = .black
+        $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(LibrarySongCollectionViewCell.self, forCellWithReuseIdentifier: "librarySongCollectionViewIdentifier")
     }
@@ -113,7 +97,7 @@ class LibraryMainView : UIView {
         $0.itemSize = constant.albumCollectionViewIconSize
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
     }).then{
-        $0.backgroundColor = .black
+        $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: "albumCollectionViewIdentifier")
     }
@@ -124,7 +108,7 @@ class LibraryMainView : UIView {
         $0.itemSize = constant.playlistCollectionViewIconSize
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
     }).then{
-        $0.backgroundColor = .black
+        $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(ArtistCollectionViewCell.self, forCellWithReuseIdentifier: "artistCollectionViewIdentifier")
     }
@@ -133,8 +117,7 @@ class LibraryMainView : UIView {
         
         //subview에 추가
         [
-            libraryLabel,
-            mypageIcon,
+            topView,
             librarySegmentControl,
             normalUnderbar,
             selectedUnderbar,
@@ -142,37 +125,19 @@ class LibraryMainView : UIView {
             songCollectionView,
             albumCollectionView,
             artistCollectionView,
-            exploreIcon,
-            searchIcon
         ].forEach{
             addSubview($0)
         }
         
-        libraryLabel.snp.makeConstraints{
+        topView.snp.makeConstraints{
 //            $0.top.equalTo(safeAreaLayoutGuide).offset(46 * UIScreen.main.screenHeight / 667)
             $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(librarySegmentControl)
-            $0.size.equalTo(constant.libraryLabelSize)
-        }
-        
-        exploreIcon.snp.makeConstraints{
-            $0.centerY.equalTo(libraryLabel)
-            $0.size.equalTo(constant.myPageIconSize)
-            $0.trailing.equalTo(searchIcon.snp.leading).offset(-20 * UIScreen.main.screenWidth / 375)
-        }
-        searchIcon.snp.makeConstraints{
-            $0.centerY.equalTo(libraryLabel)
-            $0.size.equalTo(constant.myPageIconSize)
-            $0.trailing.equalTo(mypageIcon.snp.leading).offset(-20 * UIScreen.main.screenWidth / 375)
-        }
-        mypageIcon.snp.makeConstraints{
-            $0.centerY.equalTo(libraryLabel)
-            $0.size.equalTo(constant.myPageIconSize)
-            $0.trailing.equalTo(librarySegmentControl)
+            $0.horizontalEdges.equalToSuperview().inset(20)
         }
         
         librarySegmentControl.snp.makeConstraints{
-            $0.top.equalTo(libraryLabel.snp.bottom).offset(16 * UIScreen.main.screenHeight / 667)
+            $0.top.equalTo(topView.snp.bottom).offset(16 * UIScreen.main.screenHeight / 667)
             $0.centerX.equalToSuperview()
             $0.size.equalTo(constant.segmentViewSize)
         }

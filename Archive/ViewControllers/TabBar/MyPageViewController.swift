@@ -57,6 +57,7 @@ class MyPageViewController: UIViewController {
                 Task{
                     
                     self.genreResponseDate = response
+                    self.buildGradient()
                     
                 }
             case .failure(let error):
@@ -116,30 +117,51 @@ class MyPageViewController: UIViewController {
         let viewController = ProfileChangeViewController()
         self.navigationController?.pushViewController(viewController, animated: true)
     }
+    
     func buildGradient() {
         
+        let genreColors: [String: UIColor] = [
+            "Pop": UIColor.Pop ?? .black,
+            "HipHop": UIColor.HipHop ?? .black,
+            "Afrobeats": UIColor.Afrobeats ?? .black,
+            "Ballad": UIColor.Ballad ?? .black,
+            "Disco": UIColor.Disco ?? .black,
+            "Electronic": UIColor.Electronic ?? .black,
+            "Funk": UIColor.Funk ?? .black,
+            "Indie": UIColor.Indie ?? .black,
+            "Jazz": UIColor.Jazz ?? .black,
+            "Latin": UIColor.Latin ?? .black,
+            "Phonk": UIColor.Phonk ?? .black,
+            "Punk": UIColor.Punk ?? .black,
+            "Rock": UIColor.Rock ?? .black,
+            "Trot": UIColor.Trot ?? .black,
+            "Other": UIColor.Other ?? .black
+        ]
         
         gradient.type = .conic
         if let data = genreResponseDate, data.count == 5 {
+            print("""
+                                    \(data[0].name), \(data[1].name), \(data[2].name), \(data[3].name),\(data[4].name)
+                    """)
             gradient.colors = [
-                UIColor(named: "\(data[0].name)") ?? .white,
-                UIColor(named: "\(data[1].name)") ?? .white,
-                UIColor(named: "\(data[2].name)") ?? .white,
-                UIColor(named: "\(data[3].name)") ?? .white,
-                UIColor(named: "\(data[4].name)") ?? .white,
-                UIColor(named: "\(data[0].name)") ?? .white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[3].name]?.cgColor ?? UIColor.white,
+                genreColors[data[4].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
             ]
         }else{
             gradient.colors = [
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.hiphop_100?.cgColor,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.RnB_100?.cgColor,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.dance_100?.cgColor
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
             ]
         }
-       
+        
         
         gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.5) // 중심점
@@ -148,7 +170,7 @@ class MyPageViewController: UIViewController {
         
         rootView.CDView.layer.addSublayer(gradient)
     }
-
+    
     private func getRecentMusic(){
         userService.RecentlyMusic(){ [weak self] result in
             guard let self = self else { return }
@@ -159,10 +181,10 @@ class MyPageViewController: UIViewController {
                 print(response)
                 Task{
                     
-
+                    
                     self.recentlyData = response
                     self.rootView.recentCollectionView.reloadData()
-                  
+                    
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -190,61 +212,64 @@ class MyPageViewController: UIViewController {
             }
         }
     }
+    
 }
     
-
-extension MyPageViewController : UICollectionViewDataSource {
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        switch collectionView{
-        case rootView.recordCollectionView :
-            return recentlyPlayData?.count ?? 0
-        case rootView.recentCollectionView :
-            return recentlyData?.count ?? 3
-        default :
-            return 0
+    extension MyPageViewController : UICollectionViewDataSource {
+        func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+            switch collectionView{
+            case rootView.recordCollectionView :
+                return recentlyPlayData?.count ?? 0
+            case rootView.recentCollectionView :
+                return recentlyData?.count ?? 3
+            default :
+                return 0
+            }
         }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        switch collectionView{
-        case rootView.recordCollectionView :
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
-                fatalError("Failed to dequeue ListenRecordCollectionViewCell")
-            }
-            if let data = recentlyPlayData{
-                cell.configData(image: data[indexPath.row].musicImage, albumName: data[indexPath.row].musicTitle, artist: data[indexPath.row].artists.first?.artistName ?? "아티스트")
-            }else{
-                let dummy = ListenRecordModel.dummy()
+        
+        func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+            switch collectionView{
+            case rootView.recordCollectionView :
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
+                    fatalError("Failed to dequeue ListenRecordCollectionViewCell")
+                }
+                if let data = recentlyPlayData{
+                    cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
+                }else{
+                    let dummy = ListenRecordModel.dummy()
+                    
+                    cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+                }
+                return cell
                 
-                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
-            }
-            return cell
-            
-        case rootView.recentCollectionView :
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
-                fatalError("Failed to dequeue ListenRecordCollectionViewCell")
-            }
-            if let data = recentlyData{
-                cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].music.artist.name)
-            }else{
-                let dummy = ListenRecordModel.dummy()
+            case rootView.recentCollectionView :
+                guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "listenRecordCollectionViewIdentifier", for: indexPath)as? ListenRecordCollectionViewCell else {
+                    fatalError("Failed to dequeue ListenRecordCollectionViewCell")
+                }
+                if let data = recentlyData{
+                    cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
+                }else{
+                    let dummy = ListenRecordModel.dummy()
+                    
+                    cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
+                }
+                return cell
+            default :
+                fatalError("Unknown collection view")
                 
-                cell.config(image: dummy[indexPath.row].albumImage, albumName: dummy[indexPath.row].albumName)
             }
-            return cell
-        default :
-            fatalError("Unknown collection view")
             
         }
         
-    }
-    
-    // 프로필 이미지 설정 함수
-    private func setProfileImage() {
-        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
-            rootView.topView.config(profileImage: profileImage)
-            self.rootView.profileView.kf.setImage(with: URL(string: profileImage))
+        
+        
+        // 프로필 이미지 설정 함수
+        private func setProfileImage() {
+            if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+                rootView.topView.config(profileImage: profileImage)
+                self.rootView.profileView.kf.setImage(with: URL(string: profileImage))
+            }
         }
+        
     }
 
-}

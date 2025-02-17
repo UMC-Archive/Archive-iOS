@@ -32,39 +32,31 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         $0.clipsToBounds = true
     }
     
-    private let albumLabelStackView = UIStackView().then{
-        $0.axis = .vertical
-        $0.alignment = .leading
-        
-    }
+    public let touchView = UIView()
     
-    private let albumNameLabel = UILabel().then{
+    public let albumNameLabel = UILabel().then{
         $0.text = "Album Name"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white
     }
     
-    private let artistLabel = UILabel().then{
+    public let artistLabel = UILabel().then{
         $0.text = "Artist"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
     }
-    // 더보기 뷰
-    public let overflowView = OverflowView().then { view in
-        view.isHidden = true
-    }
+
     
     private func setComponent(){
         [
             albumImage,
-            albumLabelStackView,
-            overflowView
+            albumNameLabel,
+            touchView,
+            artistLabel,
+    
         ].forEach{
             addSubview($0)
         }
-        
-        albumLabelStackView.addSubview(albumNameLabel)
-        albumLabelStackView.addSubview(artistLabel)
         
         albumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
@@ -72,27 +64,21 @@ class AlbumCollectionViewCell: UICollectionViewCell {
             $0.size.equalTo(constant.albumImageSize)
         }
         
-        albumLabelStackView.snp.makeConstraints{
-            $0.leading.equalToSuperview()
-            $0.size.equalTo(constant.albumLabelStackViewSize)
-            $0.top.equalTo(albumImage.snp.bottom).offset(6 * UIScreen.main.screenHeight / 667)
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(albumImage.snp.leading)
+            $0.trailing.equalTo(albumImage.snp.trailing)
+            $0.height.equalToSuperview()
         }
         albumNameLabel.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.width.equalTo(160)
+            $0.top.equalTo(albumImage.snp.bottom)
+            $0.leading.equalTo(albumImage.snp.leading)
+            $0.trailing.equalTo(albumImage.snp.trailing).offset(-10)
         }
         artistLabel.snp.makeConstraints{
             $0.top.equalTo(albumNameLabel.snp.bottom)
-            $0.width.equalTo(160)
+            $0.leading.equalTo(albumImage.snp.leading)
         }
-        // 더보기 뷰
-        overflowView.snp.makeConstraints { make in
-            make.width.equalTo(97)
-            make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
-            make.centerY.equalToSuperview()
-            make.trailing.equalTo(albumLabelStackView).offset(7)
-        }
+
 
     }
     
@@ -101,16 +87,5 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         albumImage.kf.setImage(with: imageUrl)
         albumNameLabel.text = albumName
         artistLabel.text = artist
-    }
-    public func setOverflowView(type: OverflowType){
-        overflowView.setType(type: type)
-        switch type {
-        case .inAlbum:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(26)
-            }
-        default:
-            return
-        }
     }
 }

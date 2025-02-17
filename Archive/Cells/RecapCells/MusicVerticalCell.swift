@@ -12,6 +12,7 @@ class MusicVerticalCell: UICollectionViewCell {
     
     // 앨범 이미지 뷰
     private let imageView = AlbumImageView()
+    public let touchView = UIView()
     
     // Album & SongTitle
     private let titleLabel = UILabel().then { lbl in
@@ -21,7 +22,7 @@ class MusicVerticalCell: UICollectionViewCell {
     }
     
     // 아티스트 ⦁ year
-    private let artistYearLabel = UILabel().then { lbl in
+    public let artistYearLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
@@ -61,6 +62,7 @@ class MusicVerticalCell: UICollectionViewCell {
         [
             imageView,
             titleLabel,
+            touchView,
             artistYearLabel,
             overflowButton,
             overflowView
@@ -86,8 +88,6 @@ class MusicVerticalCell: UICollectionViewCell {
         artistYearLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
             make.leading.equalTo(titleLabel)
-            make.trailing.equalTo(overflowButton.snp.leading).offset(-20)
-//            make.bottom.equalTo(imageView).inset(6)
         }
         
         // 더보기 버튼
@@ -96,6 +96,11 @@ class MusicVerticalCell: UICollectionViewCell {
             make.trailing.equalToSuperview().offset(-15)
             make.width.equalTo(3)
             make.height.equalTo(17)
+        }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(imageView.snp.leading)
+            $0.trailing.equalTo(overflowButton.snp.leading)
+            $0.height.equalToSuperview()
         }
         // 더보기 뷰
         overflowView.snp.makeConstraints { make in
@@ -124,14 +129,7 @@ class MusicVerticalCell: UICollectionViewCell {
             overflowView.snp.updateConstraints { make in
                 make.height.equalTo(26)
             }
-        case .inLibrary:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(20)
-            }
-        case .recap:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(20)
-        }
+
         default:
             return
         }

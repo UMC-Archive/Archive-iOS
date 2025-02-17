@@ -9,6 +9,7 @@ import Foundation
 
 public struct RecapResponseDTO: Decodable {
     let id: String
+    let albumTitle: String
     let title: String
     let image: String
     let releaseYear: Int

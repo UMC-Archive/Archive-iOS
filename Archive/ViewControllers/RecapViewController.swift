@@ -172,16 +172,33 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     
     func buildGradient() {
         
+        let genreColors: [String: UIColor] = [
+            "Pop": UIColor.Pop ?? .black,
+            "HipHop": UIColor.HipHop ?? .black,
+            "Afrobeats": UIColor.Afrobeats ?? .black,
+            "Ballad": UIColor.Ballad ?? .black,
+            "Disco": UIColor.Disco ?? .black,
+            "Electronic": UIColor.Electronic ?? .black,
+            "Funk": UIColor.Funk ?? .black,
+            "Indie": UIColor.Indie ?? .black,
+            "Jazz": UIColor.Jazz ?? .black,
+            "Latin": UIColor.Latin ?? .black,
+            "Phonk": UIColor.Phonk ?? .black,
+            "Punk": UIColor.Punk ?? .black,
+            "Rock": UIColor.Rock ?? .black,
+            "Trot": UIColor.Trot ?? .black,
+            "Other": UIColor.Other ?? .black
+        ]
         
         gradient.type = .conic
         if let data = genreResponseDate, data.count == 5 {
             gradient.colors = [
-                UIColor(named: "\(data[0].name)") ?? .white,
-                UIColor(named: "\(data[1].name)") ?? .white,
-                UIColor(named: "\(data[2].name)") ?? .white,
-                UIColor(named: "\(data[3].name)") ?? .white,
-                UIColor(named: "\(data[4].name)") ?? .white,
-                UIColor(named: "\(data[0].name)") ?? .white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[3].name]?.cgColor ?? UIColor.white,
+                genreColors[data[4].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
             ]
         }else{
             gradient.colors = [
@@ -247,7 +264,34 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             }
         }
     }
-
+    // 노래 재생 제스처
+    @objc private func musicPlayingGesture(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId,
+              let musicTitle = sender.musicTitle,
+              let musicImageURL = sender.musicImageURL,
+              let artist = sender.artist
+        else { return }
+        
+        KeychainService.shared.save(account: .musicInfo, service: .musicId, value: musicId)
+        KeychainService.shared.save(account: .musicInfo, service: .musicTitle, value: musicTitle)
+        KeychainService.shared.save(account: .musicInfo, service: .musicImageURL, value: musicImageURL)
+        KeychainService.shared.save(account: .musicInfo, service: .artist, value: artist)
+        (self.tabBarController as? TabBarViewController)?.setFloatingView()
+    }
+    
+    // 아티스트 버튼
+    @objc private func tapArtistLabelGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else {return }
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    // 앨범 버튼
+    @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
+        guard let album = sender.album, let artist = sender.artist else { return }
+        print("TapAlbumImageGesture: \(album), \(artist)")
+        let nextVC = AlbumViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+    }
     
 }
 
@@ -255,7 +299,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case rootView.recapCollectionView :
-            return recapResponseData?.count ?? 3
+            return 3
         case rootView.genreCollectionView :
             return genreResponseDate?.count ?? 5
         case rootView.collectionView :
@@ -276,8 +320,11 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
                 cell.config(data: dummy[indexPath.row])
                 return cell
             }
+            guard let recapData = recapResponseData, indexPath.row < min(3, recapData.count) else {
+                return UICollectionViewCell() // 안전한 기본 반환
+            }
             
-            cell.recapConfig(data: data[indexPath.row])
+            cell.recapConfig(data: recapData[indexPath.row])
             
             return cell
         case rootView.genreCollectionView:
@@ -304,12 +351,36 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             
             // overflow 버튼 로직 선택
             cell.overflowButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
-            cell.setOverflowView(type: .recap)
+            cell.setOverflowView(type: .other)
             
             // 노래 보관함으로 이동 탭 제스처
             let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
             tapGoToLibraryGesture.musicId = recapResponseData?[indexPath.row].id
             cell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
+            
+            // 앨범 으로 이동 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = recapResponseData?[indexPath.row].artists
+            tapAlbumGesture.album = recapResponseData?[indexPath.row].albumTitle
+            cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+            cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+            
+            // 노래 재생 제스처
+            let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+            musicGesture.musicTitle = recapResponseData?[indexPath.row].title
+            musicGesture.musicId = recapResponseData?[indexPath.row].id
+            musicGesture.musicImageURL = recapResponseData?[indexPath.row].image
+            musicGesture.artist = recapResponseData?[indexPath.row].artists
+            cell.touchView.isUserInteractionEnabled = true
+            cell.touchView.addGestureRecognizer(musicGesture)
+
+
+        // 아티스트 탭 제스처
+            let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+            tapArtistGesture.artist = recapResponseData?[indexPath.row].artists
+            tapArtistGesture.album = recapResponseData?[indexPath.row].albumTitle
+            cell.artistYearLabel.isUserInteractionEnabled = true
+            cell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
             return cell
         default:
             fatalError("Unknown collection view")

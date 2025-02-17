@@ -6,16 +6,19 @@
 //
 
 public struct LibraryArtistResponseDTO: Decodable {
-    //    let isSuceess : Bool
-    //    let code : String
-    //    let message : String
-    //    let result: [LibraryArtistInfo]
+    let artist: artistArtistDTO
+    let album: [artistAlbumDTO]
+}
+
+struct artistArtistDTO: Decodable {
     let id: String
     let name: String
     let image: String
 }
 
-//public struct LibraryArtistInfo: Decodable {
-//    let name: String
-//    let image: String
-//}
+struct artistAlbumDTO: Decodable {
+    let id: String
+    let title: String
+    let releaseTime: Int
+    let image: String
+}

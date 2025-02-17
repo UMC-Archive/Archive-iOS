@@ -6,8 +6,9 @@
 //
 
 public struct RecentMusicResponseDTO: Decodable {
-    
     let music: RecentMusicDTO
+    let album: RecentAlbumDTO
+    let artist: RecentArtistDTO
 }
 
 struct RecentMusicDTO: Decodable {
@@ -16,10 +17,16 @@ struct RecentMusicDTO: Decodable {
     let releaseTime: String
     let image: String
     let updatedAt: String
-    let artist: ArtistDTO
 }
 
-struct ArtistDTO: Decodable {
+struct RecentAlbumDTO: Decodable {
+    let id: String
+    let title: String
+    let releaseTime: String
+    let image: String
+}
+
+struct RecentArtistDTO: Decodable {
     let name: String
 }
 

@@ -82,7 +82,7 @@ class AlbumViewController: UIViewController {
     
     // 뒤로 가기 버튼
     @objc private func tapPopButton() {
-        self.navigationController?.navigationBar.isHidden = false
+        self.navigationController?.navigationBar.isHidden = true
         self.navigationController?.popViewController(animated: true)
     }
     
