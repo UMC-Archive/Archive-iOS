@@ -70,7 +70,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
             $0.height.equalToSuperview()
         }
         albumNameLabel.snp.makeConstraints{
-            $0.top.equalTo(albumImage.snp.bottom)
+            $0.top.equalTo(albumImage.snp.bottom).offset(6)
             $0.leading.equalTo(albumImage.snp.leading)
             $0.trailing.equalTo(albumImage.snp.trailing).offset(-10)
         }
