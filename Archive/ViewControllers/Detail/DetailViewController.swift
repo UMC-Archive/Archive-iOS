@@ -73,7 +73,24 @@ class DetailViewController: UIViewController {
                 return cell
             case .RecentlyPlayedMusicItem(let data): // 최근 들은 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: BannerCell.id, for: indexPath)
-                (cell as? BannerCell)?.configRecentlyPlayedMusic(music: data.music, artist: data.artist.name)
+                guard let bannerCell = cell as? BannerCell else {return cell}
+                
+                bannerCell.configRecentlyPlayedMusic(music: data.music, artist: data.artist.name)
+                
+                // 음악 재생 탭 제스처
+                let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+                musicGesture.musicTitle = data.music.title
+                musicGesture.musicId = data.music.id
+                musicGesture.musicImageURL = data.music.image
+                musicGesture.artist = data.artist.name
+                bannerCell.imageView.addGestureRecognizer(musicGesture)
+                
+                // 아티스트 탭 제스처
+                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+                tapArtistGesture.artist = data.artist.name
+                tapArtistGesture.album = data.album.title
+                bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
+                
                 return cell
             case let .RecommendMusic(music, album, artist): // 당신을 위한 추천곡
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
@@ -112,7 +129,37 @@ class DetailViewController: UIViewController {
                 return cell
             case  .RecentlyAddMusicItem(let data): // 최근 추가한 노래
                 let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath)
-                (cell as? VerticalCell)?.configRecentlyAddMusic(music: data.music, artist: data.artist.name)
+                 guard let verticalCell = cell as? VerticalCell else {return cell}
+                verticalCell.configRecentlyAddMusic(music: data.music, artist: data.artist.name)
+                 
+                 // 노래 재생 제스처
+                 let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+                 musicGesture.musicTitle = data.music.title
+                 musicGesture.musicId = data.music.id
+                 musicGesture.musicImageURL = data.music.image
+                 musicGesture.artist = data.artist.name
+                 verticalCell.playMusicView.addGestureRecognizer(musicGesture)
+                 
+                 // 앨범 탭 제스처
+                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                 tapAlbumGesture.artist = data.artist.name
+                 tapAlbumGesture.album = data.album.title
+                 verticalCell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+                 
+                 // 아티스트 탭 제스처
+                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+                 tapArtistGesture.artist = data.artist.name
+                 tapArtistGesture.album = data.album.title
+                 verticalCell.artistYearLabel.addGestureRecognizer(tapArtistGesture)
+                 
+                 // overflow 버튼 로직 선택
+                 verticalCell.overflowButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+                 verticalCell.setOverflowView(type: .other)
+                 
+                 // 노래 보관함으로 이동 탭 제스처
+                 let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+                 tapGoToLibraryGesture.musicId = data.music.id
+                 verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
                 return cell
                 
                 // 앨범 뷰
