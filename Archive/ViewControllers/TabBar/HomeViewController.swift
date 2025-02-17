@@ -171,7 +171,7 @@ class HomeViewController: UIViewController {
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self?.tapArtistLabelGesture(_:)))
-                musicGesture.artist = data.artist.name
+                tapArtistGesture.artist = data.artist.name
                 tapArtistGesture.album = data.album.title
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
