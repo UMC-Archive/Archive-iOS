@@ -86,8 +86,6 @@ class OverflowView: UIView {
         
         switch type {
         case .inAlbum:
-            goToAlbumButton.isHidden = false
-            seperatorLine.isHidden = false
             libraryButton.snp.remakeConstraints { make in
                 make.horizontalEdges.centerY.equalToSuperview()
                 

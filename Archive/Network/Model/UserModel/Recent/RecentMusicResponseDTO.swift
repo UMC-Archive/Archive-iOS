@@ -6,27 +6,23 @@
 //
 import Foundation
 
-public struct RecentMusicResponseDTO: Decodable {
-    
+public struct RecentMusicResponseDTO: Decodable, Hashable {
     let music: RecentMusicDTO
+    let album: AlbumInfoReponseDTO
+    let artist: ArtistDTO
 }
 
 public struct RecentMusicDTO: Decodable, Hashable {
-    
     let id: String
     let title: String
     let releaseTime: String
     let image: String
-    let updatedAt: String
-    let artist: ArtistDTO
     
     enum CodingKeys: CodingKey {
         case id
         case title
         case releaseTime
         case image
-        case updatedAt
-        case artist
     }
     
     public init(from decoder: any Decoder) throws {
@@ -35,8 +31,6 @@ public struct RecentMusicDTO: Decodable, Hashable {
         self.title = try container.decode(String.self, forKey: .title)
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
-        self.updatedAt = try container.decode(String.self, forKey: .updatedAt)
-        self.artist = try container.decode(ArtistDTO.self, forKey: .artist)
     }
 }
 

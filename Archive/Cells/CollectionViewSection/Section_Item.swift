@@ -44,7 +44,7 @@ enum Item: Hashable {
     case ExploreRecommendMusic(ExploreRecommendMusic, ExploreRecommendAlbum, String)       // 당신을 위한 추천곡 (탐색 뷰)
     case ExploreRecommendAlbum(ExploreRecommendAlbum, String)    // 당신을 위한 앨범 추천(탐색 뷰)
     case RecentlyPlayedMusicItem(RecentPlayMusicResponseDTO)   // 최근 들은 노래
-    case RecentlyAddMusicItem(RecentMusicDTO)       // 최근에 추가한 노래
+    case RecentlyAddMusicItem(RecentMusicResponseDTO)       // 최근에 추가한 노래
     case AnotherAlbum(AnotherAlbumResponseDTO, String)               // 이 아티스트의 다른 앨범
     case HiddenMusic(HiddenMusicResponse, ExploreRecommendAlbum, String)         // 숨겨진 명곡
     case ArtistPopularMusic(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)        // 아티스트 인기곡

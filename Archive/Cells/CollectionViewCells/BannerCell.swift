@@ -122,9 +122,9 @@ class BannerCell: UICollectionViewCell {
     }
     
     // 홈뷰 - 최근 들은 노래
-    public func configRecentlyPlayedMusic(music: RecentPlayMusicResponseDTO) {
-        imageView.kf.setImage(with: URL(string: music.musicImage))
-        titleLabel.text = music.musicTitle
-        artistLabel.text = music.artists.first?.artistName
+    public func configRecentlyPlayedMusic(music: RecentMusicDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistLabel.text = artist
     }
 }
