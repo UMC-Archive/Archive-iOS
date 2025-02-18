@@ -20,8 +20,8 @@ class PreferGenreView: UIView {
     // 회원가입 타이틀
     lazy var title = UILabel().then { make in
         make.textColor = .white
-        make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.text = "선호하는 장르를 선택해주세요"
+        make.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         make.textAlignment = .center
     }
     
@@ -36,7 +36,7 @@ class PreferGenreView: UIView {
     // 왼쪽 화살표 버튼
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "left"), for: .normal)
+        button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()
@@ -120,7 +120,7 @@ class PreferGenreView: UIView {
 
         // 장르 선택 컬렉션 뷰
         GenreCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(8)
+            make.top.equalTo(progress4.snp.bottom).offset(8)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(nextButton.snp.top).offset(-10)
         }
@@ -133,15 +133,15 @@ class PreferGenreView: UIView {
         }
 
         leftArrowButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
-            make.leading.equalToSuperview().offset(16)
+            make.top.equalTo(safeAreaLayoutGuide).offset(57)
+            make.leading.equalToSuperview().offset(20)
             make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
-            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
+            make.top.equalTo(safeAreaLayoutGuide).offset(57)
+            make.leading.equalTo(leftArrowButton.snp.trailing).offset(64)
         }
         progress4.snp.makeConstraints { make in
             make.top.equalTo(leftArrowButton.snp.bottom).offset(10)

@@ -8,7 +8,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var title = UILabel().then { make in
         make.textColor = .white
         make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.font = .customFont(font: .SFPro, ofSize: 18,rawValue : 700)
         make.textAlignment = .center
     }
     lazy var progress2: UIImageView = {
@@ -21,14 +21,14 @@ class Register2View: UIView, UITextFieldDelegate {
     // 왼쪽 화살표 버튼
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()
     lazy var successLabel: UILabel = {
         let label = UILabel()
         label.textColor = .green
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         label.text = "올바른 형식의 비밀번호입니다."
         label.isHidden = true
         return label
@@ -37,7 +37,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var successLabel2: UILabel = {
         let label = UILabel()
         label.textColor = .green
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         label.text = "비밀번호 확인이 완료되었습니다."
         label.isHidden = true
         return label
@@ -46,7 +46,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var nextButton: UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
-        button.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
         button.layer.cornerRadius = 8
@@ -90,7 +90,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var register = UILabel().then { make in
         make.textColor = .white
         make.text = "비밀번호를 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
      
     }
     
@@ -98,7 +98,7 @@ class Register2View: UIView, UITextFieldDelegate {
         let textField = UITextField()
         textField.placeholder = "비밀번호"
         textField.borderStyle = .roundedRect
-        textField.font = UIFont.systemFont(ofSize: 16)
+        textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
         textField.backgroundColor = UIColor(white: 0.2, alpha: 1) // 기본 배경색
         return textField
@@ -108,7 +108,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var errorLabel: UILabel = {
         let label = UILabel()
         label.textColor = .red
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         label.text = "비밀번호는 8~13자리로 설정해주세요"
         label.isHidden = true
         return label
@@ -118,7 +118,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var register2 = UILabel().then { make in
         make.textColor = .white
         make.text = "비밀번호를 다시 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
       
     }
     
@@ -127,7 +127,7 @@ class Register2View: UIView, UITextFieldDelegate {
         let textField = UITextField()
         textField.placeholder = "비밀번호 확인"
         textField.borderStyle = .roundedRect
-        textField.font = UIFont.systemFont(ofSize: 16)
+        textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
         textField.backgroundColor = UIColor(white: 0.2, alpha: 1) // 기본 배경색
         return textField
@@ -136,7 +136,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var errorLabel2: UILabel = {
         let label = UILabel()
         label.textColor = .red
-        label.font = UIFont.systemFont(ofSize: 14)
+        label.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         label.text = "비밀번호가 동일하지 않습니다"
         label.isHidden = true
         return label
@@ -185,14 +185,14 @@ class Register2View: UIView, UITextFieldDelegate {
     
     private func setupConstraints() {
         leftArrowButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.top.equalTo(safeAreaLayoutGuide).offset(40)
             make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
         }
         progress2.snp.makeConstraints { make in
@@ -204,13 +204,13 @@ class Register2View: UIView, UITextFieldDelegate {
         
         register.snp.makeConstraints { make in
            
-            make.top.equalTo(title.snp.bottom).offset(24)
+            make.top.equalTo(title.snp.bottom).offset(60)
             make.leading.equalToSuperview().offset(46)
         }
         
         PWField.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(register.snp.bottom).offset(16)
+            make.top.equalTo(register.snp.bottom).offset(20)
             make.width.equalTo(295)
             make.height.equalTo(45)
         }
@@ -225,28 +225,28 @@ class Register2View: UIView, UITextFieldDelegate {
         
         register2.snp.makeConstraints { make in
            
-            make.top.equalTo(errorLabel.snp.bottom).offset(24)
+            make.top.equalTo(errorLabel.snp.bottom).offset(30)
             make.leading.equalToSuperview().offset(46)
         }
         
         PWField2.snp.makeConstraints { make in
             make.centerX.equalToSuperview()
-            make.top.equalTo(register2.snp.bottom).offset(16)
+            make.top.equalTo(register2.snp.bottom).offset(20)
             make.width.equalTo(295)
             make.height.equalTo(45)
         }
         
         errorLabel2.snp.makeConstraints { make in
             make.leading.equalTo(PWField2)
-            make.top.equalTo(PWField2.snp.bottom).offset(8)
+            make.top.equalTo(PWField2.snp.bottom).offset(4)
         }
         successLabel2.snp.makeConstraints { make in
               make.leading.equalTo(PWField2)
-              make.top.equalTo(errorLabel2.snp.bottom).offset(4) // 성공 메시지 아래 배치
+            make.top.equalTo(PWField2.snp.bottom).offset(4) // 성공 메시지 아래 배치
           }
           
         nextButton.snp.makeConstraints { make in
-            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-20)
+            make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-40)
             make.centerX.equalToSuperview()
             make.width.equalTo(295)
             make.height.equalTo(45)
