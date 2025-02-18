@@ -35,10 +35,6 @@ class HomeViewController: UIViewController {
         setSnapShot()
         setAction()
         setGesture()
-        
-        getArchive() // 당신을 위한 아카이브
-        getSelection() // 빠른 선곡
-        getRecommendMusic() // 당신을 위한 추천곡
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -47,6 +43,19 @@ class HomeViewController: UIViewController {
         getHistory() // 최근 탐색 연도 불러오기
         getRecentlyPlayingMusic() // 최근 들은 노래
         getRecentlyAddMusic() // 최근 추가한 노래
+        
+        // 데이터가 안 들어왔었으면 다시 호출
+        if archiveData.count == 1 {
+            self.getArchive() // 당신을 위한 아카이브
+        }
+        
+        if fastSelectionData.count == 1 {
+            self.getSelection()  // 빠른 선곡
+        }
+        
+        if recommendMusic.count == 1 {
+            self.getRecommendMusic() // 당신을 위한 추천곡
+        }
     }
     
     // 프로필 이미지 설정 함수
@@ -330,7 +339,9 @@ class HomeViewController: UIViewController {
                     self.tabBarController?.selectedIndex = 1 // 탐색 뷰로 이동
                 }
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "탐색년도 저장" , description: error.description, retryAction: { [weak self] in
+                    self?.postHistory(history: history) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -347,19 +358,8 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                if let afError = error.asAFError {
-                    switch afError {
-                    case .sessionTaskFailed(let underlyingError as URLError) where underlyingError.code == .timedOut:
-                        let alert = NetworkAlert.shared.getAlertController(title: "요청 시간이 초과되었습니다.\n네트워크 상태를 확인해주세요.")
-                        self.present(alert, animated: true)
-                    default:
-                        let alert = NetworkAlert.shared.getAlertController(title: error.localizedDescription)
-                        self.present(alert, animated: true)
-                    }
-                } else {
-                    let alert = NetworkAlert.shared.getAlertController(title: error.localizedDescription)
-                    self.present(alert, animated: true)
-                }
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 아카이브", description: error.description, retryAction: self.getArchive) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                self.present(alert, animated: true)
             }
         }
     }
@@ -376,7 +376,7 @@ class HomeViewController: UIViewController {
                 setDataSource()
                 setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 추천곡", description: error.description, retryAction: self.getRecommendMusic) // 🔄 재시도 버튼을 누르면 다시 API 호출
                 self.present(alert, animated: true)
             }
         }
@@ -393,7 +393,7 @@ class HomeViewController: UIViewController {
                 setDataSource()
                 setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "탐색했던 시점", description: error.description, retryAction: self.getHistory) // 🔄 재시도 버튼을 누르면 다시 API 호출
                 self.present(alert, animated: true)
             }
         }
@@ -411,7 +411,7 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "빠른 선곡", description: error.description, retryAction: self.getSelection) // 🔄 재시도 버튼을 누르면 다시 API 호출
                 self.present(alert, animated: true)
             }
         }
@@ -428,7 +428,7 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "최근 들은 노래", description: error.description, retryAction: self.getRecentlyPlayingMusic) // 🔄 재시도 버튼을 누르면 다시 API 호출
                 self.present(alert, animated: true)
             }
         }
@@ -445,11 +445,13 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "최근 추가한 노래", description: error.description, retryAction: self.getRecentlyAddMusic) // 🔄 재시도 버튼을 누르면 다시 API 호출
                 self.present(alert, animated: true)
             }
         }
     }
+    
+
 }
 
 // 제스처 함수 - Extension
@@ -507,7 +509,9 @@ extension HomeViewController: UIGestureRecognizerDelegate  {
                 self.present(alert, animated: true)
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: error.description, retryAction: { [weak self] in
+                    self?.postAddMusicInLibary(musicId: musicId)  // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
