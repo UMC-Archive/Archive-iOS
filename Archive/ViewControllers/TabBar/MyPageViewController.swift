@@ -230,6 +230,20 @@ class MyPageViewController: UIViewController {
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
+    // 노래 재생 제스처
+    @objc private func musicPlayingGesture(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId,
+              let musicTitle = sender.musicTitle,
+              let musicImageURL = sender.musicImageURL,
+              let artist = sender.artist
+        else { return }
+        
+        KeychainService.shared.save(account: .musicInfo, service: .musicId, value: musicId)
+        KeychainService.shared.save(account: .musicInfo, service: .musicTitle, value: musicTitle)
+        KeychainService.shared.save(account: .musicInfo, service: .musicImageURL, value: musicImageURL)
+        KeychainService.shared.save(account: .musicInfo, service: .artist, value: artist)
+        (self.tabBarController as? TabBarViewController)?.setFloatingView()
+    }
     
 }
     
@@ -254,12 +268,14 @@ class MyPageViewController: UIViewController {
                 if let data = recentlyPlayData{
                     cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
                     
-                    // 앨범 으로 이동 제스처
-                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                    tapAlbumGesture.artist = data[indexPath.row].artist.name
-                    tapAlbumGesture.album = data[indexPath.row].album.title
+                    // 노래 재생 제스처
+                    let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+                    musicGesture.musicTitle = data[indexPath.row].music.title
+                    musicGesture.musicId = data[indexPath.row].music.id
+                    musicGesture.musicImageURL = data[indexPath.row].music.image
+                    musicGesture.artist = data[indexPath.row].artist.name
                     cell.touchView.isUserInteractionEnabled = true
-                    cell.touchView.addGestureRecognizer(tapAlbumGesture)
+                    cell.touchView.addGestureRecognizer(musicGesture)
                     
                     // 아티스트 탭 제스처
                     let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
@@ -281,12 +297,14 @@ class MyPageViewController: UIViewController {
                 }
                 if let data = recentlyData{
                     cell.configData(image: data[indexPath.row].music.image, albumName: data[indexPath.row].music.title, artist: data[indexPath.row].artist.name)
-                    // 앨범 으로 이동 제스처
-                    let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                    tapAlbumGesture.artist = data[indexPath.row].artist.name
-                    tapAlbumGesture.album = data[indexPath.row].album.title
+                    // 노래 재생 제스처
+                    let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+                    musicGesture.musicTitle = data[indexPath.row].music.title
+                    musicGesture.musicId = data[indexPath.row].music.id
+                    musicGesture.musicImageURL = data[indexPath.row].music.image
+                    musicGesture.artist = data[indexPath.row].artist.name
                     cell.touchView.isUserInteractionEnabled = true
-                    cell.touchView.addGestureRecognizer(tapAlbumGesture)
+                    cell.touchView.addGestureRecognizer(musicGesture)
                     
                     // 아티스트 탭 제스처
                     let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))

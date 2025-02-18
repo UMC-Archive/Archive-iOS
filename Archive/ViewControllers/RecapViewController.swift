@@ -72,7 +72,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     private func updateGenreLabel() {
-        if let layout = rootView.genreCollectionView.collectionViewLayout as? CarouselLayout {
+        if let layout = rootView.genreCollectionView.collectionViewLayout as? CarouselLayout2 {
             let centerX = rootView.genreCollectionView.contentOffset.x + rootView.genreCollectionView.bounds.width / 2
             let visibleCellsAttributes = rootView.genreCollectionView.indexPathsForVisibleItems.compactMap { indexPath -> UICollectionViewLayoutAttributes? in
                 return layout.layoutAttributesForItem(at: indexPath)
@@ -81,13 +81,14 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             // 화면 중앙에 가장 가까운 셀을 찾음
             if let closestAttributes = visibleCellsAttributes.min(by: {
                 abs($0.center.x - centerX) < abs($1.center.x - centerX)
-            }) {
+            }) { print("\(rootView.genreTasteLabel2.text)라벨")
                 
                 let indexPath = closestAttributes.indexPath
                 
                 // genreResponseDate가 nil이 아닌 경우에만 처리
                 if let genreResponseDate = genreResponseDate, indexPath.row < genreResponseDate.count {
                     rootView.genreTasteLabel2.text = genreResponseDate[indexPath.row].name
+                    print("\(rootView.genreTasteLabel2.text)라벨")
                 }
             }
         }
@@ -395,9 +396,10 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             fatalError("Unknown collection view")
         }
     }
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-            updateGenreLabel()
-        }
+
+    func scrollViewDidEndDecelerating(_ scrollView: UIScrollView) {
+        updateGenreLabel()
+    }
 
 }
         

@@ -35,6 +35,12 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
         print("1")
     }
     @objc func saveButtonTapped(){
+        
+        if rootView.nicknameLabel.text == "" {
+            let alert = ProfileAlert.shared.getAlertController(type: .nickname)
+            self.present(alert, animated: true)
+            return}
+        
         let requestDTO = ProfileChangePostRequestDTO(nickname: rootView.nicknameLabel.text ?? "error")
         userService.profileChange(image: profileImage, parameter: requestDTO) { [weak self] result in
                 guard let self = self else { return }
