@@ -347,8 +347,19 @@ class HomeViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapShot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
+                if let afError = error.asAFError {
+                    switch afError {
+                    case .sessionTaskFailed(let underlyingError as URLError) where underlyingError.code == .timedOut:
+                        let alert = NetworkAlert.shared.getAlertController(title: "요청 시간이 초과되었습니다.\n네트워크 상태를 확인해주세요.")
+                        self.present(alert, animated: true)
+                    default:
+                        let alert = NetworkAlert.shared.getAlertController(title: error.localizedDescription)
+                        self.present(alert, animated: true)
+                    }
+                } else {
+                    let alert = NetworkAlert.shared.getAlertController(title: error.localizedDescription)
+                    self.present(alert, animated: true)
+                }
             }
         }
     }
