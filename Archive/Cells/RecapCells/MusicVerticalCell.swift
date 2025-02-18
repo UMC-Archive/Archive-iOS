@@ -12,6 +12,7 @@ class MusicVerticalCell: UICollectionViewCell {
     
     // 앨범 이미지 뷰
     private let imageView = AlbumImageView()
+    public let touchView = UIView()
     
     // Album & SongTitle
     private let titleLabel = UILabel().then { lbl in
@@ -21,7 +22,7 @@ class MusicVerticalCell: UICollectionViewCell {
     }
     
     // 아티스트 ⦁ year
-    private let artistYearLabel = UILabel().then { lbl in
+    public let artistYearLabel = UILabel().then { lbl in
         lbl.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         lbl.textColor = .white_70
         lbl.numberOfLines = 1
@@ -29,6 +30,11 @@ class MusicVerticalCell: UICollectionViewCell {
     
     // 더보기 버튼
     public let overflowButton = OverflowButton()
+    
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
+    }
     
     
     override init(frame: CGRect) {
@@ -51,12 +57,15 @@ class MusicVerticalCell: UICollectionViewCell {
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
     }
     
+    
     private func setSubView() {
         [
             imageView,
             titleLabel,
+            touchView,
             artistYearLabel,
-            overflowButton
+            overflowButton,
+            overflowView
         ].forEach{self.addSubview($0)}
     }
     
@@ -72,23 +81,34 @@ class MusicVerticalCell: UICollectionViewCell {
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView).offset(6)
             make.leading.equalTo(imageView.snp.trailing).offset(10)
-            make.trailing.equalTo(overflowButton.snp.leading)
+            make.trailing.equalTo(overflowButton.snp.leading).offset(-20)
         }
         
         // 아티스트
         artistYearLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(2)
             make.leading.equalTo(titleLabel)
-            make.trailing.equalTo(overflowButton.snp.leading)
-//            make.bottom.equalTo(imageView).inset(6)
         }
         
         // 더보기 버튼
         overflowButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.trailing.equalToSuperview()
+            make.trailing.equalToSuperview().offset(-15)
             make.width.equalTo(3)
             make.height.equalTo(17)
+        }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(imageView.snp.leading)
+            $0.trailing.equalTo(overflowButton.snp.leading)
+            $0.height.equalToSuperview()
+        }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(overflowButton).offset(-7)
         }
     }
     
@@ -101,6 +121,18 @@ class MusicVerticalCell: UICollectionViewCell {
         
         // 아티스트 및 연도 설정
         artistYearLabel.text = "\(artist) ⦁ \(year)"
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+
+        default:
+            return
+        }
     }
 
 }

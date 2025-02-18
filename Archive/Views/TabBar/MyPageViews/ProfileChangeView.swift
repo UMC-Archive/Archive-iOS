@@ -25,17 +25,20 @@ class ProfileChangeView : UIView {
     public let navigationView = NavigationBar(title: .profile)
     public let profileImage = UIImageView().then{
         $0.image = UIImage(named: "profileSample")
-    }
-    public let profileChange = UIImageView().then{
-        $0.image = UIImage(named: "edit_back")
+        $0.clipsToBounds = true
+        $0.layer.cornerRadius = 65
     }
     private let nickLabel = UILabel().then{
         $0.text = "닉네임"
         $0.textColor = .white
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 700)
     }
-    private let nicknameLabel = UILabel().then{
-        $0.text = "혀콩"
+    public let nicknameLabel = UITextField().then{
+        $0.placeholder = "혀콩"
+        $0.attributedPlaceholder = NSAttributedString(
+            string: "혀콩",
+            attributes: [.foregroundColor: UIColor.white]
+        )
         $0.textColor = .white
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400)
     }
@@ -53,7 +56,6 @@ class ProfileChangeView : UIView {
             view,
             navigationView,
             profileImage,
-            profileChange,
             nickLabel,
             nicknameLabel,
             divideLine,
@@ -73,12 +75,7 @@ class ProfileChangeView : UIView {
         profileImage.snp.makeConstraints{
             $0.top.equalTo(navigationView.snp.bottom).offset(99)
             $0.centerX.equalToSuperview()
-            $0.size.equalTo(CGSize(width: 120, height: 120))
-        }
-        profileChange.snp.makeConstraints{
-            $0.top.equalTo(profileImage.snp.top).offset(89)
-            $0.leading.equalTo(profileImage.snp.leading).offset(97.75)
-            $0.size.equalTo(CGSize(width: 31, height: 31))
+            $0.size.equalTo(CGSize(width: 130, height: 130))
         }
         nickLabel.snp.makeConstraints{
             $0.top.equalTo(profileImage.snp.bottom).offset(70)
@@ -97,9 +94,21 @@ class ProfileChangeView : UIView {
             $0.height.equalTo(1)
         }
         button.snp.makeConstraints{
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-46)
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-(40 + FloatingViewHeight))
             $0.centerX.equalToSuperview()
             $0.size.equalTo(CGSize(width: 335, height: 50))
         }
     }
+    private func addTapGestureToProfileImage() {
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(didTapProfileImage))
+        profileImage.addGestureRecognizer(tapGesture)
+    }
+
+    @objc private func didTapProfileImage() {
+        // ViewController에서 구현해야 함
+        onProfileImageTapped?()
+    }
+
+    // 클로저로 탭 이벤트 전달
+    var onProfileImageTapped: (() -> Void)?
 }

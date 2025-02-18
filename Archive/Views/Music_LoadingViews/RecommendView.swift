@@ -214,7 +214,7 @@ class RecommendView: UIView {
     }
     
     func configure(
-        albumImage: UIImage?,
+        albumImage: String,
         songTitle: String,
         artistName: String
     ) {

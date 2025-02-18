@@ -37,7 +37,7 @@ class RecapView: UIView {
     public var contentView = UIView()
     
     public var genreInfoLabel = UILabel().then{
-        $0.text = "2024 상반기 유저 닉네임님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
+        $0.text = "2025 상반기 유저 닉네임님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
         $0.textAlignment = .center
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400)
         $0.textColor = .white
@@ -47,12 +47,14 @@ class RecapView: UIView {
     public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout().then{
         $0.itemSize = CGSize(width: 120, height: 120)
         $0.scrollDirection = .horizontal
+        
     }).then{
-        $0.backgroundColor = UIColor.black_100
-        $0.isScrollEnabled = false
+        $0.backgroundColor = .clear /*UIColor.black_100*/
+        $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
         $0.register(GenreRecommendedCollectionViewCell.self, forCellWithReuseIdentifier: "genreRecommendedCollectionViewIdentifier")
-        $0.backgroundColor = .black_100
+        $0.backgroundColor = .clear /*UIColor.black_100*/
+        $0.showsHorizontalScrollIndicator = false
     }
     private let genreCollectionViewBackgound = UIImageView().then {
         $0.image = UIImage(named: "GenreCollectionViewBackground")
@@ -66,7 +68,7 @@ class RecapView: UIView {
         $0.numberOfLines = 2
     }
     public var genreTasteLabel2 = UILabel().then{
-        $0.text = "Dance Pop · 2000년대"
+        $0.text = "Dance Pop"
         $0.textAlignment = .center
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.75)
@@ -184,7 +186,8 @@ class RecapView: UIView {
                 
         scrollView.snp.makeConstraints {
             $0.top.equalTo(navigationView.snp.bottom) // scrollView는 navigationView 아래에 위치
-            $0.leading.trailing.bottom.equalToSuperview()
+            $0.leading.trailing.equalToSuperview()
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
         }
                 
                 
@@ -217,11 +220,11 @@ class RecapView: UIView {
             $0.top.equalTo(CDBackgroundView.snp.bottom).offset(46)
             $0.centerX.equalToSuperview()
         }
-        genreCollectionViewBackgound.snp.makeConstraints{
-            $0.centerX.centerY.equalTo(genreCollectionView)
-            $0.width.equalTo(423)
-            $0.height.equalTo(58)
-        }
+//        genreCollectionViewBackgound.snp.makeConstraints{
+//            $0.centerX.centerY.equalTo(genreCollectionView)
+//            $0.width.equalTo(423)
+//            $0.height.equalTo(58)
+//        }
         
         // genreCollectionView 제약 조건
         genreCollectionView.snp.makeConstraints {
@@ -264,7 +267,8 @@ class RecapView: UIView {
         collectionView.snp.makeConstraints{
             $0.top.equalTo(headerView.snp.bottom).offset(20)
             $0.leading.equalTo(headerView)
-            $0.width.equalToSuperview()
+//            $0.width.equalToSuperview()
+            $0.trailing.equalToSuperview()
             $0.height.equalTo(317)
         }
     }

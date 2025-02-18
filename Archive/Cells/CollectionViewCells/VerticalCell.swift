@@ -10,6 +10,11 @@ import UIKit
 class VerticalCell: UICollectionViewCell {
     static let id = "VerticalCell"
     
+    // 음악 재생 뷰
+    public let playMusicView = UIView().then { view in
+        view.isUserInteractionEnabled = true
+    }
+    
     // 앨범 이미지 뷰
     public let imageView = AlbumImageView()
     
@@ -64,6 +69,7 @@ class VerticalCell: UICollectionViewCell {
         [
             imageView,
             titleLabel,
+            playMusicView,
             artistYearLabel,
             overflowButton,
             overflowView
@@ -73,7 +79,7 @@ class VerticalCell: UICollectionViewCell {
     private func setUI(){
         // 이미지 뷰
         imageView.snp.makeConstraints { make in
-            make.top.leading.equalToSuperview()
+            make.centerY.leading.equalToSuperview()
             make.width.height.equalTo(50)
             make.bottom.equalToSuperview().priority(.low)
         }
@@ -82,7 +88,14 @@ class VerticalCell: UICollectionViewCell {
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView).offset(6)
             make.leading.equalTo(imageView.snp.trailing).offset(10)
-            make.trailing.equalTo(overflowButton.snp.leading)
+            make.trailing.equalTo(overflowButton.snp.leading).offset(-10)
+        }
+        
+        // 해당 뷰 탭에 따라 음악 재생
+        playMusicView.snp.makeConstraints { make in
+            make.verticalEdges.equalToSuperview()
+            make.leading.equalToSuperview()
+            make.trailing.equalTo(titleLabel)
         }
         
         // 아티스트
@@ -96,7 +109,7 @@ class VerticalCell: UICollectionViewCell {
         overflowButton.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().inset(8)
-            make.width.equalTo(5)
+            make.width.equalTo(10)
             make.height.equalTo(17)
         }
         
@@ -137,11 +150,25 @@ class VerticalCell: UICollectionViewCell {
         artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
+    // 홈 - 최근에 추가한 노래
+    public func configRecentlyAddMusic(music: RecentMusicDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
+    }
+    
     // 트랙 리스트
     public func configTrackList(music: TrackListResponse){
         imageView.kf.setImage(with: URL(string: music.image))
         titleLabel.text = music.title
         artistYearLabel.text = "\(music.artist) ⦁ \(music.releaseTime)"
+    }
+    
+    // 아티스트 인기곡
+    public func configPopularMusic(music: MusicInfoResponseDTO, artist: String) {
+        imageView.kf.setImage(with: URL(string: music.image))
+        titleLabel.text = music.title
+        artistYearLabel.text = "\(artist) ⦁ \(music.releaseTime.prefixBeforeDash())"
     }
     
     public func setOverflowView(type: OverflowType){

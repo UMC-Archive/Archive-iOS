@@ -28,40 +28,45 @@ class GenreCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
-    private let genreImage = UIImageView() 
-    
-    private let genreLabelStackView = UIStackView().then{
-        $0.axis = .vertical
-        $0.alignment = .leading
+    private let genreImage = UIImageView().then{
+        $0.layer.cornerRadius = 6
+        $0.clipsToBounds = true
     }
     
-    private let songLabel = UILabel().then{
+
+    
+    public let songLabel = UILabel().then{
         $0.text = "노래 제목"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    public let touchView = UIView()
     
-    private let artistYearLabel = UILabel().then{
+    public let artistYearLabel = UILabel().then{
         $0.text = "아티스트 · 년도"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
     }
     
-    private let etcImage = UIImageView().then{
+    public let etcImage = UIImageView().then{
         $0.image = UIImage(named: "etc")
+    }
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
     }
     
     private func setComponent(){
         [
             genreImage,
-            genreLabelStackView,
-            etcImage
+            songLabel,
+            touchView,
+            artistYearLabel,
+            etcImage,
+            overflowView
         ].forEach{
             addSubview($0)
         }
-        
-        genreLabelStackView.addSubview(songLabel)
-        genreLabelStackView.addSubview(artistYearLabel)
         
         genreImage.snp.makeConstraints{
             $0.top.equalToSuperview()
@@ -69,32 +74,55 @@ class GenreCollectionViewCell: UICollectionViewCell {
             $0.size.equalTo(constant.genreImageSize)
         }
         
-        genreLabelStackView.snp.makeConstraints{
-            $0.leading.equalTo(genreImage.snp.trailing).offset(10 * UIScreen.main.screenWidth / 375)
-            $0.size.equalTo(constant.genreLabelStackViewSize)
-            $0.centerY.equalToSuperview()
-        }
         songLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.leading.equalTo(genreImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         artistYearLabel.snp.makeConstraints{
             $0.top.equalTo(songLabel.snp.bottom)
+            $0.leading.equalTo(genreImage.snp.trailing).offset(10)
         }
         etcImage.snp.makeConstraints{
             $0.trailing.equalToSuperview()
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
         }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(genreImage.snp.leading)
+            $0.trailing.equalTo(etcImage.snp.leading)
+            $0.height.equalToSuperview()
+        }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(etcImage).offset(-7)
+        }
 
     }
     
-    public func config(image: UIImage, songName: String, artist: String, year: String){
-        genreImage.image = image
+    public func config(image: String, songName: String, artist: String, year: Int){
+        genreImage.kf.setImage(with: URL(string: image))
         songLabel.text = songName
         
         songLabel.text = songName
         
         let updatedText = "\(artist) · \(year)"
         artistYearLabel.text = updatedText
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+
+        default:
+            return
+        }
     }
 }

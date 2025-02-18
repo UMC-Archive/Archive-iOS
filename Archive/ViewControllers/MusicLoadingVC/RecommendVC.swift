@@ -38,7 +38,7 @@ class RecommendVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
         fetchRecommendMusic()
         fetchNextTrackMusic()
         recommendView.configure(
-            albumImage: UIImage(named: "aespa"),
+            albumImage: "",
             songTitle: "NOW OR NEVER",
             artistName: "ZERO BASE ONE"
         )

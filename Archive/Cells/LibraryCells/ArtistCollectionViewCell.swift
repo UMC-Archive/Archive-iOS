@@ -45,6 +45,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    public let touchView = UIView()
     
     private let artistLabel = UILabel().then{
         $0.text = "아티스트"
@@ -52,15 +53,21 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         $0.textColor = .white.withAlphaComponent(0.7)
     }
     
-    private let etcImage = UIImageView().then{
+    public let etcImage = UIImageView().then{
         $0.image = UIImage(named: "etc")
+    }
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
     }
     
     private func setComponent(){
         [
             artistImage,
             artistLabelStackView,
-            etcImage
+            touchView,
+            etcImage,
+            overflowView
         ].forEach{
             addSubview($0)
         }
@@ -81,6 +88,8 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         }
         artistNameLabel.snp.makeConstraints{
             $0.top.equalToSuperview()
+            $0.leading.equalTo(artistImage.snp.trailing).offset(10)
+            $0.trailing.equalTo(etcImage.snp.leading).offset(-20)
         }
         artistLabel.snp.makeConstraints{
             $0.top.equalTo(artistNameLabel.snp.bottom)
@@ -90,6 +99,19 @@ class ArtistCollectionViewCell: UICollectionViewCell {
             $0.centerY.equalToSuperview()
             $0.size.equalTo(constant.etcImageSize)
         }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(artistImage.snp.leading)
+            $0.trailing.equalTo(etcImage.snp.leading)
+            $0.height.equalToSuperview()
+        }
+        // 더보기 뷰
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(etcImage).offset(-7)
+        }
 
     }
     
@@ -97,5 +119,20 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         let imageUrl = URL(string: image)
         artistImage.kf.setImage(with: imageUrl)
         artistNameLabel.text = artistName
+    }
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+//        case .inLibrary:
+//            overflowView.snp.updateConstraints { make in
+//                make.height.equalTo(26)
+//            }
+        default:
+            return
+        }
     }
 }

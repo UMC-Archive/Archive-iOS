@@ -22,12 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let musicLoadVC = Register2VC()
         let navigationController = UINavigationController(rootViewController: musicLoadVC)
         window?.rootViewController = TabBarViewController()
-//        let musicLoadVC = MusicLoadVC()
-  //      let navigationController = UINavigationController(rootViewController: musicLoadVC)
-    //    window?.rootViewController = navigationController
 
-//        let navigationController = UINavigationController(rootViewController: LoginVC())
-//        window?.rootViewController = navigationController
         window?.makeKeyAndVisible()
       
     }

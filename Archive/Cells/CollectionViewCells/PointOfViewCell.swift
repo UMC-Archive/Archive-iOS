@@ -41,6 +41,7 @@ class PointOfViewCell: UICollectionViewCell {
         
         albumImageView.image = nil
         titleLabel.text = ""
+        self.gestureRecognizers = nil
     }
     
     private func setBorder() {
@@ -65,9 +66,13 @@ class PointOfViewCell: UICollectionViewCell {
         }
     }
     
-    public func config(data: GetHistoryResponseDTO) {
-        albumImageView.kf.setImage(with: URL(string: "https://cdn.hankyung.com/photo/202410/01.38493988.1.jpg"))
-        let weekData = data.history.getWeekTuple()
+    public func config(userHistory: UserHistoryResponseDTO, imageURL: String?) {
+        
+        print("imageURL: \(String(describing: imageURL))")
+        if let imageURL = imageURL {
+            albumImageView.kf.setImage(with: URL(string: imageURL))
+        }
+        let weekData = userHistory.history.getWeekTuple()
         titleLabel.text = "\(weekData.year) \(weekData.month) \(weekData.week)"
     }
 }

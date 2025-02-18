@@ -19,6 +19,9 @@ public enum UserTargetType {
     case postHistory(date: PostHistoryRequestDTO)
     case getRecap
     case preference
+    case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO)
+    case getRecentMusic // 최근 추가한 노래
+    case getRecentlyPlayedMusic // 최근 들은 노래, 청취 기록
    }
 
 extension UserTargetType: TargetType {
@@ -51,6 +54,12 @@ extension UserTargetType: TargetType {
             return "recap"
         case .preference:
             return "genre/preference"
+        case .profileChange:
+            return "profile_image"
+        case .getRecentMusic:
+            return "recent"
+        case .getRecentlyPlayedMusic:
+            return "play"
         }
     }
     
@@ -66,14 +75,20 @@ extension UserTargetType: TargetType {
             return .get
         case .preference:
             return .get
+        case .profileChange:
+            return .post
+        case .getRecentMusic:
+            return .get
+        case .getRecentlyPlayedMusic:
+            return .get
         }
     }
     
     public var task: Moya.Task {
         switch self {
         case .login(parameter: let parameter):
-                  // `LoginRequestDTO`를 JSON body로 보냅니다.
-                  return .requestJSONEncodable(parameter)
+            // `LoginRequestDTO`를 JSON body로 보냅니다.
+            return .requestJSONEncodable(parameter)
             
         case .sendVerificationCode(let email):
             return .requestParameters(parameters: ["email" : email], encoding: URLEncoding.queryString)
@@ -81,20 +96,20 @@ extension UserTargetType: TargetType {
             return .requestJSONEncodable(parameter)
         case .signUp(image: let image, parameter: let parameter):
             
-                // 이미지 데이터를 Data로 전환
-                guard let imageData = image.jpegData(compressionQuality: 0.8) else {
-                    return .requestPlain
-                }
-                
-                var formData: [MultipartFormData] = []
-                
-                // 이미지 추가
-                let imagePart = MultipartFormData(provider: .data(imageData),
-                                                  name: "image",
-                                                  fileName: "\(image.hashValue).jpg",
-                                                  mimeType: "image/jpeg"
-                )
-                formData.append(imagePart)
+            // 이미지 데이터를 Data로 전환
+            guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+                return .requestPlain
+            }
+            
+            var formData: [MultipartFormData] = []
+            
+            // 이미지 추가
+            let imagePart = MultipartFormData(provider: .data(imageData),
+                                              name: "image",
+                                              fileName: "\(image.hashValue).jpg",
+                                              mimeType: "image/jpeg"
+            )
+            formData.append(imagePart)
             
             // Request body(createLetterRequestDTO)를 JSON으로 인코딩
             do {
@@ -108,9 +123,9 @@ extension UserTargetType: TargetType {
                 print("Failed to encode request body: \(error)")
                 return .requestPlain
             }
-
+            
             return .uploadMultipart(formData)
-        
+            
         case .userPlayingRecord(parameter: let parameter):
             return .requestJSONEncodable(parameter)
         case .getHistory, .info:
@@ -121,12 +136,48 @@ extension UserTargetType: TargetType {
             return .requestPlain
         case .preference:
             return .requestPlain
+        case .profileChange(image: let image, parameter: let parameter):
+            
+            // 이미지 데이터를 Data로 전환
+            guard let imageData = image.jpegData(compressionQuality: 0.8) else {
+                return .requestPlain
+            }
+            
+            var formData: [MultipartFormData] = []
+            
+            // 이미지 추가
+            let imagePart = MultipartFormData(provider: .data(imageData),
+                                              name: "image",
+                                              fileName: "\(image.hashValue).jpg",
+                                              mimeType: "image/jpeg"
+            )
+            formData.append(imagePart)
+            
+            // Request body(createLetterRequestDTO)를 JSON으로 인코딩
+            do {
+                let jsonData = try JSONEncoder().encode(parameter)
+                let requestPart = MultipartFormData(
+                    provider: .data(jsonData),
+                    name: "data"
+                )
+                formData.append(requestPart)
+            } catch {
+                print("Failed to encode request body: \(error)")
+                return .requestPlain
+            }
+            
+            return .uploadMultipart(formData)
+            
+        case .getRecentMusic:
+            return .requestPlain
+        case .getRecentlyPlayedMusic:
+            return .requestPlain
         }
     }
     
     public var headers: [String : String]? {
         switch self {
-        case .signUp:
+        case .signUp, .profileChange:
             return ["Content-Type": "multipart/form-data"]
         default:
             return ["Content-Type": "application/json"]

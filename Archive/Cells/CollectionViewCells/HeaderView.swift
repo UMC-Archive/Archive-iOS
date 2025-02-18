@@ -65,7 +65,7 @@ class HeaderView: UICollectionReusableView {
         
         // 배너일 경우 디테일 버튼 히든 처리
         switch headerTitle {
-        case .Archive, .MusicVideo, .SimilarArtist:
+        case .Archive, .MusicVideo, .SimilarArtist, .PointOfView:
             detailButton.isHidden = true
         default:
             detailButton.isHidden = false

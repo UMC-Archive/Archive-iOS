@@ -20,7 +20,7 @@ class RecentMusicView: UIView {
     private let view = UIView().then{
         $0.backgroundColor = UIColor.black_100
     }
-    public let navigationView = NavigationBar(title: .RecentlyListendMusic)
+    public let navigationView = NavigationBar(title: .RecentlyPlayedMusic)
     
     public let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewFlowLayout().then{
         $0.scrollDirection = .vertical
@@ -30,7 +30,7 @@ class RecentMusicView: UIView {
         $0.backgroundColor = UIColor.black_100
         $0.isScrollEnabled = true
         $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
-        $0.register(RecapCollectionViewVerticalCell.self, forCellWithReuseIdentifier: "recapCollectionViewVerticalCellIdentifier")
+//        $0.register(RecapCollectionViewVerticalCell.self, forCellWithReuseIdentifier: "recapCollectionViewVerticalCellIdentifier")
     }
     
     
@@ -46,13 +46,13 @@ class RecentMusicView: UIView {
             $0.edges.equalToSuperview()
         }
         navigationView.snp.makeConstraints{
-            $0.top.equalTo(safeAreaLayoutGuide).offset(46)
+            $0.top.equalToSuperview().offset(46)
             $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(30)
         }
         collectionView.snp.makeConstraints{
             $0.top.equalTo(navigationView.snp.bottom).offset(30)
-            $0.height.equalTo(422)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
             $0.width.equalTo(337)
             $0.leading.equalToSuperview().offset(19)
         }

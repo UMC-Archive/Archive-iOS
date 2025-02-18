@@ -6,6 +6,7 @@
 //
 
 public struct LibraryAlbumResponseDTO: Decodable {
+    let id: String
     let title: String
     let image: String
     let artist: String

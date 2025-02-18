@@ -13,20 +13,22 @@ class MusicLoadVC: UIViewController {
     private let musicLoadView = MusicLoadView()
     private var player: AVPlayer?
     private let musiceservice = MusicService()
-    private var musicInfo : MusicInfoResponseDTO?
+    public var musicInfo : MusicInfoResponseDTO?
     private var music: String
     private var artist: String
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
-
+    
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
     }
     
-    init(artist: String = "NewJeans", music: String = "Supernatural") {
-        self.artist = artist
+    init(music: String, artist: String) {
         self.music = music
+        self.artist = artist
         super.init(nibName: nil, bundle: nil)
+        
+        setupActions()
     }
     
     required init?(coder: NSCoder) {
@@ -35,12 +37,12 @@ class MusicLoadVC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         setupActions()
-            musicLoad()
     }
     
 
-    private func musicLoad() {
+    public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
 
@@ -70,6 +72,10 @@ class MusicLoadVC: UIViewController {
                                  ]
                              )
                     self?.loadNextTracks()
+                    if playMusic {
+                        self?.player = nil
+                        self?.playPauseMusic()
+                    }
                 case .failure(let error):
                     print(" 음악 정보 API 오류: \(error)")
                 }
@@ -191,10 +197,19 @@ class MusicLoadVC: UIViewController {
         let recommendTapGesture = UITapGestureRecognizer(target: self, action: #selector(goToRecommend))
         bottomMenuSubviews[2].isUserInteractionEnabled = true
         bottomMenuSubviews[2].addGestureRecognizer(recommendTapGesture)
+        
+        
+        // 뒤로 가기
+        musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+    }
+    
+    // 뒤로 가기 액션
+    @objc private func popButton() {
+        self.dismiss(animated: true)
     }
 
     // 다음 트랙 화면으로 이동
-    @objc private func goToNextTrack() {
+    @objc public func goToNextTrack() {
         let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0)
         nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
@@ -237,10 +252,9 @@ class MusicLoadVC: UIViewController {
         recommendVC.segmentIndexNum = 2
         present(recommendVC,animated: true)
     }
-      
 
     // 재생 버튼 누를 시에 음악 재생하기
-    @objc private func playPauseMusic() {
+    @objc public func playPauseMusic() {
             guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {
                 print(" 음악 URL이 유효하지 않습니다.")
                 return

@@ -13,8 +13,8 @@ class AlbumCollectionViewCell: UICollectionViewCell {
     static let albumCollectionViewIdentifier = "albumCollectionViewIdentifier"
     
     private enum constant {
-        static let albumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 160) : CGSize(width: 160, height: 160)
-        static let albumLabelStackViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 40) : CGSize(width: 101, height: 39)
+        static let albumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 170, height: 170) : CGSize(width: 160, height: 160)
+        static let albumLabelStackViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 101, height: 39) : CGSize(width: 101, height: 39)
     }
     
     override init(frame: CGRect) {
@@ -32,35 +32,31 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         $0.clipsToBounds = true
     }
     
-    private let albumLabelStackView = UIStackView().then{
-        $0.axis = .vertical
-        $0.alignment = .leading
-        
-    }
+    public let touchView = UIView()
     
-    private let albumNameLabel = UILabel().then{
+    public let albumNameLabel = UILabel().then{
         $0.text = "Album Name"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white
     }
     
-    private let artistLabel = UILabel().then{
+    public let artistLabel = UILabel().then{
         $0.text = "Artist"
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         $0.textColor = .white.withAlphaComponent(0.7)
     }
-    
+
     
     private func setComponent(){
         [
             albumImage,
-            albumLabelStackView,
+            albumNameLabel,
+            touchView,
+            artistLabel,
+    
         ].forEach{
             addSubview($0)
         }
-        
-        albumLabelStackView.addSubview(albumNameLabel)
-        albumLabelStackView.addSubview(artistLabel)
         
         albumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
@@ -68,19 +64,21 @@ class AlbumCollectionViewCell: UICollectionViewCell {
             $0.size.equalTo(constant.albumImageSize)
         }
         
-        albumLabelStackView.snp.makeConstraints{
-            $0.leading.equalToSuperview()
-            $0.size.equalTo(constant.albumLabelStackViewSize)
-            $0.top.equalTo(albumImage.snp.bottom).offset(6 * UIScreen.main.screenHeight / 667)
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(albumImage.snp.leading)
+            $0.trailing.equalTo(albumImage.snp.trailing)
+            $0.height.equalToSuperview()
         }
         albumNameLabel.snp.makeConstraints{
-            $0.top.equalToSuperview()
-            $0.width.equalTo(160)
+            $0.top.equalTo(albumImage.snp.bottom).offset(6)
+            $0.leading.equalTo(albumImage.snp.leading)
+            $0.trailing.equalTo(albumImage.snp.trailing).offset(-10)
         }
         artistLabel.snp.makeConstraints{
             $0.top.equalTo(albumNameLabel.snp.bottom)
-            $0.width.equalTo(160)
+            $0.leading.equalTo(albumImage.snp.leading)
         }
+
 
     }
     
