@@ -18,9 +18,9 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var artistInfo: ArtistInfoReponseDTO?
-    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
-    private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
-    private var sameArtistAnoterAlbum: [(SameArtistAnotherAlbumResponseDTO, String)]? // 앨범 둘러보기
+    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)] = Constant.SimilarArtistLoadinData // 비슷한 아티스트
+    private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)] = Constant.PopularMusicLoadingData // 아티스트 인기곡
+    private var sameArtistAnoterAlbum: [(SameArtistAnotherAlbumResponseDTO, String)] = Constant.SameArtistAnotherAlbumLoadingData // 앨범 둘러보기
 
     init(artist: String, album: String) {
         self.artist = artist
@@ -199,29 +199,26 @@ class ArtistViewController: UIViewController {
         let musicVideoSection = Section.MusicVideoCell(.MusicVideo) // 뮤직 비디오
         let similarArtistSection = Section.Circle(.SimilarArtist)   // 다른 비슷한 아티스트
         
-        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, musicVideoSection, similarArtistSection])
+        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, similarArtistSection, musicVideoSection])
         
         // 아티스트 인기곡
-        if let popularMusic = popularMusic {
-            let popularMusicItem = popularMusic.map{Item.ArtistPopularMusic($0.0, $0.1, $0.2)}
-            snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
-        }
+        let popularMusicItem = popularMusic.map{Item.ArtistPopularMusic($0.0, $0.1, $0.2)}
+        snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
+        
         
         // 앨범 둘러보기
-        if let sameArtistAnoterAlbum = sameArtistAnoterAlbum {
-            let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0.0, $0.1)}
-            snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
-        }
+        let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0.0, $0.1)}
+        snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
+        
         
         // 뮤직 비디오
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
         // 다른 비슷한 아티스트
-        if let similarArtist = similarArtist {
-            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
-            snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
-        }
+        let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
+        snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        
         
         dataSource?.apply(snapshot)
     }

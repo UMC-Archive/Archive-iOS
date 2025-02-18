@@ -20,9 +20,9 @@ class HomeViewController: UIViewController {
     private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
     
-    private var archiveData: [(AlbumRecommendAlbum, String)]? // 당신을 위한 아카이브
-    private var fastSelectionData: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 빠른 선곡
-    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)]? // 당신을 위한 추천곡
+    private var archiveData: [(AlbumRecommendAlbum, String)] = Constant.ArchiveLoadingData // 당신을 위한 아카이브
+    private var fastSelectionData: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]  = Constant.FastSelectionLoadingData // 빠른 선곡
+    private var recommendMusic: [(RecommendMusic, RecommendAlbum, String)] = Constant.RecommendMusicLoadingData // 당신을 위한 추천곡
     private var pointOfViewData: [(UserHistoryResponseDTO, String)]? // 탐색했던 시점
     private var recentlyAddMusic: [RecentMusicResponseDTO]? // 최근 추가한 노래
     private var recentlyPlayedMusic: [RecentPlayMusicResponseDTO]? // 최근 들은 노래
@@ -279,10 +279,9 @@ class HomeViewController: UIViewController {
                                  RecentlyAddMusicSection])
         
         // 당신을 위한 아카이브
-        if let archiveData = archiveData {
             let archiveItem = archiveData.map{Item.ArchiveItem($0.0, $0.1)}
             snapshot.appendItems(archiveItem, toSection: archiveSection)
-        }
+        
         
         // 최근 탐색 시점
         if let pointOfViewData = pointOfViewData {
@@ -291,16 +290,13 @@ class HomeViewController: UIViewController {
         }
         
         // 빠른 선곡
-        if let fastSelectionData = fastSelectionData {
             let fastSelectionItem = fastSelectionData.map{Item.FastSelectionItem($0.0, $0.1, $0.2)}
             snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
-        }
+        
         
         // 당신을 위한 추천곡
-        if let recommendMusic = recommendMusic {
             let recommendMusicItem = recommendMusic.map{Item.RecommendMusic($0.0, $0.1, $0.2)}
             snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
-        }
         
         // 최근 들은 노래
         if let recentlyPlayedMusic = recentlyPlayedMusic {
