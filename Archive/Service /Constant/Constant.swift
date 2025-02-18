@@ -61,3 +61,23 @@ extension Constant {
             (ExploreRecommendAlbum.loadingData(), Constant.LoadString)
         ]
 }
+
+// 앨범 뷰 로딩 데이터
+extension Constant {
+    
+    // 앨범 정보 데이터
+    static let AlbumInfoLoadingData: AlbumInfoReponseDTO = AlbumInfoReponseDTO.loadingData()
+    
+    // 트랙 리스트 데이터
+    static let TrackListLoadingData: [TrackListResponse] = [
+        TrackListResponse.loadingData()
+    ]
+    
+    // 추천 앨범 - 홈 뷰: 아카이브 앨범 로딩 데이터와 동일
+    
+    // 이 아티스트의 다른 앨범
+    static let AnotherAlbumLoadingData: [
+        (AnotherAlbumResponseDTO, String)] = [
+            (AnotherAlbumResponseDTO.loadingData(), Constant.LoadString)
+        ]
+}
