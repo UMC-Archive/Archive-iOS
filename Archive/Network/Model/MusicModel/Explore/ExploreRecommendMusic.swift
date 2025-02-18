@@ -20,6 +20,14 @@ public struct ExploreRecommendMusic: Decodable, Hashable {
     let releaseTime: String
     let image: String
     
+    init(id: String, albumId: String, title: String, releaseTime: String, image: String) {
+        self.id = id
+        self.albumId = albumId
+        self.title = title
+        self.releaseTime = releaseTime
+        self.image = image
+    }
+    
     enum CodingKeys: CodingKey {
         case id
         case albumId
@@ -35,5 +43,11 @@ public struct ExploreRecommendMusic: Decodable, Hashable {
         self.title = try container.decode(String.self, forKey: .title)
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
+    }
+}
+
+extension ExploreRecommendMusic {
+    static func loadingData() -> ExploreRecommendMusic {
+        return ExploreRecommendMusic(id: "1", albumId: "1", title: Constant.LoadString, releaseTime: "", image: Constant.LoadingImageURL)
     }
 }

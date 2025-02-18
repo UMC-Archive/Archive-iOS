@@ -34,3 +34,30 @@ extension Constant {
             (RecommendMusic.loadingData(), RecommendAlbum.loadingData(), Constant.LoadString)
         ]
 }
+
+
+// 탐색 뷰 로딩 데이터
+extension Constant {
+    // 메인 CD 로딩 데이터
+    static let MainCDLoadingData: [
+        MainCDResponseDTO] = [
+            MainCDResponseDTO.loadingData()
+        ]
+    
+    // 숨겨진 명곡 로딩 데이터
+    static let HiddenMusicLoadingData: [(HiddenMusicResponse, ExploreRecommendAlbum, String)] = [
+        (HiddenMusicResponse.loadingData(), ExploreRecommendAlbum.loadingData(), Constant.LoadString)
+    ]
+    
+    // 추천 음악 로딩 데이터
+    static let ExploreRecommnedMusicLoadingData: [
+        (ExploreRecommendMusic, ExploreRecommendAlbum, String)] = [
+            (ExploreRecommendMusic.loadingData(), ExploreRecommendAlbum.loadingData(), Constant.LoadString)
+        ]
+    
+    // 추천 앨범 로딩 데이터
+    static let RecommendAlbumLoadingData: [
+        (ExploreRecommendAlbum, String)] = [
+            (ExploreRecommendAlbum.loadingData(), Constant.LoadString)
+        ]
+}
