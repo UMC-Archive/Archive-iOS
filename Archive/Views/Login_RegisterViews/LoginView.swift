@@ -8,7 +8,7 @@ class LoginView: UIView, UITextFieldDelegate {
     // 앱 로고 이미지
     lazy var appImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(named: "appLogo") // 앱 로고 이미지 설정
+        imageView.image = UIImage(named: "AppLOGO") // 앱 로고 이미지 설정
         imageView.contentMode = .scaleAspectFit
         imageView.clipsToBounds = true
         return imageView
@@ -94,7 +94,8 @@ class LoginView: UIView, UITextFieldDelegate {
         appImage.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(60)
             make.centerX.equalToSuperview()
-            make.width.height.equalTo(120)
+            make.width.equalTo(146.78)
+            make.height.equalTo(197.06)
         }
 
         // 이메일 입력 필드

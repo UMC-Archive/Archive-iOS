@@ -59,8 +59,17 @@ class MusicLoadVC: UIViewController {
                             musicUrl: data.music
                         )
                     }
+                    
+                    NotificationCenter.default.post(
+                                 name: .didChangeMusic,
+                                 object: nil,
+                                 userInfo: [
+                                     "title": data.title,
+                                     "artist": data.id,
+                                     "lyrics": data.lyrics
+                                 ]
+                             )
                     self?.loadNextTracks()
-
                 case .failure(let error):
                     print(" 음악 정보 API 오류: \(error)")
                 }
@@ -94,12 +103,21 @@ class MusicLoadVC: UIViewController {
         }
     }
     @objc private func playBackTrack(){
-        
+        let backIndex = currentTrackIndex - 1
+        if backIndex > 0 {
+            playTrack(at: backIndex)
+        }
+        else{
+            print("첫번째 곡입니다.")
+            if repeatState == .RepeatAll {
+                playTrack(at: 10)
+            }
+        }
         
     }
     private func playTrack(at index: Int) {
         guard index >= 0, index < nextTracks.count else { return }
-
+        resetPlayer()
         currentTrackIndex = index
         let track = nextTracks[index]
         guard let musicUrl = URL(string: track.music.music) else { return }
@@ -113,10 +131,30 @@ class MusicLoadVC: UIViewController {
             artist: track.artist,
             musicUrl: track.music.music
         )
-
+        //  현재 재생 중인 곡 정보 Notification 전송 -> 가사에서 사용하려고
+           NotificationCenter.default.post(
+               name: .didChangeMusic,
+               object: nil,
+               userInfo: [
+                   "title": track.music.title,
+                   "artist": track.artist,
+                   "lyrics": track.music.lyrics // 가사도 같이 보내줌
+               ]
+           )
         musicLoadView.updatePlayButton(isPlaying: true)
         addPeriodicTimeObserver()
         observePlayerItemDidEnd()
+    }
+    private func resetPlayer() {
+        //  기존 player observer 해제 및 초기화
+        if let timeObserverToken = timeObserverToken {
+            player?.removeTimeObserver(timeObserverToken)
+            self.timeObserverToken = nil
+        }
+        NotificationCenter.default.removeObserver(self, name: .AVPlayerItemDidPlayToEndTime, object: player?.currentItem)
+
+        player?.pause()
+        player = nil
     }
 
     
@@ -161,12 +199,37 @@ class MusicLoadVC: UIViewController {
         nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
     }
+    private var lyricsVC: MusicSegmentVC?
+
+    @objc private func goToLyrics() {
+        if let lyricsVC = lyricsVC {
+            lyricsVC.segmentIndexNum = 1
+            present(lyricsVC, animated: true)
+        } else {
+            guard let currentTrack = musicInfo else { return }
+            
+            let newLyricsVC = MusicSegmentVC(
+                segmentIndexNum: 1,
+                musicTitle: currentTrack.title,
+                artistName: currentTrack.id
+            )
+            
+            lyricsVC = newLyricsVC // 생성된 거 저장해두기
+            present(newLyricsVC, animated: true)
+        }
+    }
 
     // 가사 화면으로 이동
-    @objc private func goToLyrics() {
-        let lyricsVC = MusicSegmentVC(segmentIndexNum: 1)
-        present(lyricsVC, animated: true)
-    }
+//    @objc private func goToLyrics() {
+//        guard let currentTrack = musicInfo else { return }
+//        let lyricsVC = MusicSegmentVC(
+//            segmentIndexNum: 1,
+//            musicTitle: currentTrack.title,
+//            artistName: currentTrack.id // id가 아티스트명이라면
+//        )
+//        present(lyricsVC, animated: true)
+//    }
+//
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
@@ -220,6 +283,7 @@ class MusicLoadVC: UIViewController {
             name: .AVPlayerItemDidPlayToEndTime,
             object: player?.currentItem)
     }
+    
     @objc private func trackDidFinishPlaying() {
         switch repeatState {
         case .RepeatAll:
@@ -322,4 +386,7 @@ class MusicLoadVC: UIViewController {
     }
 
     
+}
+extension Notification.Name {
+    static let didChangeMusic = Notification.Name("didChangeMusic")
 }

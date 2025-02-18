@@ -13,12 +13,16 @@ class MusicSegmentVC: UIViewController {
     private var recommendAlbums: [AlbumRecommendAlbumResponseDTO] = []
     private var recommendMusic: [RecommendMusicResponseDTO] = []
 
+    var musicTitle: String?
+       var artistName: String?
+   
     override func loadView() {
         self.view = segmentView
     }
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
         setupSegmentActions()
         setupCollectionView()
         segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
@@ -26,9 +30,12 @@ class MusicSegmentVC: UIViewController {
         // 초기 언더바
         // 언더바 초기 위치 설정 로직도 segmentChanged()와 똑같이
         
-        fetchLyrics()
+        
         fetchNextTracks()
         fetchRecommendAlbums()
+        if segmentIndexNum == 1 {
+               fetchLyrics()
+           }
         fetchRecommendMusic()
         print(segmentIndexNum)
     }
@@ -51,8 +58,10 @@ class MusicSegmentVC: UIViewController {
         }
     }
 
-    init(segmentIndexNum: Int) {
+    init(segmentIndexNum: Int, musicTitle: String? = nil, artistName: String? = nil) {
         self.segmentIndexNum = segmentIndexNum
+        self.musicTitle = musicTitle
+        self.artistName = artistName
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -122,15 +131,55 @@ class MusicSegmentVC: UIViewController {
         segmentView.albumRecommendCollectionView.dataSource = self
         segmentView.albumRecommendCollectionView.register(AlbumCell.self, forCellWithReuseIdentifier: AlbumCell.identifier)
     }
-// 가사 가져오는 api
+// 가사 가져오는 함수
     private func fetchLyrics() {
-        lyrics = [
-            "Stormy night", "Stormy night", "Stormy night",
-            "Cloudy sky", "In a moment you and I", "One more chance",
-            "너와 나 다시 한 번 만나게", "서로에게 향하게", "My feeling’s getting deeper"
-        ]
-        segmentView.lyricsCollectionView.reloadData()
+        guard let musicTitle = musicTitle, let artistName = artistName else {
+            print("곡 정보 없음")
+            return
+        }
+
+        // musicService.musicInfo()를 또 호출해도 되고, 필요한 데이터만 넘겨받았다면 바로 사용해도 됨
+        musicService.musicInfo(artist: artistName, music: musicTitle) { [weak self] result in
+            switch result {
+            case .success(let response):
+                guard let data = response else { return }
+                let rawLyrics = data.lyrics
+                self?.lyrics = rawLyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+
+            case .failure(_):
+                self?.lyrics = ["가사를 불러오지 못했습니다."]
+            }
+
+            DispatchQueue.main.async {
+                self?.segmentView.lyricsCollectionView.reloadData()
+            }
+        }
     }
+    @objc private func handleMusicChange(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+              let title = userInfo["title"] as? String,
+              let artist = userInfo["artist"] as? String,
+              let lyrics = userInfo["lyrics"] as? String else {
+            print("Notification 데이터 부족")
+            return
+        }
+
+        // 현재 음악 제목, 아티스트 업데이트
+        self.musicTitle = title
+        self.artistName = artist
+
+        // 가사 파싱해서 업데이트
+        self.lyrics = lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+
+        // 만약 가사 탭이 열려있는 상태(segmentIndexNum == 1)이면 바로 갱신
+        if segmentIndexNum == 1 || segmentView.tabBar.selectedSegmentIndex == 1 {
+            DispatchQueue.main.async {
+                self.segmentView.lyricsCollectionView.reloadData()
+            }
+        }
+    }
+
+
 // 트랙 가져오는 api
     private func fetchNextTracks() {
         musicService.selection { [weak self] result in
@@ -410,5 +459,4 @@ class AlbumCell: UICollectionViewCell {
 
 
 }
-
 
