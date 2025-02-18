@@ -21,7 +21,9 @@ class PreferArtistVC: UIViewController {
 
     //  서버에서 아티스트 목록 가져오기
     private func fetchArtists() {
-        musicService.chooseArtistInfo { [weak self] result in
+        let selectedGenre = UserSignupData.shared.selectedGenres
+        let param = ChooseArtistRequestDTO(artist_name: nil, genre_id: selectedGenre)
+        musicService.chooseArtistInfo(parameter: param) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
