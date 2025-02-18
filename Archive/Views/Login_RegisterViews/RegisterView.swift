@@ -105,6 +105,7 @@ class RegisterView: UIView {
         make.setTitleColor(.white, for: .normal)
         make.backgroundColor = .darkGray
         make.layer.cornerRadius = 8
+        make.isUserInteractionEnabled = true
     }
 
     // 인증번호 입력 섹션

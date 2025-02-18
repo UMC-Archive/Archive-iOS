@@ -17,6 +17,7 @@ class OnBoarding2VC : UIViewController {
         OnBOardingView.image = UIImage(named: "OnBoarding2")
         OnBOardingView.contentMode = .scaleAspectFit
         OnBOardingView.frame=view.bounds
+        self.navigationController?.navigationBar.isHidden = true
         setupTapGesture()
     }
     private func setupTapGesture() {
@@ -26,8 +27,9 @@ class OnBoarding2VC : UIViewController {
 
     @objc private func goToNextViewController() {
         let nextVC = OnBoarding3VC() // 다음 보여줄 뷰컨트롤러로 변경해!
-        nextVC.modalPresentationStyle = .fullScreen
-               present(nextVC, animated: true, completion: nil)
+        navigationController?.pushViewController(nextVC, animated: true)
+//        nextVC.modalPresentationStyle = .fullScreen
+//               present(nextVC, animated: true, completion: nil)
     }
 
 }

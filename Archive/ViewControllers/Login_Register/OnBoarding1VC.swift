@@ -17,17 +17,22 @@ class OnBoarding1VC : UIViewController {
         OnBOardingView.image = UIImage(named: "OnBoarding1")
         OnBOardingView.contentMode = .scaleAspectFit
         OnBOardingView.frame=view.bounds
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
         goToNextViewControllerAfterDelay()
     }
    
     private func goToNextViewControllerAfterDelay() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {[weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {[weak self] in
             self?.goToNextViewController()
         }
     }
 
     @objc private func goToNextViewController() {
-        let nextVC = LoginVC() // 다음 보여줄 뷰컨트롤러로 변경해!
+        let nextVC = UINavigationController(rootViewController: LoginVC())  // 다음 보여줄 뷰컨트롤러로 변경해!
         nextVC.modalPresentationStyle = .fullScreen
                present(nextVC, animated: true, completion: nil)
     }

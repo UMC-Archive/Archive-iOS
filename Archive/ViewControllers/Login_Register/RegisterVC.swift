@@ -12,6 +12,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         super.viewDidLoad()
         setupActions()
         registerView.authCodeField.delegate = self // Delegate 설정
+        self.navigationController?.navigationBar.isHidden = true
     }
 
     private func setupActions() {
@@ -53,6 +54,8 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                           self.registerView.successLabel.text = response ?? "인증 코드가 전송되었습니다."
                           self.registerView.authCodeLabel.isHidden = false
                           self.registerView.authCodeField.isHidden = false
+                          
+                          self.registerView.nextButton.isEnabled = true
                       case .failure(let error):
                           self.registerView.errorLabel.isHidden = false
                           print("Error: \(error.localizedDescription)")
@@ -71,6 +74,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
  
 
     @objc private func handleNextButtonTap() {
+        print("handleNextButtonTap")
         guard let authCode = registerView.authCodeField.text, !authCode.isEmpty else {
             registerView.authErrorLabel.isHidden = false
             registerView.authErrorLabel.text = "인증번호를 입력해주세요."
