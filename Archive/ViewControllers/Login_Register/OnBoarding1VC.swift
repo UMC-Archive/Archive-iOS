@@ -21,7 +21,7 @@ class OnBoarding1VC : UIViewController {
     }
    
     private func goToNextViewControllerAfterDelay() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) {[weak self] in
+        DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {[weak self] in
             self?.goToNextViewController()
         }
     }

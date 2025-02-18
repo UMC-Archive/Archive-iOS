@@ -17,7 +17,7 @@ class OverflowButton: UIButton {
         fatalError("init(coder:) has not been implemented")
     }
     private func setUI(){
-        self.setImage(.ellipsis, for: .normal)
+        self.setImage(.etc, for: .normal)
         self.tintColor = .white
     }
 }

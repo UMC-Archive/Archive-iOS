@@ -20,6 +20,9 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         
         // "다음" 버튼 동작
         registerView.nextButton.addTarget(self, action: #selector(handleNextButtonTap), for: .touchUpInside)
+        registerView.emailField.addTarget(self,action: #selector(handleTextFieldEditingChanged), for: .editingChanged)
+        registerView.authCodeField.addTarget(self,action: #selector (handleTextFieldEditingChanged), for: .editingChanged)
+        
     }
 
     @objc private func handleEmailButtonTap() {
@@ -119,9 +122,16 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                     self.registerView.authErrorLabel.text = "잘못된 인증번호입니다. 다시 시도해주세요."
                     self.registerView.authSuccessLabel.isHidden = true
                     self.registerView.nextButton.isEnabled = false
-                    self.registerView.nextButton.backgroundColor = UIColor(white: 0.2, alpha: 1)
-                }
+                    self.registerView.nextButton.backgroundColor = UIColor(hex: "#2D2D2C")                }
             }
+        }
+    }
+    
+    @objc private func handleTextFieldEditingChanged(_ sender: UITextField) {
+        if let text = sender.text, !text.isEmpty {
+            sender.backgroundColor = .white // 입력값이 있을 때 배경색 변경
+        } else {
+            sender.backgroundColor = UIColor(white: 0.2, alpha: 1) // 입력값이 없을 때 기본 배경색
         }
     }
     
