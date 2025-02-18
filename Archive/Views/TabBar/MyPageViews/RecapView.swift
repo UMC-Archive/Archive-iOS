@@ -44,7 +44,7 @@ class RecapView: UIView {
         $0.numberOfLines = 2
     }
     
-    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout().then{
+    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout2().then{
         $0.itemSize = CGSize(width: 120, height: 120)
         $0.scrollDirection = .horizontal
         
