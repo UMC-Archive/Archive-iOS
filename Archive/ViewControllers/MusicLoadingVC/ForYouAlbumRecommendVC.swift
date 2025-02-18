@@ -29,6 +29,8 @@ class ForYouAlbumRecommendVC : UIViewController {
         setupCollectionView()
         setupActions()
         fetchAlbum()
+        forYouRecommendAlbumView.leftArrowButton.addTarget(self,action : #selector(leftButtonTapped), for: .touchUpInside)
+        
         self.navigationController?.navigationBar.isHidden = true
         self.view.layoutIfNeeded()
     }
@@ -40,6 +42,12 @@ private func setupCollectionView(){
     forYouRecommendAlbumView.ForYouRecommendAlbumCollectionView.register(ForYouRecommendAlbumCell.self, forCellWithReuseIdentifier : ForYouRecommendAlbumCell.identifier)
     forYouRecommendAlbumView.ForYouRecommendAlbumCollectionView.allowsMultipleSelection = true
     
+    }
+
+    @objc private func leftButtonTapped(){
+        print("눌림!")
+        let moveVC = MusicSegmentVC(segmentIndexNum: 3, lyrics: nil)
+        navigationController?.pushViewController(moveVC,animated: true)
     }
     private func setupActions(){
         

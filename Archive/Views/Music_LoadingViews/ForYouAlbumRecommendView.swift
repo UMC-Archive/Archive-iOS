@@ -12,6 +12,7 @@ class ForYouAlbumRecommendView : UIView {
         let button = UIButton()
         button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
+        button.isUserInteractionEnabled = true
         return button
     }()
     lazy var titleLabel = UILabel().then { make in
@@ -121,6 +122,7 @@ class ForYouRecommendAlbumCell : UICollectionViewCell {
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(imageView.snp.bottom).offset(6)
             make.leading.equalTo(imageView)
+            make.width.equalTo(160)
         }
         
         // 아티스트

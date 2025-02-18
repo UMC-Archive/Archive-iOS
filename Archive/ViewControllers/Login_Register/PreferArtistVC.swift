@@ -16,6 +16,7 @@ class PreferArtistVC: UIViewController {
         setupCollectionView()
         setupActions()
         fetchArtists()
+        updateNextButtonState()
     }
 
     //  서버에서 아티스트 목록 가져오기
@@ -48,7 +49,14 @@ class PreferArtistVC: UIViewController {
     private func setupActions() {
         preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
     }
+// 아티스트 한명이상은 선택해야 한다
+    private func updateNextButtonState() {
+        let isEnabled = !selectedArtists.isEmpty
+        preferArtistView.nextButton.isEnabled = isEnabled
+        preferArtistView.nextButton.backgroundColor = isEnabled ? .systemBlue : .darkGray // 색상 변경
+    }
 
+    
     @objc private func handleNext() {
         print("Selected Artists: \(selectedArtists.map { $0.name })")
         UserSignupData.shared.selectedArtists = selectedArtists.compactMap { Int($0.id)} // ID만 저장
@@ -137,6 +145,7 @@ extension PreferArtistVC: UICollectionViewDelegate, UICollectionViewDataSource {
             let artist = allArtists.remove(at: indexPath.row - selectedArtists.count)
             selectedArtists.insert(artist, at: 0)
             collectionView.reloadData()
+            updateNextButtonState()
         }
     }
 
@@ -145,6 +154,7 @@ extension PreferArtistVC: UICollectionViewDelegate, UICollectionViewDataSource {
             let artist = selectedArtists.remove(at: indexPath.row)
             allArtists.insert(artist, at: 0)
             collectionView.reloadData()
+            updateNextButtonState()
         }
     }
 }

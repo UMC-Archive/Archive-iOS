@@ -4,7 +4,7 @@ import Then
 class PreferArtistView: UIView {
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "left"), for: .normal)
+        button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()
@@ -115,7 +115,7 @@ class PreferArtistView: UIView {
       
         
         searchBar.snp.makeConstraints { make in
-            make.top.equalTo(pageIndicator.snp.bottom).offset(16)
+            make.top.equalTo(progress5.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(40)
         }

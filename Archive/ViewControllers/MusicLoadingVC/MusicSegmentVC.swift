@@ -383,7 +383,7 @@ class TrackCell: UICollectionViewCell {
     
     public let moreButton : UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+        button.setImage(UIImage(named :  "etc"), for: .normal)
         button.tintColor = .white
         return button
     }()
