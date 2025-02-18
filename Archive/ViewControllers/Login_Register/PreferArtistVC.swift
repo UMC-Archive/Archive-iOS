@@ -65,7 +65,7 @@ class PreferArtistVC: UIViewController {
                let todayDate = dateFormatter.string(from: Date())
 
                // 2. 기본 프로필 이미지 설정 (없으면 기본 이미지)
-               let profileImage = UserSignupData.shared.profileImage ?? UIImage(named: "default_profile")!
+        let profileImage = UserSignupData.shared.profileImage ?? .profileSample
 
                // 3. 회원가입 요청 데이터 생성
                let signUpData = SignUpRequestDTO(

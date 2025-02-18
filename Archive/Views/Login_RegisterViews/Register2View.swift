@@ -169,8 +169,7 @@ class Register2View: UIView, UITextFieldDelegate {
     
     private func setupViews() {
         addSubview(leftArrowButton)
-        addSubview(rightArrowButton)
-        addSubview(pageIndicator)
+        
         addSubview(title)
         addSubview(register)
         addSubview(successLabel)

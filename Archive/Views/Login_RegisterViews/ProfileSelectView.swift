@@ -24,7 +24,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     }()
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "left"), for: .normal)
+        button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()

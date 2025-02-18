@@ -208,6 +208,7 @@ class RegisterView: UIView {
             make.top.equalTo(instructionLabel.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(295)
+            make.height.equalTo(45)
             
         }
 
@@ -226,7 +227,7 @@ class RegisterView: UIView {
             make.centerX.equalToSuperview()
             make.width.equalTo(emailField.snp.width)
             
-            make.height.equalTo(40)
+            make.height.equalTo(45)
         }
 
         authCodeLabel.snp.makeConstraints { make in
