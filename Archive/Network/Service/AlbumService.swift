@@ -31,7 +31,7 @@ public final class AlbumService: NetworkManager {
     
     // 당신을 위한 앨범 추천(앨범 뷰, 홈뷰)
     public func albumRecommendAlbum(completion: @escaping (Result<[AlbumRecommendAlbumResponseDTO]?, NetworkError>) -> Void) {
-        requestOptional(target: .ExploreRecommendAlbum, decodingType: [AlbumRecommendAlbumResponseDTO].self, completion: completion)
+        requestOptional(target: .AlbumRecommendAlbum, decodingType: [AlbumRecommendAlbumResponseDTO].self, completion: completion)
     }
     
     // 트랙 리스트 (수록곡 소개)

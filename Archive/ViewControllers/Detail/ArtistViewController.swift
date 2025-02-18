@@ -264,9 +264,10 @@ class ArtistViewController: UIViewController {
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 정보" , description: error.description, retryAction: { [weak self] in
+                    self?.postArtistInfo(artist: artist, album: album) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -283,9 +284,10 @@ class ArtistViewController: UIViewController {
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 큐레이션" , description: error.description, retryAction: { [weak self] in
+                    self?.postArtistCuration(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -301,7 +303,9 @@ class ArtistViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "비슷한 아티스트" , description: error.description, retryAction: { [weak self] in
+                    self?.getSimilarArtist(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -329,7 +333,9 @@ class ArtistViewController: UIViewController {
                 artistView.playButton.addGestureRecognizer(playTabGesture)
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 인기곡" , description: error.description, retryAction: { [weak self] in
+                    self?.getArtistPopularMusic(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -348,7 +354,9 @@ class ArtistViewController: UIViewController {
                 self.setSnapshot()
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 둘러보기" , description: error.description, retryAction: { [weak self] in
+                    self?.getSameArtistAnotherAlbum(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
