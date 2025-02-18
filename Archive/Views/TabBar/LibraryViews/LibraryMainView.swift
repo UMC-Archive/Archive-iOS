@@ -37,7 +37,7 @@ class LibraryMainView : UIView {
         $0.setBackgroundImage(UIImage(), for: .highlighted, barMetrics: .default)
         $0.setDividerImage(UIImage(), forLeftSegmentState: .selected, rightSegmentState: .normal, barMetrics: .default)
                
-        $0.selectedSegmentIndex = 0
+        $0.selectedSegmentIndex = 1
         
         //기본 상태의 색 설정
         $0.setTitleTextAttributes(
@@ -79,6 +79,7 @@ class LibraryMainView : UIView {
     }).then{
         $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
+        $0.showsVerticalScrollIndicator = false
         $0.register(PlayListCollectionViewCell.self, forCellWithReuseIdentifier: "playListCollectionViewIdentifier")
     }
     
@@ -89,6 +90,7 @@ class LibraryMainView : UIView {
     }).then{
         $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
+        $0.showsVerticalScrollIndicator = false
         $0.register(LibrarySongCollectionViewCell.self, forCellWithReuseIdentifier: "librarySongCollectionViewIdentifier")
     }
     
@@ -99,6 +101,7 @@ class LibraryMainView : UIView {
     }).then{
         $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
+        $0.showsVerticalScrollIndicator = false
         $0.register(AlbumCollectionViewCell.self, forCellWithReuseIdentifier: "albumCollectionViewIdentifier")
     }
     
@@ -110,6 +113,7 @@ class LibraryMainView : UIView {
     }).then{
         $0.backgroundColor =  UIColor.black_100
         $0.isScrollEnabled = true
+        $0.showsVerticalScrollIndicator = false
         $0.register(ArtistCollectionViewCell.self, forCellWithReuseIdentifier: "artistCollectionViewIdentifier")
     }
     
