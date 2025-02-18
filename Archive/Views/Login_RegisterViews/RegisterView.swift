@@ -8,7 +8,7 @@ class RegisterView: UIView {
     lazy var titleLabel = UILabel().then { make in
         make.textColor = .white
         make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         make.textAlignment = .center
     }
     lazy var leftArrowButton: UIButton = {
@@ -67,14 +67,14 @@ class RegisterView: UIView {
     lazy var instructionLabel = UILabel().then { make in
         make.textColor = .white
         make.text = "이메일 주소를 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
-        make.textAlignment = .center
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
+         make.textAlignment = .center
     }
 
     lazy var emailField = UITextField().then { make in
         make.placeholder = "이메일"
         make.borderStyle = .roundedRect
-        make.font = UIFont.systemFont(ofSize: 16)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.backgroundColor = UIColor(white: 0.2, alpha: 1)
         make.textColor = .white
         make.attributedPlaceholder = NSAttributedString(
@@ -85,21 +85,23 @@ class RegisterView: UIView {
 
     lazy var errorLabel = UILabel().then { make in
         make.textColor = .red
-        make.font = UIFont.systemFont(ofSize: 14)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
+      
         make.text = "올바르지 않은 형식의 이메일입니다."
         make.isHidden = true
     }
 
     lazy var successLabel = UILabel().then { make in
         make.textColor = .green
-        make.font = UIFont.systemFont(ofSize: 14)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
+      
         make.text = "올바른 형식의 이메일입니다."
         make.isHidden = true
     }
 
     lazy var emailButton = UIButton().then { make in
         make.setTitle("인증메일 받기", for: .normal)
-        make.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        make.titleLabel?.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.setTitleColor(.white, for: .normal)
         make.backgroundColor = .darkGray
         make.layer.cornerRadius = 8
@@ -108,7 +110,7 @@ class RegisterView: UIView {
     // 인증번호 입력 섹션
     lazy var authCodeLabel = UILabel().then { make in
         make.text = "이메일 인증번호를 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
         make.textColor = .white
         make.isHidden = true
     }
@@ -116,7 +118,7 @@ class RegisterView: UIView {
     lazy var authCodeField = UITextField().then { make in
         make.placeholder = "인증번호"
         make.borderStyle = .roundedRect
-        make.font = UIFont.systemFont(ofSize: 16)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.backgroundColor = UIColor(white: 0.2, alpha: 1)
         make.textColor = .white
         make.attributedPlaceholder = NSAttributedString(

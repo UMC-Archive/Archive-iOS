@@ -73,7 +73,7 @@ class MusicLoadVC: UIViewController {
                              )
                     self?.loadNextTracks()
                     if playMusic {
-                        self?.player = nil
+                        self?.resetPlayer()
                         self?.playPauseMusic()
                     }
                 case .failure(let error):
@@ -210,7 +210,7 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc public func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0)
+        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil)
         nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
     }
@@ -225,8 +225,10 @@ class MusicLoadVC: UIViewController {
             
             let newLyricsVC = MusicSegmentVC(
                 segmentIndexNum: 1,
-                musicTitle: currentTrack.title,
-                artistName: currentTrack.id
+//                musicTitle: currentTrack.title,
+//                artistName: currentTrack.id
+                lyrics: musicInfo?.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+
             )
             
             lyricsVC = newLyricsVC // 생성된 거 저장해두기
@@ -248,7 +250,7 @@ class MusicLoadVC: UIViewController {
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = MusicSegmentVC(segmentIndexNum: 2)
+        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil)
         recommendVC.segmentIndexNum = 2
         present(recommendVC,animated: true)
     }
