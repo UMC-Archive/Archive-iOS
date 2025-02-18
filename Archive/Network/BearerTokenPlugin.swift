@@ -13,9 +13,7 @@ import Moya
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
 
-
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTg0NTU2OSwiZXhwIjoxNzM5ODU5OTY5fQ.PB3MJb13HrbDjyPBiv0jsHTw9SVN9vQoxkpkJgDXV4E"
-
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTg2MTU5MywiZXhwIjoxNzM5ODc1OTkzfQ.KNomwP9hD7b15hbAzlHlaSUZCwm4_TmEt8OWow-jZOQ"
 
         
         

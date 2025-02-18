@@ -252,7 +252,8 @@ class MusicLoadVC: UIViewController {
     @objc private func goToRecommend() {
         let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil)
         recommendVC.segmentIndexNum = 2
-        present(recommendVC,animated: true)
+        let nextVC = UINavigationController(rootViewController: recommendVC)
+        present(nextVC,animated: true)
     }
 
     // 재생 버튼 누를 시에 음악 재생하기

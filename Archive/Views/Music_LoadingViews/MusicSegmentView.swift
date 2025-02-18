@@ -71,9 +71,17 @@ class MusicSegmentView: UIView {
     let recommendTitleLabel: UILabel = {
         let label = UILabel()
         label.text = "당신을 위한 앨범 추천"
-        label.font = UIFont.boldSystemFont(ofSize: 18)
+        label.font = .customFont(font: .SFPro, ofSize: 21, rawValue: 700)
         label.textColor = .white
         return label
+    }()
+    let rightButton : UIButton = {
+        let button = UIButton()
+        button.setImage( UIImage(named: "right"), for: .normal)
+        button.contentMode = .scaleAspectFit
+        button.isUserInteractionEnabled = true
+        return button
+        
     }()
 
     override init(frame: CGRect) {
@@ -100,6 +108,7 @@ class MusicSegmentView: UIView {
         recommendContentView.addSubview(recommendTitleLabel)
         recommendContentView.addSubview(albumCollectionView)
         recommendContentView.addSubview(albumRecommendCollectionView)
+        recommendContentView.addSubview(rightButton)
     }
 
     private func setupConstraints() {
@@ -149,7 +158,12 @@ class MusicSegmentView: UIView {
             make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
             make.leading.equalToSuperview().offset(10)
         }
-
+        
+        rightButton.snp.makeConstraints { make in
+            make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
+            make.centerY.equalTo(recommendTitleLabel)
+            make.leading.equalTo(recommendTitleLabel.snp.trailing).offset(146)
+        }
        
 
         albumRecommendCollectionView.snp.makeConstraints { make in
