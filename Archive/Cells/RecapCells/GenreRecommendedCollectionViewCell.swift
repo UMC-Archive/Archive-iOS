@@ -50,7 +50,7 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
     func updateOverlayVisibility(_ darkRatio: CGFloat) {
         print("----------\(darkRatio)")
         self.darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(darkRatio)
-//        self.darkOverlay.layer.layoutIfNeeded()
+        self.darkOverlay.layer.layoutIfNeeded()
     }
 
     

@@ -40,7 +40,6 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         self.navigationController?.navigationBar.isHidden = true
         
         
-        
         // 뷰가 로드된 직후 1번 인덱스로 이동
         DispatchQueue.main.async {
             let recapIndexPath = IndexPath(item: 1, section: 0)
@@ -48,6 +47,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             self.rootView.recapCollectionView.scrollToItem(at: recapIndexPath, at: .centeredHorizontally, animated: false)
             self.rootView.genreCollectionView.scrollToItem(at: genreIndexPath, at: .centeredHorizontally, animated: false)
         }
+        
         
         buildGradient()
         setDelegateAndDataSource()
@@ -62,6 +62,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         getRecap()
         getGenre()
         setData()
+    
     }
     public func setData(){
         let nickName = KeychainService.shared.load(account: .userInfo, service: .nickname) ?? "닉네임"
@@ -87,7 +88,11 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
                 
                 // genreResponseDate가 nil이 아닌 경우에만 처리
                 if let genreResponseDate = genreResponseDate, indexPath.row < genreResponseDate.count {
-                    rootView.genreTasteLabel2.text = genreResponseDate[indexPath.row].name
+                    if genreResponseDate[indexPath.row].name == "Others"{
+                        rootView.genreTasteLabel2.text = "아직 수집중입니다..."
+                    }else{
+                        rootView.genreTasteLabel2.text = genreResponseDate[indexPath.row].name
+                    }
                     print("\(rootView.genreTasteLabel2.text)라벨")
                 }
             }
@@ -181,7 +186,6 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     func buildGradient() {
-        
         let genreColors: [String: UIColor] = [
             "Pop": UIColor.Pop ?? .black,
             "HipHop": UIColor.HipHop ?? .black,
@@ -201,31 +205,54 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         ]
         
         gradient.type = .conic
-        if let data = genreResponseDate, data.count == 5 {
+        guard let data = genreResponseDate else {return}
+        // genreResponseDate가 nil이 아니고 count가 5일 때
+        if data.count == 5 , data[3].name == "Others" && data[4].name == "Others"{
+            gradient.colors = [
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+            ]
+            gradient.locations = [0.0, 0.17, 0.5, 0.83, 1.0]
+           
+        } else if data.count == 5 , data[4].name == "Others"{
+            gradient.colors = [
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[3].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white
+            ]
+            gradient.locations = [0.0, 0.125, 0.375, 0.625, 0.875, 1.0]
+            
+        }else if data.count == 5 {
             gradient.colors = [
                 genreColors[data[0].name]?.cgColor ?? UIColor.white,
                 genreColors[data[1].name]?.cgColor ?? UIColor.white,
                 genreColors[data[2].name]?.cgColor ?? UIColor.white,
                 genreColors[data[3].name]?.cgColor ?? UIColor.white,
                 genreColors[data[4].name]?.cgColor ?? UIColor.white,
-                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white
             ]
-        }else{
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+        }
+        else {
             gradient.colors = [
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.hiphop_100?.cgColor,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.RnB_100?.cgColor,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.dance_100?.cgColor
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor ?? UIColor.red
             ]
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+
         }
-       
         
-        gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+        
         gradient.startPoint = CGPoint(x: 0.5, y: 0.5) // 중심점
         gradient.endPoint = CGPoint(x: 1.0, y: 1.0)   // conic 그라데이션은 중심을 공유
-        
         
         rootView.CDView.layer.addSublayer(gradient)
     }
@@ -348,7 +375,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
                 return cell
             }
             cell.config(data: data[indexPath.row])
-            rootView.genreTasteLabel2.text = data[2].name
+                rootView.genreTasteLabel2.text = data[2].name
             return cell
         case rootView.collectionView:
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {
