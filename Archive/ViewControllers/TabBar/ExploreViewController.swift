@@ -73,8 +73,25 @@ class ExploreViewController: UIViewController {
     
     // 선택 년도 가져오기
     private func setTime() {
+        
+        // 년도 탐색을 하지 않은 경우 - 년도 설정으로 이동
         guard let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) else {
-            touchUpInsideResetButton() // 년도 설정으로 이동
+            let alert = UIAlertController(title: "시대 별 음악 탐색하기", message: "탐색년도를 설정해주세요!", preferredStyle: .alert)
+            
+            // 취소 액션 - 홈뷰로 이동
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+                self.tabBarController?.selectedIndex = 0
+            }
+            
+            // 년도 설정으로 이동
+            let alertAction = UIAlertAction(title: "탐색하기", style: .default, handler: { _ in
+                self.touchUpInsideResetButton()
+            })
+            
+            alert.addAction(cancelAction)
+            alert.addAction(alertAction)
+            self.present(alert, animated: true)
+                                
             return
         }
         
