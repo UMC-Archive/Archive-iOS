@@ -4,9 +4,15 @@ import Then
 class PreferArtistView: UIView {
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.setImage(UIImage(systemName: "left"), for: .normal)
         button.tintColor = .white
         return button
+    }()
+    lazy var progress5: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "progress5")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
     lazy var title = UILabel().then { make in
         make.textColor = .white
@@ -82,6 +88,7 @@ class PreferArtistView: UIView {
         addSubview(leftArrowButton)
         addSubview(rightArrowButton)
         addSubview(title)
+        addSubview(progress5)
         addSubview(pageIndicator)
         addSubview(searchBar)
         addSubview(ArtistCollectionView)
@@ -90,24 +97,22 @@ class PreferArtistView: UIView {
 
     private func setupConstraints() {
         leftArrowButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
             make.leading.equalToSuperview().offset(16)
-            make.centerY.equalTo(pageIndicator)
+            make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
-        rightArrowButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-16)
-            make.centerY.equalTo(pageIndicator)
-            make.width.height.equalTo(24)
-        }
-
-        pageIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(16)
-        }
+      
         title.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(pageIndicator.snp.bottom).offset(8)
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
         }
+        progress5.snp.makeConstraints { make in
+            make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+        }
+        
+      
         
         searchBar.snp.makeConstraints { make in
             make.top.equalTo(pageIndicator.snp.bottom).offset(16)

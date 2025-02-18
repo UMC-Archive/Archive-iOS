@@ -8,12 +8,12 @@ class RegisterView: UIView {
     lazy var titleLabel = UILabel().then { make in
         make.textColor = .white
         make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         make.textAlignment = .center
     }
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.setImage(UIImage(named: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()
@@ -23,6 +23,20 @@ class RegisterView: UIView {
         button.setImage(UIImage(systemName: "chevron.right"), for: .normal)
         button.tintColor = .white
         return button
+    }()
+    lazy var appImage: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "AppLOGO") // 앱 로고 이미지 설정
+        imageView.contentMode = .scaleAspectFit
+        imageView.clipsToBounds = true
+        return imageView
+    }()
+
+    lazy var progress1: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "progress1")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
     }()
     // 페이지 인디케이터
     lazy var pageIndicator: UIStackView = {
@@ -53,14 +67,14 @@ class RegisterView: UIView {
     lazy var instructionLabel = UILabel().then { make in
         make.textColor = .white
         make.text = "이메일 주소를 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
-        make.textAlignment = .center
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
+         make.textAlignment = .center
     }
 
     lazy var emailField = UITextField().then { make in
         make.placeholder = "이메일"
         make.borderStyle = .roundedRect
-        make.font = UIFont.systemFont(ofSize: 16)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.backgroundColor = UIColor(white: 0.2, alpha: 1)
         make.textColor = .white
         make.attributedPlaceholder = NSAttributedString(
@@ -71,21 +85,23 @@ class RegisterView: UIView {
 
     lazy var errorLabel = UILabel().then { make in
         make.textColor = .red
-        make.font = UIFont.systemFont(ofSize: 14)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
+      
         make.text = "올바르지 않은 형식의 이메일입니다."
         make.isHidden = true
     }
 
     lazy var successLabel = UILabel().then { make in
         make.textColor = .green
-        make.font = UIFont.systemFont(ofSize: 14)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
+      
         make.text = "올바른 형식의 이메일입니다."
         make.isHidden = true
     }
 
     lazy var emailButton = UIButton().then { make in
         make.setTitle("인증메일 받기", for: .normal)
-        make.titleLabel?.font = UIFont.boldSystemFont(ofSize: 16)
+        make.titleLabel?.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.setTitleColor(.white, for: .normal)
         make.backgroundColor = .darkGray
         make.layer.cornerRadius = 8
@@ -94,7 +110,7 @@ class RegisterView: UIView {
     // 인증번호 입력 섹션
     lazy var authCodeLabel = UILabel().then { make in
         make.text = "이메일 인증번호를 입력해주세요"
-        make.font = UIFont.boldSystemFont(ofSize: 21)
+        make.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
         make.textColor = .white
         make.isHidden = true
     }
@@ -102,7 +118,7 @@ class RegisterView: UIView {
     lazy var authCodeField = UITextField().then { make in
         make.placeholder = "인증번호"
         make.borderStyle = .roundedRect
-        make.font = UIFont.systemFont(ofSize: 16)
+        make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.backgroundColor = UIColor(white: 0.2, alpha: 1)
         make.textColor = .white
         make.attributedPlaceholder = NSAttributedString(
@@ -150,9 +166,10 @@ class RegisterView: UIView {
 
     private func setupViews() {
         addSubview(leftArrowButton)
-        addSubview(rightArrowButton)
+        
         addSubview(titleLabel)
-        addSubview(pageIndicator)
+        addSubview(progress1)
+        
         addSubview(instructionLabel)
         addSubview(emailField)
         addSubview(errorLabel)
@@ -168,22 +185,20 @@ class RegisterView: UIView {
     private func setupConstraints() {
      
         leftArrowButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
             make.leading.equalToSuperview().offset(16)
-            make.centerY.equalTo(pageIndicator)
+            make.centerY.equalTo(titleLabel)
             make.width.height.equalTo(24)
         }
         
-        rightArrowButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-16)
-            make.centerY.equalTo(pageIndicator)
-            make.width.height.equalTo(24)
-        }
-        pageIndicator.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide.snp.top).offset(20)
-            make.centerX.equalToSuperview()
-        }
+     
+      
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(pageIndicator.snp.bottom).offset(20)
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
+        }
+        progress1.snp.makeConstraints { make in
+            make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
         }
         instructionLabel.snp.makeConstraints { make in
@@ -195,6 +210,7 @@ class RegisterView: UIView {
             make.top.equalTo(instructionLabel.snp.bottom).offset(16)
             make.centerX.equalToSuperview()
             make.width.equalTo(295)
+            make.height.equalTo(45)
             
         }
 
@@ -213,7 +229,7 @@ class RegisterView: UIView {
             make.centerX.equalToSuperview()
             make.width.equalTo(emailField.snp.width)
             
-            make.height.equalTo(40)
+            make.height.equalTo(45)
         }
 
         authCodeLabel.snp.makeConstraints { make in
