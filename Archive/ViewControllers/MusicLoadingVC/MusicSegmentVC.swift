@@ -11,7 +11,7 @@ class MusicSegmentVC: UIViewController {
 
     private var lyrics: [String]?
     private var nextTracks: [SelectionResponseDTO]?
-    private var recommendAlbums: [AlbumRecommendAlbumResponseDTO]?
+    public var recommendAlbums: [AlbumRecommendAlbumResponseDTO]?
     private var recommendMusic: [RecommendMusicResponseDTO]?
 
     var musicTitle: String?
@@ -53,14 +53,35 @@ class MusicSegmentVC: UIViewController {
         
         
         fetchNextTracks()
-        fetchRecommendAlbums()
+        
 //        if segmentIndexNum == 1 {
 //               fetchLyrics()
 //           }
-        fetchRecommendMusic()
+        
         print(segmentIndexNum)
+        //   preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        segmentView.rightButton.addTarget(self,action : #selector(rightButtonTapped), for: .touchUpInside)
+        
+        self.view.layoutIfNeeded()
+        
     }
-    private var isInitialLayoutSet = false
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        fetchRecommendAlbums()
+        fetchRecommendMusic()
+    }
+    // 오른쪽 버튼 눌렀을 때 앨범 추천으로 가게
+    @objc func rightButtonTapped() {
+        print("눌림!")
+        
+        guard let albums = recommendAlbums else {print("눌림!hjhkjj")
+            return }
+        print("albums: \(albums)")
+        let secondVC = ForYouAlbumRecommendVC(recommendMusic: albums)
+        navigationController?.pushViewController(secondVC, animated: true)
+
+    }
+       private var isInitialLayoutSet = false
 
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
@@ -221,7 +242,7 @@ class MusicSegmentVC: UIViewController {
         }
     }
 // 추천 2
-    private func fetchRecommendMusic() {
+    private func fetchRecommendMusic(retryCount : Int = 0) {
         musicService.homeRecommendMusic { [weak self] result in
             switch result {
             case .success(let response):
@@ -232,10 +253,19 @@ class MusicSegmentVC: UIViewController {
                 }
             case .failure(let error):
                 print("추천 음악 에러: \(error)")
+                if retryCount < 3 {
+                                print("재시도 \(retryCount + 1)회")
+                                DispatchQueue.main.asyncAfter(deadline: .now() + 1.0) { // 1초 뒤 재시도
+                                    self?.fetchRecommendMusic(retryCount: retryCount + 1)
+                                }
+                            } else {
+                                print("최대 재시도 횟수 초과")
+                            }
+                        }
             }
         }
     }
-}
+
 
 extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
