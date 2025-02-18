@@ -15,12 +15,11 @@ class ExploreViewController: UIViewController {
     private let albumService = AlbumService()
     private let libraryService = LibraryService()
     
-    private let musicData = MusicDummyModel.dummy()
-    private let albumData = AlbumDummyModel.dummy()
+    private var mainCDData: [MainCDResponseDTO] = Constant.MainCDLoadingData// 메인 CD 데이터
     private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)] = Constant.HiddenMusicLoadingData // 숨겨진 명곡 데이터
     private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)] = Constant.ExploreRecommnedMusicLoadingData // 추천 음악 데이터
     private var recommendAlbumData: [(ExploreRecommendAlbum, String)] = Constant.RecommendAlbumLoadingData // 추천 앨범 데이터
-    private var mainCDData: [MainCDResponseDTO] = Constant.MainCDLoadingData// 메인 CD 데이터
+   
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -78,6 +77,14 @@ class ExploreViewController: UIViewController {
             touchUpInsideResetButton() // 년도 설정으로 이동
             return
         }
+        
+        mainCDData = Constant.MainCDLoadingData// 메인 CD 데이터 초기화
+        hiddenMusic = Constant.HiddenMusicLoadingData // 숨겨진 명곡 데이터 초기화
+        recommendMusic = Constant.ExploreRecommnedMusicLoadingData // 추천 음악 데이터 초기화
+        recommendAlbumData = Constant.RecommendAlbumLoadingData // 추천 앨범 데이터 초기화
+        exploreView.recapCollectionView.reloadData()
+        setDataSource()
+        setSnapShot()
         
         exploreView.config(time: time)
         getHiddenMusic()    // 숨겨진 명곡 조회 API
@@ -303,9 +310,8 @@ class ExploreViewController: UIViewController {
                 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 추천곡" , description: error.description, retryAction: getRecommendMusic)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -323,9 +329,8 @@ class ExploreViewController: UIViewController {
                 setSnapShot()
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 앨범 추천" , description: error.description, retryAction: getRecommendAlbum)
+                self.present(alert, animated: true)
             }
         }
     }
@@ -343,9 +348,8 @@ class ExploreViewController: UIViewController {
                 self.setSnapShot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "숨겨진 명곡" , description: error.description, retryAction: getHiddenMusic)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -361,7 +365,7 @@ class ExploreViewController: UIViewController {
                 self.exploreView.recapCollectionView.reloadData()
                 self.setRecapIndex()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "메인 CD" , description: error.description, retryAction: getMainCD)
                 self.present(alert, animated: true)
             }
         }
