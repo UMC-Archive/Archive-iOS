@@ -11,7 +11,12 @@ class PreferGenreView: UIView {
         searchBar.translatesAutoresizingMaskIntoConstraints = false
         return searchBar
     }()
-    
+    lazy var progress4: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "progress4")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     // 회원가입 타이틀
     lazy var title = UILabel().then { make in
         make.textColor = .white
@@ -31,7 +36,7 @@ class PreferGenreView: UIView {
     // 왼쪽 화살표 버튼
     lazy var leftArrowButton: UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(systemName: "chevron.left"), for: .normal)
+        button.setImage(UIImage(systemName: "left"), for: .normal)
         button.tintColor = .white
         return button
     }()
@@ -102,6 +107,7 @@ class PreferGenreView: UIView {
         addSubview(rightArrowButton)
         addSubview(pageIndicator)
         addSubview(title)
+        addSubview(progress4)
     }
 
     private func setupConstraints() {
@@ -127,24 +133,22 @@ class PreferGenreView: UIView {
         }
 
         leftArrowButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
             make.leading.equalToSuperview().offset(16)
-            make.centerY.equalTo(pageIndicator)
+            make.centerY.equalTo(title)
             make.width.height.equalTo(24)
+        }
+      
+        title.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
+        }
+        progress4.snp.makeConstraints { make in
+            make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
         }
         
-        rightArrowButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-16)
-            make.centerY.equalTo(pageIndicator)
-            make.width.height.equalTo(24)
-        }
-        pageIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(16)
-        }
-        title.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(pageIndicator.snp.bottom).offset(8)
-        }
+      
     }
 
     required init?(coder: NSCoder) {

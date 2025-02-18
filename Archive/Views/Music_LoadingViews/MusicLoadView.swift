@@ -35,7 +35,7 @@ class MusicLoadView: UIView {
 
     // 제목 옆 아이콘
     lazy var titleIcon = UIImageView().then { make in
-        make.image = UIImage(systemName: "rectangle.on.rectangle")
+        make.image = UIImage(named: "MusicLoad2Square")
         make.tintColor = .white
         make.contentMode = .scaleAspectFit
     }
@@ -91,29 +91,29 @@ class MusicLoadView: UIView {
 
     // 재생 제어 버튼들
     lazy var repeatButton = UIButton().then { button in
-        button.setImage(UIImage(systemName: "repeat"), for: .normal)
+        button.setImage(UIImage(named: "MusicLoadReplay"), for: .normal)
         button.tintColor = .white
     }
 
     lazy var previousButton = UIButton().then { button in
-        button.setImage(UIImage(systemName: "backward.fill"), for: .normal)
+        button.setImage(UIImage(named: "MusicLoadBack"), for: .normal)
         button.tintColor = .white
     }
 
     lazy var playPauseButton = UIButton().then { button in
-        button.setImage(UIImage(systemName: "pause.fill"), for: .normal)
+        button.setImage(UIImage(named: "MusicLoadStopButton"), for: .normal)
         button.tintColor = .white
         button.layer.cornerRadius = 25
         button.backgroundColor = .black
     }
 
     lazy var nextButton = UIButton().then { button in
-        button.setImage(UIImage(systemName: "forward.fill"), for: .normal)
+        button.setImage(UIImage(named: "MusicLoadFront"), for: .normal)
         button.tintColor = .white
     }
 
     lazy var shuffleButton = UIButton().then { button in
-        button.setImage(UIImage(systemName: "shuffle"), for: .normal)
+        button.setImage(UIImage(named: "MusicLoadShuffle"), for: .normal)
         button.tintColor = .white
     }
 
@@ -122,7 +122,7 @@ class MusicLoadView: UIView {
         stackView.axis = .horizontal
         stackView.alignment = .center
         stackView.distribution = .equalSpacing
-        stackView.spacing = 20
+        stackView.spacing = 90
         stackView.addArrangedSubview(createMenuLabel("다음 트랙"))
         stackView.addArrangedSubview(createMenuLabel("가사"))
         stackView.addArrangedSubview(createMenuLabel("추천 콘텐츠"))
@@ -216,21 +216,26 @@ class MusicLoadView: UIView {
         previousButton.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseButton)
             make.trailing.equalTo(playPauseButton.snp.leading).offset(-30)
+            make.width.height.equalTo(25)
         }
 
         nextButton.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseButton)
             make.leading.equalTo(playPauseButton.snp.trailing).offset(30)
+            make.width.height.equalTo(25)
         }
 
         repeatButton.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseButton)
-            make.trailing.equalTo(previousButton.snp.leading).offset(-30)
+            make.trailing.equalTo(progressSlider.snp.leading).offset(30)
+            make.width.height.equalTo(25)
         }
 
         shuffleButton.snp.makeConstraints { make in
             make.centerY.equalTo(playPauseButton)
-            make.leading.equalTo(nextButton.snp.trailing).offset(30)
+            make.leading.equalTo(progressSlider.snp.trailing).offset(-30)
+            make.width.equalTo(25)
+            make.height.equalTo(23.5)
         }
 
         // 하단 메뉴
@@ -252,8 +257,25 @@ class MusicLoadView: UIView {
 
       // 재생 버튼 UI 업데이트
       func updatePlayButton(isPlaying: Bool) {
-          let buttonImage = isPlaying ? UIImage(systemName: "pause.fill") : UIImage(systemName: "play.fill")
+          let buttonImage = isPlaying ? UIImage(named: "MusicLoadPlayButton") : UIImage(named: "MusicLoadStopButton")
           playPauseButton.setImage(buttonImage, for: .normal)
       }
+    //반복 재생 UI 업데이트
+    enum RepeatState {
+        case RepeatAll
+        case Norepeat
+        case RepeatOne
+    }
+    func updateRepeatButton(state: RepeatState) {
+        switch state {
+        case .RepeatAll:
+            repeatButton.setImage(UIImage(named: "MusicLoadReplay"), for: .normal)
+        case .Norepeat:
+            repeatButton.setImage(UIImage(named: "NoRepeat"), for: .normal)
+        case .RepeatOne:
+            repeatButton.setImage(UIImage(named: "RepeatOne"), for: .normal)
+        }
+    }
+   
 }
 

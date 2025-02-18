@@ -10,7 +10,7 @@ import UIKit
 class TabBarViewController: UITabBarController {
     private let userService = UserService()
     public let floatingView = AlbumInfoView()
-    private var musicLoadVC: MusicLoadVC? // 음악 재생 화면
+    public var musicLoadVC: MusicLoadVC? // 음악 재생 화면
     public var isPlaying = false
     
     private let homeVC = UINavigationController(rootViewController: HomeViewController())
@@ -113,7 +113,7 @@ class TabBarViewController: UITabBarController {
             self.playingMusic(musicId: musicId, imageURL: musicImageURL, musicTitle: musicTitle, artist: artist)
         } else {
             // MusicLoadVC를 미리 생성해두고 백그라운드에서 음악 재생만 실행
-            self.musicLoadVC = MusicLoadVC()
+            self.musicLoadVC = MusicLoadVC(music: musicTitle, artist: artist)
         }
     }
     

@@ -11,6 +11,12 @@ class Register2View: UIView, UITextFieldDelegate {
         make.font = UIFont.boldSystemFont(ofSize: 18)
         make.textAlignment = .center
     }
+    lazy var progress2: UIImageView = {
+        let imageView = UIImageView()
+        imageView.image = UIImage(named: "progress2")
+        imageView.contentMode = .scaleAspectFit
+        return imageView
+    }()
     
     // 왼쪽 화살표 버튼
     lazy var leftArrowButton: UIButton = {
@@ -163,14 +169,14 @@ class Register2View: UIView, UITextFieldDelegate {
     
     private func setupViews() {
         addSubview(leftArrowButton)
-        addSubview(rightArrowButton)
-        addSubview(pageIndicator)
+        
         addSubview(title)
         addSubview(register)
         addSubview(successLabel)
         addSubview(successLabel2)
         addSubview(PWField)
         addSubview(errorLabel)
+        addSubview(progress2)
         addSubview(register2)
         addSubview(PWField2)
         addSubview(errorLabel2)
@@ -179,26 +185,22 @@ class Register2View: UIView, UITextFieldDelegate {
     
     private func setupConstraints() {
         leftArrowButton.snp.makeConstraints { make in
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
             make.leading.equalToSuperview().offset(16)
-            make.centerY.equalTo(pageIndicator)
+            make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
-        
-        rightArrowButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-16)
-            make.centerY.equalTo(pageIndicator)
-            make.width.height.equalTo(24)
-        }
-        
-        pageIndicator.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(self.safeAreaLayoutGuide.snp.top).offset(16)
-        }
-        
+      
         title.snp.makeConstraints { make in
-            make.centerX.equalToSuperview()
-            make.top.equalTo(pageIndicator.snp.bottom).offset(8)
+            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
         }
+        progress2.snp.makeConstraints { make in
+            make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
+            make.centerX.equalToSuperview()
+        }
+        
+      
         
         register.snp.makeConstraints { make in
            
