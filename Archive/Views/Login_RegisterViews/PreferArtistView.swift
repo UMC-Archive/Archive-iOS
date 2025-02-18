@@ -44,6 +44,9 @@ class PreferArtistView: UIView {
         let searchBar = UISearchBar()
         searchBar.placeholder = "아티스트 검색"
         searchBar.searchBarStyle = .minimal
+        searchBar.backgroundColor = .white_35
+        searchBar.layer.cornerRadius = 8
+        searchBar.clipsToBounds = true
         return searchBar
     }()
 
@@ -115,7 +118,7 @@ class PreferArtistView: UIView {
       
         
         searchBar.snp.makeConstraints { make in
-            make.top.equalTo(pageIndicator.snp.bottom).offset(16)
+            make.top.equalTo(progress5.snp.bottom).offset(16)
             make.leading.trailing.equalToSuperview().inset(16)
             make.height.equalTo(40)
         }

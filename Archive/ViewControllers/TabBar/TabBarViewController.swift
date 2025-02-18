@@ -51,6 +51,7 @@ class TabBarViewController: UITabBarController {
     // 음악 정보 뷰 탭 제스처
     @objc private func musicInfoTapGesture(_ sender: UITapGestureRecognizer) {
         guard let musicLoadVC = musicLoadVC else { return }
+        musicLoadVC.modalPresentationStyle = .fullScreen
         self.present(musicLoadVC, animated: true)
     }
     

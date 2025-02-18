@@ -18,7 +18,7 @@ enum MusicTargetType {
     case sameArtistAnotherAlbum(artistId: String) // 앨범 둘러보기
     case musicHidden // 숨겨진 명곡
     case chooseGenreInfo // 선택 장르 정보 가져오기
-    case chooseArtistInfo(parameter: ChooseArtistRequestDTO) // 선택 아티스트 정보 가져오기
+    case chooseArtistInfo(searchArtist: String?,parameter: ChooseArtistRequestDTO) // 선택 아티스트 정보 가져오기
     case ExploreRecommendMusic // 당신을 위한 추천곡(탐색뷰)
     case recommendMusic // 홈 - 당신을 위한 추천곡
     case similarArtist(artistId: String) // 비슷한 아티스트 가져오기
@@ -94,8 +94,11 @@ extension MusicTargetType: TargetType {
         case .artistInfo(let artist, let album):
             return .requestParameters(parameters: ["artist_name" : artist, "album_name" : album], encoding:
                                         URLEncoding.queryString)
-        case .chooseArtistInfo(let parameter):
-            return .requestJSONEncodable(parameter)
+        case .chooseArtistInfo(let searchArtist, let parameter):
+            guard let searchArtist = searchArtist, searchArtist != "" else {
+                return .requestJSONEncodable(parameter)
+            }
+            return .requestParameters(parameters: ["artist_name" : searchArtist], encoding: URLEncoding.queryString)
         case .musicHidden, .chooseGenreInfo, .albumCuration, .artistCuration, .ExploreRecommendMusic, .recommendMusic, .similarArtist, .anotherAlbum, .selection, .artistPopularMusic, .sameArtistAnotherAlbum, .mainCD:
             return .requestPlain
         case .allInfo(music: let music, artist: let artist, album: let album):

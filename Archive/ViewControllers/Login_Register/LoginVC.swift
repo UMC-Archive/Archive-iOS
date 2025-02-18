@@ -23,8 +23,8 @@ class LoginVC: UIViewController {
         
         
         // 음악 재생 기록 예시
-        let param = UserPlayingRecordRequestDTO(musicId: 1)
-        postPlayingRecord(param: param)
+//        let param = UserPlayingRecordRequestDTO(musicId: 1)
+//        postPlayingRecord(param: param)
     }
 
     private func setupActions() {
