@@ -279,8 +279,8 @@ class HomeViewController: UIViewController {
                                  RecentlyAddMusicSection])
         
         // 당신을 위한 아카이브
-            let archiveItem = archiveData.map{Item.ArchiveItem($0.0, $0.1)}
-            snapshot.appendItems(archiveItem, toSection: archiveSection)
+        let archiveItem = archiveData.map{Item.ArchiveItem($0.0, $0.1)}
+        snapshot.appendItems(archiveItem, toSection: archiveSection)
         
         
         // 최근 탐색 시점
@@ -289,14 +289,15 @@ class HomeViewController: UIViewController {
             snapshot.appendItems(pointItem, toSection: pointOfViewSection)
         }
         
+        
         // 빠른 선곡
-            let fastSelectionItem = fastSelectionData.map{Item.FastSelectionItem($0.0, $0.1, $0.2)}
-            snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
+        let fastSelectionItem = fastSelectionData.map{Item.FastSelectionItem($0.0, $0.1, $0.2)}
+        snapshot.appendItems(fastSelectionItem, toSection: fastSelectionSection)
         
         
         // 당신을 위한 추천곡
-            let recommendMusicItem = recommendMusic.map{Item.RecommendMusic($0.0, $0.1, $0.2)}
-            snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
+        let recommendMusicItem = recommendMusic.map{Item.RecommendMusic($0.0, $0.1, $0.2)}
+        snapshot.appendItems(recommendMusicItem, toSection: recommendSection)
         
         // 최근 들은 노래
         if let recentlyPlayedMusic = recentlyPlayedMusic {
@@ -373,10 +374,10 @@ class HomeViewController: UIViewController {
     // 최근 탐색 연도 불러오기 API
     private func getHistory() {
         userService.getHistroy { [weak self] result in
-            guard let self = self else {return }
+            guard let self = self else { return }
             switch result {
             case .success(let response):
-                guard let response = response else { return } // 탐색했던 시점이 없을 때
+                guard let response = response, !response.isEmpty else { return } // 탐색했던 시점이 없을 때
                 self.pointOfViewData = response.map{($0.userHistory, $0.historyImage ?? "")}
                 setDataSource()
                 setSnapShot()
@@ -411,6 +412,7 @@ class HomeViewController: UIViewController {
             guard let self = self else {return }
             switch result {
             case .success(let response):
+                guard let response = response, response != [] else { return }
                 self.recentlyPlayedMusic = response
                 self.setDataSource()
                 self.setSnapShot()
@@ -427,7 +429,7 @@ class HomeViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                guard let response = response else { return }
+                guard let response = response, response != [] else { return }
                 self.recentlyAddMusic = response
                 self.setDataSource()
                 self.setSnapShot()
