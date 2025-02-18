@@ -28,11 +28,6 @@ class ExploreViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         setProfileImage() // 프로필 설정
         setTime() // 년도 설정
-    
-        getHiddenMusic()    // 숨겨진 명곡 조회 API
-        getRecommendMusic() // 추천 음악 API
-        getRecommendAlbum() // 당신을 위한 앨범 추천 API
-        getMainCD()         // 메인 CD API
     }
     
     // 프로필 이미지 설정 함수
@@ -73,16 +68,23 @@ class ExploreViewController: UIViewController {
     
     // 년도 설정 버튼 액션
     @objc private func touchUpInsideResetButton() {
-        print("touchUpInsideResetButton")
         let nextVC = DatePickerViewController()
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 선택 년도 가져오기
     private func setTime() {
-        if let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) {
-            exploreView.config(time: time)
+        guard let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) else {
+            touchUpInsideResetButton() // 년도 설정으로 이동
+            return
         }
+        
+        exploreView.config(time: time)
+        getHiddenMusic()    // 숨겨진 명곡 조회 API
+        getRecommendMusic() // 추천 음악 API
+        getRecommendAlbum() // 당신을 위한 앨범 추천 API
+        getMainCD()         // 메인 CD API
+        
     }
     
     // 컬렉션 뷰 높이 구하는 함수
