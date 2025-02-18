@@ -31,6 +31,7 @@ class RecapView: UIView {
     public var scrollView = UIScrollView().then {
         $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
+        $0.showsVerticalScrollIndicator = false
     }
     
     // ScrollView의 ContentView 정의
@@ -44,7 +45,7 @@ class RecapView: UIView {
         $0.numberOfLines = 2
     }
     
-    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout().then{
+    public let genreCollectionView = UICollectionView(frame: .zero, collectionViewLayout: CarouselLayout2().then{
         $0.itemSize = CGSize(width: 120, height: 120)
         $0.scrollDirection = .horizontal
         
@@ -179,7 +180,7 @@ class RecapView: UIView {
     private func setConstraint() {
         
         navigationView.snp.makeConstraints{
-            $0.top.equalToSuperview().offset(46)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(30)
         }
