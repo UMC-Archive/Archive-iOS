@@ -65,19 +65,43 @@ extension Constant {
 // 앨범 뷰 로딩 데이터
 extension Constant {
     
-    // 앨범 정보 데이터
+    // 앨범 정보 로딩 데이터
     static let AlbumInfoLoadingData: AlbumInfoReponseDTO = AlbumInfoReponseDTO.loadingData()
     
-    // 트랙 리스트 데이터
+    // 트랙 리스트 로딩 데이터
     static let TrackListLoadingData: [TrackListResponse] = [
         TrackListResponse.loadingData()
     ]
     
     // 추천 앨범 - 홈 뷰: 아카이브 앨범 로딩 데이터와 동일
     
-    // 이 아티스트의 다른 앨범
+    // 이 아티스트의 다른 앨범 로딩 데이터
     static let AnotherAlbumLoadingData: [
         (AnotherAlbumResponseDTO, String)] = [
             (AnotherAlbumResponseDTO.loadingData(), Constant.LoadString)
+        ]
+}
+
+// 아티스트 뷰 로딩 데이터
+extension Constant {
+    
+    // 아티스트 정보 로딩 데이터
+    static let ArtistInfoLoadingData: ArtistInfoReponseDTO = ArtistInfoReponseDTO.loadingData()
+    
+    // 비슷한 아티스트 로딩 데이터
+    static let SimilarArtistLoadinData: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)] = [
+        (ArtistInfoReponseDTO.loadingData(), AlbumInfoReponseDTO.loadingData())
+    ]
+    
+    // 아티스트 인기곡 로딩 데이터
+    static let PopularMusicLoadingData: [
+        (MusicInfoResponseDTO, AlbumInfoReponseDTO, String)] = [
+            (MusicInfoResponseDTO.loadingData(), AlbumInfoReponseDTO.loadingData(), Constant.LoadString)
+        ]
+    
+    // 앨범 둘러보기 로딩 데이터
+    static let SameArtistAnotherAlbumLoadingData: [
+        (SameArtistAnotherAlbumResponseDTO, String)] = [
+            (SameArtistAnotherAlbumResponseDTO.loadingData(), Constant.LoadString)
         ]
 }

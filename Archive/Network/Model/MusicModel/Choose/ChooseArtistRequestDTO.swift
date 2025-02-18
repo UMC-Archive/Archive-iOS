@@ -8,6 +8,5 @@
 import Foundation
 
 public struct ChooseArtistRequestDTO: Encodable {
-    let artist_name: String?
     let genre_id: [Int]
 }
