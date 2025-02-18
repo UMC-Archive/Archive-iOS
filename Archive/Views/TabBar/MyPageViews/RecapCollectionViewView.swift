@@ -33,9 +33,11 @@ class RecapCollectionViewView: UIView {
         $0.scrollDirection = .vertical
         $0.itemSize = CGSize(width: 337, height: 50)
         $0.minimumInteritemSpacing = 12 * UIScreen.main.screenHeight / 667
+    
     }).then{
         $0.backgroundColor = UIColor.black_100
         $0.isScrollEnabled = true
+        $0.showsVerticalScrollIndicator = false
         $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
     }
     
@@ -52,13 +54,13 @@ class RecapCollectionViewView: UIView {
             $0.edges.equalToSuperview()
         }
         navigationView.snp.makeConstraints{
-            $0.top.equalToSuperview().offset(46)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(30)
         }
         collectionView.snp.makeConstraints{
             $0.top.equalTo(navigationView.snp.bottom).offset(30)
-            $0.height.equalTo(422)
+            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
             $0.width.equalTo(337)
             $0.leading.equalToSuperview().offset(19)
         }

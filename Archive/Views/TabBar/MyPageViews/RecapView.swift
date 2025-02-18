@@ -31,6 +31,7 @@ class RecapView: UIView {
     public var scrollView = UIScrollView().then {
         $0.isScrollEnabled = true
         $0.contentInsetAdjustmentBehavior = .never
+        $0.showsVerticalScrollIndicator = false
     }
     
     // ScrollView의 ContentView 정의
@@ -179,7 +180,7 @@ class RecapView: UIView {
     private func setConstraint() {
         
         navigationView.snp.makeConstraints{
-            $0.top.equalToSuperview().offset(46)
+            $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalToSuperview().offset(20)
             $0.height.equalTo(30)
         }
