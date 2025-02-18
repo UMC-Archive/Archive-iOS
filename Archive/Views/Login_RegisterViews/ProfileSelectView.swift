@@ -7,7 +7,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     lazy var title = UILabel().then { make in
         make.textColor = .white
         make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.font = .customFont(font: .SFPro, ofSize: 18,rawValue : 700)
         make.textAlignment = .center
     }
     lazy var rightArrowButton: UIButton = {
@@ -32,7 +32,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.text = "프로필 사진을 설정해주세요"
-        label.font = UIFont.boldSystemFont(ofSize: 16)
+        label.font = .customFont(font: .SFPro, ofSize: 21,rawValue : 700)
         label.textColor = .white
         label.textAlignment = .center
         return label
@@ -68,7 +68,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 100
-        imageView.image = UIImage(systemName: "person.crop.circle.fill") // 기본 아이콘
+        imageView.image = UIImage(named: "PROFILE") // 기본 아이콘
         imageView.tintColor = .lightGray
         imageView.backgroundColor = .darkGray
         imageView.isUserInteractionEnabled = true // 터치 가능
@@ -78,18 +78,25 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     // 프로필 이름 입력 필드
     lazy var profileName: UITextField = {
         let textField = UITextField()
-        textField.font = UIFont.boldSystemFont(ofSize: 28)
+        textField.font = .customFont(font: .SFPro, ofSize: 26,rawValue : 700)
         textField.textColor = .white
         textField.textAlignment = .center
-        textField.placeholder = "이름을 입력해주세요"
+        textField.attributedPlaceholder = NSAttributedString(
+            string: "이름을 입력해주세요",
+            attributes: [
+                .foregroundColor: UIColor.white,
+                .font: UIFont.customFont(font: .SFPro, ofSize: 26, rawValue: 700)
+            ]
+        )
         textField.borderStyle = .none
+       
         return textField
     }()
 
     // 펜 이미지
     lazy var penImage: UIImageView = {
         let imageView = UIImageView()
-        imageView.image = UIImage(systemName: "pencil")
+        imageView.image = UIImage(named: "pencil")
         imageView.contentMode = .scaleAspectFit
         imageView.tintColor = .white
         return imageView
@@ -99,7 +106,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     lazy var completeButton: UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
-        button.titleLabel?.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+        button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 700)
         button.setTitleColor(.black, for: .normal)
         button.backgroundColor = .white
         button.layer.cornerRadius = 8
@@ -133,23 +140,20 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
 
     private func setupConstraints() {
         leftArrowButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalToSuperview().offset(16)
             make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(10)
+            make.top.equalTo(safeAreaLayoutGuide).offset(40)
             make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
         }
         progress3.snp.makeConstraints { make in
             make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
             make.centerX.equalToSuperview()
         }
-        
-      
-      
         
         descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(title.snp.top).offset(100)
@@ -163,7 +167,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         }
 
         profileName.snp.makeConstraints { make in
-            make.top.equalTo(profileImage.snp.bottom).offset(10)
+            make.top.equalTo(profileImage.snp.bottom).offset(30)
             make.centerX.equalToSuperview()
         }
 
