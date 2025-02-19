@@ -165,7 +165,6 @@ class AlbumTrackView: UIView {
                 self?.setBackgroundColorBasedOnImageColor()
 
             case .failure(let error):
-                print("Error loading image: \(error)")
                 self?.backgroundColor = .black
             }
         }

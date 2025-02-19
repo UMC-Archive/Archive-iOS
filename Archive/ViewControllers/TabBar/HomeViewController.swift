@@ -368,7 +368,6 @@ class HomeViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                print("getRecommendMusic() 성공")
                 guard let response = response else { return }
                 self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
                 setDataSource()
@@ -403,7 +402,6 @@ class HomeViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                print("getSelection() 성공")
                 guard let response = response else {return}
                 self.fastSelectionData = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
@@ -533,7 +531,6 @@ extension HomeViewController: UIGestureRecognizerDelegate  {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

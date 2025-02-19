@@ -34,7 +34,6 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
     }
     
     @objc private func leftButtonTapped() {
-        print("눌림!")
         let moveVC = Register2VC()
         navigationController?.pushViewController(moveVC, animated: true)
     }

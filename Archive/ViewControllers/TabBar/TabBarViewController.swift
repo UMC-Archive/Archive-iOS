@@ -62,7 +62,6 @@ class TabBarViewController: UITabBarController {
     // 플레이 리스트 버튼을 눌렀을 때
     @objc private func touchUpInsidePlaylist() {
         // songList로 화면 이동
-        print("touchUpInsidePlaylist()")
         guard let musicLoadVC = musicLoadVC else { return }
         musicLoadVC.modalPresentationStyle = .fullScreen
         self.present(musicLoadVC, animated: false)
@@ -156,7 +155,6 @@ class TabBarViewController: UITabBarController {
             let image = userInfo["image"] as? String,
             let isPlaying = userInfo["isPlaying"] as? Bool
         else {
-            print("Notification 데이터 없음")
             return
         }
         

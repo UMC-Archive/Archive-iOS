@@ -12,7 +12,6 @@ extension UIImageView {
     func avgImageColor() -> UIColor? {
         // UIImage를 Core Image의 CIImage로 변환
         guard let image = self.image, let inputImage = CIImage(image: image) else {
-            print("inputImage nil")
             return nil
         }
         
@@ -33,13 +32,11 @@ extension UIImageView {
                                         kCIInputExtentKey: extentVector
                                     ])
         else {
-            print("filter nil")
             return nil
         }
         
         // 필터를 실행한 후의 결과 이미지
         guard let outPutImage = filter.outputImage else {
-            print("outPutImage nil")
             return nil
         }
         

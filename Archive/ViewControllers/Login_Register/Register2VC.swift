@@ -25,7 +25,6 @@ class Register2VC: UIViewController {
         register2View.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
     }
     @objc private func leftButtonTapped(){
-        print("눌림!")
         let moveVC = RegisterVC()
         navigationController?.pushViewController(moveVC,animated: true)
     }
@@ -84,7 +83,6 @@ class Register2VC: UIViewController {
      
     }
     @objc private func handleNextButtonTap() {
-        print("다음 버튼 클릭됨")
         guard let password = register2View.PWField.text, !password.isEmpty else {
                showAlert(message: "비밀번호를 입력해주세요.")
                return

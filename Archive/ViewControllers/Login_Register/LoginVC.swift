@@ -69,8 +69,6 @@ class LoginVC: UIViewController {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self?.present(alert, animated: true)
-                print("실패: \(error.description)")
-
             }
         }
     }
@@ -94,17 +92,12 @@ class LoginVC: UIViewController {
             guard let self = self else { return }
             
             switch result {
-            case .success(let response):
-                print("postPlayingRecord() 성공")
-                print(response?.musicId)
-                Task{
-
-                }
+            case .success:
+                break
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
