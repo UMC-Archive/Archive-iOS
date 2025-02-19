@@ -20,6 +20,12 @@ class RecapCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.gestureRecognizers = nil
+    }
+    
     // CDView
     public let cdView = CDView(imageWidthHeight: 258, holeWidthHeight: 40)
     

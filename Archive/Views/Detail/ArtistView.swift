@@ -76,8 +76,8 @@ class ArtistView: UIView {
         
         view.register(VerticalCell.self, forCellWithReuseIdentifier: VerticalCell.id)
         view.register(BannerCell.self, forCellWithReuseIdentifier: BannerCell.id)
-        view.register(MusicVideoCell.self, forCellWithReuseIdentifier: MusicVideoCell.id)
         view.register(CircleCell.self, forCellWithReuseIdentifier: CircleCell.id)
+        view.register(MusicVideoCell.self, forCellWithReuseIdentifier: MusicVideoCell.id)
     }
     
     override init(frame: CGRect) {
@@ -172,10 +172,10 @@ class ArtistView: UIView {
                 self?.createVerticalSection()
             case 1: // 앨범 둘러보기
                 self?.createBannerSection()
-            case 2: //아티스트 뮤직 비디오
-                self?.createMusicVideoSection()
-            case 3: //다른 비슷한 아티스트
+            case 2: //다른 비슷한 아티스트
                 self?.createCircleSection()
+            case 3: //아티스트 뮤직 비디오
+                self?.createMusicVideoSection()
             default:
                 self?.createVerticalSection()
             }

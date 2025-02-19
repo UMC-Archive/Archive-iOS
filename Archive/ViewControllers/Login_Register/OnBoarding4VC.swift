@@ -25,6 +25,7 @@ class OnBoarding4VC : UIViewController {
         OnBOardingView.contentMode = .scaleAspectFit
         OnBOardingView.frame=view.bounds
         setupTapGesture()
+        self.navigationController?.navigationBar.isHidden = true
     }
     private func setupTapGesture() {
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(goToNextViewController))
@@ -32,7 +33,7 @@ class OnBoarding4VC : UIViewController {
     }
 
     @objc private func goToNextViewController() {
-        let nextVC = HomeViewController() // 다음 보여줄 뷰컨트롤러로 변경해!
+        let nextVC = TabBarViewController() // 다음 보여줄 뷰컨트롤러로 변경해!
         nextVC.modalPresentationStyle = .fullScreen
                present(nextVC, animated: true, completion: nil)
     }

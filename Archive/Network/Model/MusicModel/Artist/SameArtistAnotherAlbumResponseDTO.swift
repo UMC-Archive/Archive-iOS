@@ -13,6 +13,13 @@ public struct SameArtistAnotherAlbumResponseDTO: Decodable, Hashable {
     let releaseTime: String
     let image: String
     
+    init(id: String, title: String, releaseTime: String, image: String) {
+        self.id = id
+        self.title = title
+        self.releaseTime = releaseTime
+        self.image = image
+    }
+    
     enum CodingKeys: CodingKey {
         case id
         case title
@@ -26,5 +33,11 @@ public struct SameArtistAnotherAlbumResponseDTO: Decodable, Hashable {
         self.title = try container.decode(String.self, forKey: .title)
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
+    }
+}
+
+extension SameArtistAnotherAlbumResponseDTO {
+    static func loadingData() -> SameArtistAnotherAlbumResponseDTO {
+        return SameArtistAnotherAlbumResponseDTO(id: "1", title: Constant.LoadString, releaseTime: "", image: Constant.LoadingImageURL)
     }
 }

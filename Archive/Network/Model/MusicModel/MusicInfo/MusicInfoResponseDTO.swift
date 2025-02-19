@@ -16,6 +16,16 @@ public struct MusicInfoResponseDTO: Decodable, Hashable {
     let lyrics: String
     let image: String
     let music: String
+    
+    init(id: String, albumId: String, title: String, releaseTime: String, lyrics: String, image: String, music: String) {
+        self.id = id
+        self.albumId = albumId
+        self.title = title
+        self.releaseTime = releaseTime
+        self.lyrics = lyrics
+        self.image = image
+        self.music = music
+    }
 
     
     enum CodingKeys: CodingKey {
@@ -37,5 +47,21 @@ public struct MusicInfoResponseDTO: Decodable, Hashable {
         self.lyrics = try container.decode(String.self, forKey: .lyrics)
         self.image = try container.decode(String.self, forKey: .image)
         self.music = try container.decode(String.self, forKey: .music)
+    }
+}
+
+
+extension MusicInfoResponseDTO {
+    static func loadingData() -> MusicInfoResponseDTO {
+        return
+            MusicInfoResponseDTO(
+                 id: "1",
+                 albumId: "1",
+                 title: Constant.LoadString,
+                 releaseTime: "",
+                 lyrics: "",
+                 image: Constant.LoadingImageURL,
+                 music: ""
+             )
     }
 }

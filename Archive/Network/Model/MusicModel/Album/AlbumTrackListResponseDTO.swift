@@ -56,6 +56,14 @@ public struct TrackListResponse: Decodable {
     let image: String
     let releaseTime: Int
     
+    init(id: String, title: String, artist: String, image: String, releaseTime: Int) {
+        self.id = id
+        self.title = title
+        self.artist = artist
+        self.image = image
+        self.releaseTime = releaseTime
+    }
+    
     enum CodingKeys: CodingKey {
         case id
         case title
@@ -71,5 +79,11 @@ public struct TrackListResponse: Decodable {
         self.artist = try container.decode(String.self, forKey: .artist)
         self.image = try container.decode(String.self, forKey: .image)
         self.releaseTime = try container.decode(Int.self, forKey: .releaseTime)
+    }
+}
+
+extension TrackListResponse {
+    static func loadingData() -> TrackListResponse {
+        return TrackListResponse(id: "1", title: Constant.LoadString, artist: Constant.LoadString, image: Constant.LoadingImageURL, releaseTime: 0)
     }
 }

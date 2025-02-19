@@ -176,7 +176,7 @@ class MusicSegmentVC: UIViewController {
             switch result {
             case .success(let response):
                 guard let data = response else { return }
-                let rawLyrics = data.lyrics
+                let rawLyrics = data.music.lyrics
                 self?.lyrics = rawLyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
 
             case .failure(_):

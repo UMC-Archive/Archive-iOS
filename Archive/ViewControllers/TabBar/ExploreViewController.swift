@@ -15,12 +15,11 @@ class ExploreViewController: UIViewController {
     private let albumService = AlbumService()
     private let libraryService = LibraryService()
     
-    private let musicData = MusicDummyModel.dummy()
-    private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]? // 숨겨진 명곡 데이터
-    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]? // 추천 음악 데이터
-    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]? // 추천 앨범 데이터
-    private var mainCDData: [MainCDResponseDTO]? // 메인 CD 데이터
+    private var mainCDData: [MainCDResponseDTO] = Constant.MainCDLoadingData// 메인 CD 데이터
+    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)] = Constant.HiddenMusicLoadingData // 숨겨진 명곡 데이터
+    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)] = Constant.ExploreRecommnedMusicLoadingData // 추천 음악 데이터
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)] = Constant.RecommendAlbumLoadingData // 추천 앨범 데이터
+   
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -28,11 +27,6 @@ class ExploreViewController: UIViewController {
         self.navigationController?.navigationBar.isHidden = true
         setProfileImage() // 프로필 설정
         setTime() // 년도 설정
-    
-        getHiddenMusic()    // 숨겨진 명곡 조회 API
-        getRecommendMusic() // 추천 음악 API
-        getRecommendAlbum() // 당신을 위한 앨범 추천 API
-        getMainCD()         // 메인 CD API
     }
     
     // 프로필 이미지 설정 함수
@@ -49,7 +43,6 @@ class ExploreViewController: UIViewController {
         setDataSource()
         setSnapShot()
         setDelegate()
-        setRecapIndex()
         setGesture()
         setTarget()
 
@@ -74,16 +67,48 @@ class ExploreViewController: UIViewController {
     
     // 년도 설정 버튼 액션
     @objc private func touchUpInsideResetButton() {
-        print("touchUpInsideResetButton")
         let nextVC = DatePickerViewController()
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
     
     // 선택 년도 가져오기
     private func setTime() {
-        if let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) {
-            exploreView.config(time: time)
+        
+        // 년도 탐색을 하지 않은 경우 - 년도 설정으로 이동
+        guard let time = KeychainService.shared.load(account: .userInfo, service: .timeHistory) else {
+            let alert = UIAlertController(title: "시대 별 음악 탐색하기", message: "탐색년도를 설정해주세요!", preferredStyle: .alert)
+            
+            // 취소 액션 - 홈뷰로 이동
+            let cancelAction = UIAlertAction(title: "취소", style: .cancel) { _ in
+                self.tabBarController?.selectedIndex = 0
+            }
+            
+            // 년도 설정으로 이동
+            let alertAction = UIAlertAction(title: "탐색하기", style: .default, handler: { _ in
+                self.touchUpInsideResetButton()
+            })
+            
+            alert.addAction(cancelAction)
+            alert.addAction(alertAction)
+            self.present(alert, animated: true)
+                                
+            return
         }
+        
+        mainCDData = Constant.MainCDLoadingData// 메인 CD 데이터 초기화
+        hiddenMusic = Constant.HiddenMusicLoadingData // 숨겨진 명곡 데이터 초기화
+        recommendMusic = Constant.ExploreRecommnedMusicLoadingData // 추천 음악 데이터 초기화
+        recommendAlbumData = Constant.RecommendAlbumLoadingData // 추천 앨범 데이터 초기화
+        exploreView.recapCollectionView.reloadData()
+        setDataSource()
+        setSnapShot()
+        
+        exploreView.config(time: time)
+        getHiddenMusic()    // 숨겨진 명곡 조회 API
+        getRecommendMusic() // 추천 음악 API
+        getRecommendAlbum() // 당신을 위한 앨범 추천 API
+        getMainCD()         // 메인 CD API
+        
     }
     
     // 컬렉션 뷰 높이 구하는 함수
@@ -267,22 +292,22 @@ class ExploreViewController: UIViewController {
         snapshot.appendSections([recommendMusicSection, recommendAlbumSection, hiddenMusicSection])
 
         // 추천곡
-        if let recommendMusic = recommendMusic {
+        
             let recommendMusicItem = recommendMusic.map{Item.ExploreRecommendMusic($0.0, $0.1, $0.2)}// 추천곡
             snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
-        }
+        
        
         // 숨겨진 명곡
-        if let hiddenMusic = hiddenMusic {
+        
             let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1, $0.2)}
             snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
-        }
+        
         
         // 당신을 위한 추천 앨범
-        if let recommendAlbumData = recommendAlbumData {
+        
             let recommendAlbumItem = recommendAlbumData.map{Item.ExploreRecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        }
+        
         
         dataSource?.apply(snapshot)
     }
@@ -302,9 +327,8 @@ class ExploreViewController: UIViewController {
                 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 추천곡" , description: error.description, retryAction: getRecommendMusic)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -322,9 +346,8 @@ class ExploreViewController: UIViewController {
                 setSnapShot()
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 앨범 추천" , description: error.description, retryAction: getRecommendAlbum)
+                self.present(alert, animated: true)
             }
         }
     }
@@ -342,9 +365,8 @@ class ExploreViewController: UIViewController {
                 self.setSnapShot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "숨겨진 명곡" , description: error.description, retryAction: getHiddenMusic)
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -358,8 +380,9 @@ class ExploreViewController: UIViewController {
                 guard let response = response else {return}
                 self.mainCDData = response
                 self.exploreView.recapCollectionView.reloadData()
+                self.setRecapIndex()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "메인 CD" , description: error.description, retryAction: getMainCD)
                 self.present(alert, animated: true)
             }
         }
@@ -468,7 +491,7 @@ extension ExploreViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case exploreView.recapCollectionView:
-            return 3
+            return self.mainCDData.count == 1 ? 1 : 3
         default:
             return 0
         }
@@ -478,10 +501,6 @@ extension ExploreViewController: UICollectionViewDataSource {
         switch collectionView {
         case exploreView.recapCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
-            
-            guard let mainCDData = mainCDData else {
-                return cell
-            }
            
             (cell as? RecapCollectionViewCell)?.configMainCD(data: mainCDData[indexPath.row])
             

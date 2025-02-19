@@ -13,14 +13,19 @@ public struct AlbumInfoReponseDTO: Decodable, Hashable {
     let title: String
     let releaseTime: String
     let image: String
- //   let artist: String
     
+    init(id: String, title: String, releaseTime: String, image: String) {
+        self.id = id
+        self.title = title
+        self.releaseTime = releaseTime
+        self.image = image
+    }
+
     enum CodingKeys: String, CodingKey {
         case id
         case title
         case releaseTime 
         case image
-   //     case artist
     }
     
     public init(from decoder: any Decoder) throws {
@@ -29,6 +34,17 @@ public struct AlbumInfoReponseDTO: Decodable, Hashable {
         self.title = try container.decode(String.self, forKey: .title)
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
-     //   self.artist = try container.decode(String.self, forKey: .artist)
+    }
+}
+
+extension AlbumInfoReponseDTO {
+    static func loadingData() -> AlbumInfoReponseDTO {
+        return
+            AlbumInfoReponseDTO(
+                id: "1",
+                title: Constant.LoadString,
+                releaseTime: "",
+                image: Constant.LoadingImageURL)
+        
     }
 }

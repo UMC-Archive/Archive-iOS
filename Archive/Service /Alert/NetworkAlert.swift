@@ -18,4 +18,18 @@ class NetworkAlert {
         alert.addAction(alertAction)
         return alert
     }
+
+    func getRetryAlertController(title: String, description: String = "에러", retryAction: @escaping () -> Void) -> UIAlertController {
+        let alert = UIAlertController(title: title, message: description, preferredStyle: .alert)
+        
+        let confirmAction = UIAlertAction(title: "확인", style: .default)
+        let retryAction = UIAlertAction(title: "재시도", style: .default) { _ in
+            retryAction() // 재시도 동작 실행
+        }
+        
+        alert.addAction(confirmAction)
+        alert.addAction(retryAction)
+        
+        return alert
+    }
 }

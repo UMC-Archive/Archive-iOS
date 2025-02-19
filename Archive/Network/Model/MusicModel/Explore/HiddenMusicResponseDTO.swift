@@ -21,6 +21,15 @@ public struct HiddenMusicResponse: Decodable, Hashable {
     let image: String
     let music: String
     
+    init(id: String, albumId: String, title: String, releaseTime: String, image: String, music: String) {
+        self.id = id
+        self.albumId = albumId
+        self.title = title
+        self.releaseTime = releaseTime
+        self.image = image
+        self.music = music
+    }
+    
     enum CodingKeys: CodingKey {
         case id
         case albumId
@@ -38,5 +47,12 @@ public struct HiddenMusicResponse: Decodable, Hashable {
         self.releaseTime = try container.decode(String.self, forKey: .releaseTime)
         self.image = try container.decode(String.self, forKey: .image)
         self.music = try container.decode(String.self, forKey: .music)
+    }
+}
+
+
+extension HiddenMusicResponse {
+    static func loadingData() -> HiddenMusicResponse {
+        return HiddenMusicResponse(id: "1", albumId: "1", title: Constant.LoadString, releaseTime: "", image: Constant.LoadingImageURL, music: Constant.LoadString)
     }
 }
