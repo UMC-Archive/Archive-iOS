@@ -32,6 +32,9 @@ class TabBarViewController: UITabBarController {
         setTabBarItem()
         setFloatingView()
         setAction()
+        
+        // 음악 재생 플로팅 뷰 구독
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
     }
     
     
@@ -144,4 +147,22 @@ class TabBarViewController: UITabBarController {
         self.tabBar.backgroundColor = UIColor.black_100
         self.view.backgroundColor = UIColor.black_100
     }
+    
+    // 음악이 변경될 떄마다 호출됨
+    @objc private func handleMusicChange(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let title = userInfo["title"] as? String,
+            let artist = userInfo["artist"] as? String,
+            let image = userInfo["image"] as? String,
+            let isPlaying = userInfo["isPlaying"] as? Bool
+        else {
+            print("Notification 데이터 없음")
+            return
+        }
+        
+        // 데이터 전달
+        floatingView.configure(albumImage: image, songTitle: title, artistName: artist)
+        floatingView.playingMusic(isPlaying: isPlaying)
+    }
+
 }

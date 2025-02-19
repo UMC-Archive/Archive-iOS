@@ -17,10 +17,32 @@ class MusicSegmentVC: UIViewController {
     var musicTitle: String?
        var artistName: String?
     
-    init(segmentIndexNum: Int, lyrics: [String]?) {
+    init(segmentIndexNum: Int, lyrics: [String]?, nextTracks: [SelectionResponseDTO]) {
         self.segmentIndexNum = segmentIndexNum
         self.lyrics = lyrics
+        self.nextTracks = nextTracks.isEmpty ? Constant.NextTrackLoadingData : nextTracks
         super.init(nibName: nil, bundle: nil)
+        
+        fetchRecommendAlbums()
+        fetchRecommendMusic()
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
+        setupSegmentActions()
+        setupCollectionView()
+
+        // 초기 언더바
+        // 언더바 초기 위치 설정 로직도 segmentChanged()와 똑같이
+        
+        
+//        fetchNextTracks()
+        
+//        if segmentIndexNum == 1 {
+//               fetchLyrics()
+//           }
+        
+        print(segmentIndexNum)
+        //   preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        segmentView.rightButton.addTarget(self,action : #selector(rightButtonTapped), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -40,36 +62,19 @@ class MusicSegmentVC: UIViewController {
     override func loadView() {
         self.view = segmentView
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
+        setupInitialView(index: segmentIndexNum)
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
-        setupSegmentActions()
-        setupCollectionView()
-        segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
-        setupInitialView(index: segmentIndexNum)
-        // 초기 언더바
-        // 언더바 초기 위치 설정 로직도 segmentChanged()와 똑같이
-        
-        
-        fetchNextTracks()
-        
-//        if segmentIndexNum == 1 {
-//               fetchLyrics()
-//           }
-        
-        print(segmentIndexNum)
-        //   preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
-        segmentView.rightButton.addTarget(self,action : #selector(rightButtonTapped), for: .touchUpInside)
-        
-        self.view.layoutIfNeeded()
-        
     }
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        fetchRecommendAlbums()
-        fetchRecommendMusic()
-    }
+
 
 
     // 오른쪽 버튼 눌렀을 때 앨범 추천으로 가게
@@ -183,19 +188,22 @@ class MusicSegmentVC: UIViewController {
                 self?.lyrics = ["가사를 불러오지 못했습니다."]
             }
 
-            DispatchQueue.main.async {
-                self?.segmentView.lyricsCollectionView.reloadData()
-            }
+            self?.segmentView.lyricsCollectionView.reloadData()
         }
     }
     @objc private func handleMusicChange(_ notification: Notification) {
         guard let userInfo = notification.userInfo,
               let title = userInfo["title"] as? String,
               let artist = userInfo["artist"] as? String,
-              let lyrics = userInfo["lyrics"] as? String else {
+              let lyrics = userInfo["lyrics"] as? String,
+              let image = userInfo["image"] as? String,
+              let isPlaying = userInfo["isPlaying"] as? Bool
+        else {
             print("Notification 데이터 부족")
             return
         }
+        
+        self.segmentView.configFloatingView(title: title, artist: artist, image: image, isPlaying: isPlaying)
 
         // 현재 음악 제목, 아티스트 업데이트
         self.musicTitle = title
@@ -204,30 +212,32 @@ class MusicSegmentVC: UIViewController {
         // 가사 파싱해서 업데이트
         self.lyrics = lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
 
+        self.segmentView.lyricsCollectionView.reloadData()
+        
         // 만약 가사 탭이 열려있는 상태(segmentIndexNum == 1)이면 바로 갱신
-        if segmentIndexNum == 1 || segmentView.tabBar.selectedSegmentIndex == 1 {
-            DispatchQueue.main.async {
-                self.segmentView.lyricsCollectionView.reloadData()
-            }
-        }
+//        if segmentIndexNum == 1 || segmentView.tabBar.selectedSegmentIndex == 1 {
+//            DispatchQueue.main.async {
+//                self.segmentView.lyricsCollectionView.reloadData()
+//            }
+//        }
     }
 
 
 // 트랙 가져오는 api
-    private func fetchNextTracks() {
-        musicService.selection { [weak self] result in
-            switch result {
-            case .success(let response):
-                guard let data = response else { return }
-                self?.nextTracks = data
-                DispatchQueue.main.async {
-                    self?.segmentView.nextTrackCollectionView.reloadData()
-                }
-            case .failure(let error):
-                print("다음 트랙 에러: \(error)")
-            }
-        }
-    }
+//    private func fetchNextTracks() {
+//        musicService.selection { [weak self] result in
+//            switch result {
+//            case .success(let response):
+//                guard let data = response else { return }
+//                self?.nextTracks = data
+//                DispatchQueue.main.async {
+//                    self?.segmentView.nextTrackCollectionView.reloadData()
+//                }
+//            case .failure(let error):
+//                print("다음 트랙 에러: \(error)")
+//            }
+//        }
+//    }
 // 앨범 추천 
     private func fetchRecommendAlbums() {
         albumService.albumRecommendAlbum { [weak self] result in
@@ -235,9 +245,7 @@ class MusicSegmentVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.recommendAlbums = data
-                DispatchQueue.main.async {
-                    self?.segmentView.albumCollectionView.reloadData()
-                }
+                self?.segmentView.albumCollectionView.reloadData()
             case .failure(let error):
                 print("추천 앨범 에러: \(error)")
             }
@@ -250,9 +258,7 @@ class MusicSegmentVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.recommendMusic = data
-                DispatchQueue.main.async {
-                    self?.segmentView.albumRecommendCollectionView.reloadData()
-                }
+                self?.segmentView.albumRecommendCollectionView.reloadData()
             case .failure(let error):
                 print("추천 음악 에러: \(error)")
                 if retryCount < 3 {
@@ -771,6 +777,11 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
+    }
+    
+    // 다음트랙 받아오기
+    public func setNextTracks(nextTracks: [SelectionResponseDTO]) {
+        self.nextTracks = nextTracks
     }
 }
 extension UIView {

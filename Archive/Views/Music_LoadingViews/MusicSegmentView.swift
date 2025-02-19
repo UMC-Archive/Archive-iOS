@@ -172,5 +172,11 @@ class MusicSegmentView: UIView {
             make.height.equalTo(200)
         }
     }
+    
+    
+    public func configFloatingView(title: String, artist: String, image: String, isPlaying: Bool){
+        self.albumInfoView.configure(albumImage: image, songTitle: title, artistName: artist)
+        self.albumInfoView.playingMusic(isPlaying: isPlaying)
+    }
 }
 

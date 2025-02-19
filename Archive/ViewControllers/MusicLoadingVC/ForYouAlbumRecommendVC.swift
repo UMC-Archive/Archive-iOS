@@ -46,8 +46,9 @@ private func setupCollectionView(){
 
     @objc private func leftButtonTapped(){
         print("눌림!")
-        let moveVC = MusicSegmentVC(segmentIndexNum: 3, lyrics: nil)
-        navigationController?.pushViewController(moveVC,animated: true)
+//        let moveVC = MusicSegmentVC(segmentIndexNum: 3, lyrics: nil, nextTracks: <#[SelectionResponseDTO]#>)
+//        navigationController?.pushViewController(moveVC,animated: true)
+        self.navigationController?.popViewController(animated: true)
     }
     private func setupActions(){
         
