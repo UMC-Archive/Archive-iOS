@@ -17,15 +17,22 @@ class MusicLoadVC: UIViewController {
     public var musicInfo : MusicResponseDTO?
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
+
+
+
+    let libraryService = LibraryService()
+
+    private var playerItemObserver: Any?
+
+
     
     private var musicSegmentVC: MusicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: [])
     private var music: String
     private var artist: String
-    let libraryService = LibraryService()
-    private var playerItemObserver: Any?    // playerItemObserver가 있어야 시간 흐르는걸 인식함
     
     // 초기 반복재생 버튼 상태
     private var repeatState: MusicLoadView.RepeatState = .RepeatAll
+
     
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
@@ -387,6 +394,7 @@ class MusicLoadVC: UIViewController {
            )
     }
     
+
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {

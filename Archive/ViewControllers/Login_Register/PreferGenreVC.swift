@@ -28,7 +28,8 @@ class PreferGenreVC: UIViewController {
     private func updateNextButtonState() {
         let isEnabled = selectedGenres.count >= 3
         
-        preferGenreView.updateNextButtonState(isEnabled: isEnabled)}
+        preferGenreView.nextButton.isEnabled = true
+    }
     @objc private func leftButtonTapped(){
         print("눌림!")
         let moveVC = ProfileSelectVC()
@@ -71,7 +72,7 @@ class PreferGenreVC: UIViewController {
         let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
         let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
         alert.addAction(okAction)
-        present(alert, animated: true)
+        self.present(alert, animated: true, completion: nil)
     }
 
     @objc private func handleNext() {

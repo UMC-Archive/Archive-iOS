@@ -12,23 +12,20 @@ import Moya
 // 라이브러리 : Moya, KeychainSwift 사용
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
-
-
-//
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTk3NTE1MywiZXhwIjoxNzM5OTg5NTUzfQ.eqhTCk-L66kSXCgnm1_3SAaPaKFy36C2buSH_eP8pQA"
-
-//        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
+       return KeychainService.shared.load(account: .token, service: .serverAccessToken)
 
     }
     
-    func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
-        var request = request
-        
-        // 만약 accessToken이 있다면 Authorization 헤더에 추가합니다.
-        if let token = accessToken {
-            request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+  
+        func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
+            var request = request
+            
+            // 만약 accessToken이 있다면 Authorization 헤더에 추가합니다.
+            if let token = accessToken {
+                request.addValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            }
+            return request
         }
-        return request
-    }
+        
     
 }
