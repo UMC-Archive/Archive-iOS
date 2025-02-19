@@ -212,7 +212,7 @@ class MusicLoadVC: UIViewController {
         musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
         // 앨범 으로 이동 제스처
         let GoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
-        GoToLibraryGesture.musicId = musicInfo?.id
+        GoToLibraryGesture.musicId = musicInfo?.music.id
 
         self.musicLoadView.titleIcon.isUserInteractionEnabled = true
         self.musicLoadView.titleIcon.addGestureRecognizer(GoToLibraryGesture)
@@ -319,7 +319,7 @@ class MusicLoadVC: UIViewController {
     // 초기 반복재생 버튼 상태
     private var repeatState: MusicLoadView.RepeatState = .RepeatAll
    // layItemObserver가 있어야 시간 흐르는걸 인식함
-    private var playerItemObserver: Any?
+    
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {
