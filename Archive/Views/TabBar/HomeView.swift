@@ -58,7 +58,7 @@ class HomeView: UIView {
             make.top.equalTo(topView.snp.bottom).offset(40)
             make.leading.equalToSuperview().offset(20)
             make.trailing.equalToSuperview()
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(FloatingViewHeight)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(Constant.FloatingViewHeight)
         }
     }
     

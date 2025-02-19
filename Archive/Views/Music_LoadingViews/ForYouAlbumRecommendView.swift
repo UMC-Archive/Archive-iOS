@@ -63,7 +63,7 @@ class ForYouAlbumRecommendView : UIView {
         }
         ForYouRecommendAlbumCollectionView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel).offset(30)
-            make.bottom.equalToSuperview().offset(FloatingViewHeight)
+            make.bottom.equalToSuperview().offset(Constant.FloatingViewHeight)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()
         }

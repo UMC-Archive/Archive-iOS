@@ -60,7 +60,7 @@ class RecapCollectionViewView: UIView {
         }
         collectionView.snp.makeConstraints{
             $0.top.equalTo(navigationView.snp.bottom).offset(30)
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
             $0.width.equalTo(337)
             $0.leading.equalToSuperview().offset(19)
         }

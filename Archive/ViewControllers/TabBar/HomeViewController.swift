@@ -16,8 +16,6 @@ class HomeViewController: UIViewController {
 
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let musicData = MusicDummyModel.dummy()
-    private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
     
     private var archiveData: [(AlbumRecommendAlbum, String)] = Constant.ArchiveLoadingData // 당신을 위한 아카이브

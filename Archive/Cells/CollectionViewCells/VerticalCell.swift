@@ -123,12 +123,6 @@ class VerticalCell: UICollectionViewCell {
         }
     }
     
-    public func config(data: MusicDummyModel){
-        imageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = data.musicTitle
-        artistYearLabel.text = "\(data.artist) ⦁ \(data.year)"
-    }
-    
     // 숨겨진 명곡
     public func configHiddenMusic(music: HiddenMusicResponse, artist: String){
         imageView.kf.setImage(with: URL(string: music.image))
