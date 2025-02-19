@@ -26,7 +26,7 @@ class MusicLoadVC: UIViewController {
 
 
     
-    private var musicSegmentVC: MusicSegmentVC?
+    private var musicSegmentVC: MusicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: [])
     private var music: String
     private var artist: String
     
@@ -107,6 +107,10 @@ class MusicLoadVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.nextTracks = data
+                
+                let lyrics = self?.musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+                self?.musicSegmentVC.setInfo(segmentIndex: 1, lyrics: lyrics, nextTracks: data)
+            
 //                DispatchQueue.main.async {
 //                    
 //                    print("성공")
@@ -254,7 +258,8 @@ class MusicLoadVC: UIViewController {
     }
     // 라이브러리로 이동 액션
     @objc private func goToLibrary(_ sender: CustomTapGesture) {
-        guard let musicId = sender.musicId else { return }
+//        guard let musicId = sender.musicId else { return }
+        guard let musicId = musicInfo?.music.id else { return }
         postAddMusicInLibary(musicId: musicId)
 
     }
@@ -264,9 +269,9 @@ class MusicLoadVC: UIViewController {
             guard let self = self else { return }
             
             switch result {
-            case .success(let response):
-                break
-                print("보관함 이동 성공입니당")
+            case .success:
+                let alert = LibraryAlert.shared.getAlertController(type: .music)
+                self.present(alert, animated: true)
                 // 성공 alert 띄우기
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -283,32 +288,40 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc public func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
-        self.musicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
-        nextTrackVC.segmentIndexNum = 0
-        present(nextTrackVC, animated: true)
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+//        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: lyrics, nextTracks: self.nextTracks)
+//        nextTrackVC.segmentIndexNum = 0
+//        present(nextTrackVC, animated: true)
+        musicSegmentVC.setInfo(segmentIndex: 0, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
+        present(nextVC,animated: true)
     }
-    private var lyricsVC: MusicSegmentVC?
+//    private var lyricsVC: MusicSegmentVC?
 
     @objc private func goToLyrics() {
-        if let lyricsVC = lyricsVC {
-            lyricsVC.segmentIndexNum = 1
-            present(lyricsVC, animated: true)
-        } else {
-            guard let currentTrack = musicInfo else { return }
-            
-            let newLyricsVC = MusicSegmentVC(
-                segmentIndexNum: 1,
-//                musicTitle: currentTrack.title,
-//                artistName: currentTrack.id
-                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
-
-            )
-            
-            lyricsVC = newLyricsVC // 생성된 거 저장해두기
-            present(newLyricsVC, animated: true)
-        }
+//        if let lyricsVC = lyricsVC {
+//            lyricsVC.segmentIndexNum = 1
+//            present(lyricsVC, animated: true)
+//        } else {
+//            guard let currentTrack = musicInfo else { return }
+//            
+//            let newLyricsVC = MusicSegmentVC(
+//                segmentIndexNum: 1,
+////                musicTitle: currentTrack.title,
+////                artistName: currentTrack.id
+//                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
+//
+//            )
+//            
+//            lyricsVC = newLyricsVC // 생성된 거 저장해두기
+//            present(newLyricsVC, animated: true)
+        
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+        musicSegmentVC.setInfo(segmentIndex: 1, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
+        present(nextVC,animated: true)
     }
+    
 
     // 가사 화면으로 이동
 //    @objc private func goToLyrics() {
@@ -324,9 +337,16 @@ class MusicLoadVC: UIViewController {
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil, nextTracks: self.nextTracks)
-        recommendVC.segmentIndexNum = 2
-        let nextVC = UINavigationController(rootViewController: recommendVC)
+//        guard let musicInfo = musicInfo else { return }
+//        let lyrics = musicInfo.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+//        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: lyrics, nextTracks: self.nextTracks)
+//        recommendVC.segmentIndexNum = 2
+//        let nextVC = UINavigationController(rootViewController: recommendVC)
+//        present(nextVC,animated: true)
+        
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+        musicSegmentVC.setInfo(segmentIndex: 2, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
         present(nextVC,animated: true)
     }
 
@@ -375,9 +395,6 @@ class MusicLoadVC: UIViewController {
     }
     
 
-    // 초기 반복재생 버튼 상태
-   // layItemObserver가 있어야 시간 흐르는걸 인식함
-    
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {
@@ -402,6 +419,8 @@ class MusicLoadVC: UIViewController {
     }
     
     @objc private func trackDidFinishPlaying() {
+        print("trackDidFinishPlaying 호출")
+        musicLoadView.updatePlayButton(isPlaying: false)
         switch repeatState {
         case .RepeatAll:
             playNextTrack() // 다음 곡 재생

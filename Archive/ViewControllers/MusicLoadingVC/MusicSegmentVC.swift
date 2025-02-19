@@ -11,8 +11,10 @@ class MusicSegmentVC: UIViewController {
 
     private var lyrics: [String]?
     private var nextTracks: [SelectionResponseDTO]?
-    public var recommendAlbums: [AlbumRecommendAlbumResponseDTO]?
-    private var recommendMusic: [RecommendMusicResponseDTO]?
+    public var recommendAlbums: [AlbumRecommendAlbumResponseDTO] = [AlbumRecommendAlbumResponseDTO(album: AlbumRecommendAlbum.loadingData(), artist: Constant.LoadString)]
+    private var recommendMusic: [RecommendMusicResponseDTO] = [
+        RecommendMusicResponseDTO(music: RecommendMusic.loadingData(), album: RecommendAlbum.loadingData(), artist: Constant.LoadString)
+    ]
 
     var musicTitle: String?
        var artistName: String?
@@ -29,6 +31,7 @@ class MusicSegmentVC: UIViewController {
         NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
         setupSegmentActions()
         setupCollectionView()
+        setGesture()
 
         // 초기 언더바
         // 언더바 초기 위치 설정 로직도 segmentChanged()와 똑같이
@@ -43,6 +46,8 @@ class MusicSegmentVC: UIViewController {
         print(segmentIndexNum)
         //   preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
         segmentView.rightButton.addTarget(self,action : #selector(rightButtonTapped), for: .touchUpInside)
+        segmentView.albumInfoView.playButton.addTarget(self, action: #selector(touchUpInsidePlayButton), for: .touchUpInside)
+        segmentView.albumInfoView.overlappingSquaresButton.addTarget(self, action: #selector(touchUpInsideLibraryButton), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -65,9 +70,15 @@ class MusicSegmentVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
 
         segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
         setupInitialView(index: segmentIndexNum)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.segmentIndexNum = segmentView.tabBar.selectedSegmentIndex
     }
     
 
@@ -79,12 +90,9 @@ class MusicSegmentVC: UIViewController {
 
     // 오른쪽 버튼 눌렀을 때 앨범 추천으로 가게
     @objc func rightButtonTapped() {
-        print("눌림!")
-        
-        guard let albums = recommendAlbums else {print("눌림!hjhkjj")
-            return }
-        print("albums: \(albums)")
-        let secondVC = ForYouAlbumRecommendVC(recommendMusic: albums)
+
+        if recommendAlbums.count == 1 { return }
+        let secondVC = ForYouAlbumRecommendVC(recommendAlbum: recommendAlbums)
         navigationController?.pushViewController(secondVC, animated: true)
 
     }
@@ -112,7 +120,7 @@ class MusicSegmentVC: UIViewController {
     }
 
     @objc private func segmentChanged() {
-        var index = segmentView.tabBar.selectedSegmentIndex
+        let index = segmentView.tabBar.selectedSegmentIndex
 
         let underbarWidth = segmentView.tabBar.frame.width / 3
         let newLeading = CGFloat(index) * underbarWidth
@@ -133,7 +141,8 @@ class MusicSegmentVC: UIViewController {
 
 // 어떤 컬렉션 뷰 보여줄지
     private func setupInitialView(index: Int) {
-        var index = index
+        self.segmentView.layoutIfNeeded()
+        let index = index
         switch index {
         case 0:
             segmentView.nextTrackCollectionView.isHidden = false
@@ -245,7 +254,7 @@ class MusicSegmentVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.recommendAlbums = data
-                self?.segmentView.albumCollectionView.reloadData()
+                self?.segmentView.albumRecommendCollectionView.reloadData()
             case .failure(let error):
                 print("추천 앨범 에러: \(error)")
             }
@@ -258,7 +267,7 @@ class MusicSegmentVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.recommendMusic = data
-                self?.segmentView.albumRecommendCollectionView.reloadData()
+                self?.segmentView.albumCollectionView.reloadData()
             case .failure(let error):
                 print("추천 음악 에러: \(error)")
                 if retryCount < 3 {
@@ -273,402 +282,181 @@ class MusicSegmentVC: UIViewController {
             }
         }
     
+    // 다음트랙 받아오기
+    public func setInfo(segmentIndex: Int, lyrics: [String]?, nextTracks: [SelectionResponseDTO]) {
+        self.segmentIndexNum = segmentIndex
+        self.lyrics = lyrics
+        self.nextTracks = nextTracks.isEmpty ? Constant.NextTrackLoadingData : nextTracks
+        
+        self.segmentView.nextTrackCollectionView.reloadData()
+        self.segmentView.lyricsCollectionView.reloadData()
+        segmentChanged()
     }
+    
+    // 뮤직 아이디 받아오기
+    private func fetchMusicId() {
+        guard let music = musicTitle else { return }
+        musicService.allInfo(music: music) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let musicId = response.music.info.id else { return }
+                self.postAddMusicInLibary(musicId: musicId)
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 노래 재생 / 정지 버튼
+    @objc private func touchUpInsidePlayButton() {
+        (self.presentingViewController as? MusicLoadVC)?.playPauseMusic()
+    }
+    
+    // 라이브러리 저장 버튼
+    @objc private func touchUpInsideLibraryButton() {
+        fetchMusicId()
+    }
+}
 
 
 extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
-
+    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         if collectionView == segmentView.nextTrackCollectionView {
             return nextTracks?.count ?? 0
         } else if collectionView == segmentView.lyricsCollectionView {
             return lyrics?.count ?? 0
         } else if collectionView == segmentView.albumCollectionView {
-            return recommendAlbums?.count ?? 0
+            return recommendMusic.count
         } else if collectionView == segmentView.albumRecommendCollectionView {
-            return recommendMusic?.count ?? 0
+            return recommendAlbums.count
         }
         return 0
     }
-
+    
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        if collectionView == segmentView.nextTrackCollectionView || collectionView == segmentView.albumCollectionView {
+        switch collectionView {
+        case segmentView.nextTrackCollectionView: // 다음 트랙
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackCell.identifier, for: indexPath) as? TrackCell else {
-                fatalError("TrackCell 에러")
+                return UICollectionViewCell()
             }
-            if collectionView == segmentView.nextTrackCollectionView {
-                guard let trackData = nextTracks?[indexPath.item] else { return cell }
-                cell.configure(dto: trackData)
-                
-                // 노래 재생 제스처
-                let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
-                musicGesture.musicTitle = trackData.music.title
-                musicGesture.musicId = trackData.music.id
-                musicGesture.musicImageURL = trackData.music.image
-                musicGesture.artist = trackData.artist
-                cell.touchView.addGestureRecognizer(musicGesture)
-                cell.touchView.isUserInteractionEnabled = true
-                
-                // 아티스트 탭 제스처
-                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = trackData.artist
-                tapArtistGesture.album = trackData.album.title
-                cell.detailLabel.addGestureRecognizer(tapArtistGesture)
-                cell.detailLabel.isUserInteractionEnabled = true
-
-                // 앨범 으로 이동 제스처
-                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                tapAlbumGesture.artist = trackData.artist
-                tapAlbumGesture.album = trackData.music.albumId
-                cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
-                cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
-                
-                // etc 버튼 눌렀을 때의 제스처
-                let songEtcTapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpInsideOverflowButton(_:)))
-                cell.moreButton.addGestureRecognizer(songEtcTapGesture)
-                songEtcTapGesture.delegate = self
-                cell.moreButton.isUserInteractionEnabled = true
-                cell.setOverflowView(type: .inLibrary)
-                
-              
-                
-                
-            } else {
-                guard let trackData = recommendMusic?[indexPath.item] else { return cell }
-                cell.configure(dto: trackData)
-                
-                // 노래 재생 제스처
-                let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
-                musicGesture.musicTitle = trackData.album.title
-                musicGesture.musicId = trackData.music.id
-                musicGesture.musicImageURL = trackData.music.image
-                musicGesture.artist = trackData.artist
-                cell.titleLabel.addGestureRecognizer(musicGesture)
-                cell.albumImageView.addGestureRecognizer(musicGesture)
-                
-                // 아티스트 탭 제스처
-                let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = trackData.artist
-                tapArtistGesture.album = trackData.album.title
-                cell.detailLabel.addGestureRecognizer(tapArtistGesture)
-                cell.detailLabel.isUserInteractionEnabled = true
-
-                // 앨범 으로 이동 제스처
-                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                tapAlbumGesture.artist = trackData.artist
-                tapAlbumGesture.album = trackData.music.albumId
-                cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
-                cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
-                
-                // etc 버튼 눌렀을 때의 제스처
-                let songEtcTapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpInsideOverflowButton(_:)))
-                cell.moreButton.addGestureRecognizer(songEtcTapGesture)
-                songEtcTapGesture.delegate = self
-                cell.moreButton.isUserInteractionEnabled = true
-                cell.setOverflowView(type: .inLibrary)
-                
-              
-                
-            }
-
-            return cell
-
-        } else if collectionView == segmentView.lyricsCollectionView {
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LyricsCell.identifier, for: indexPath) as? LyricsCell else {
-                fatalError("LyricsCell 에러")
-            }
-            let isHighlighted = indexPath.item == (lyrics?.count ?? 0) / 2
-            cell.configure(text: lyrics?[indexPath.item] ?? "", isHighlighted: isHighlighted)
-            return cell
-
-        }
-        else if collectionView == segmentView.albumCollectionView {
-            // 앨범 추천 - 세로 스크롤
-            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackCell.identifier, for: indexPath) as? TrackCell else {
-                fatalError("AlbumCell 에러")
-            }
-            guard let recommendMusic = recommendMusic?[indexPath.item] else { return cell }
-            cell.configure(dto: recommendMusic)
+            guard let trackData = nextTracks?[indexPath.row] else { return cell }
+            cell.configure(dto: trackData)
 
             // 노래 재생 제스처
             let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
-            musicGesture.musicTitle = recommendMusic.music.title
-            musicGesture.musicId = recommendMusic.music.id
-            musicGesture.musicImageURL = recommendMusic.music.image
-            musicGesture.artist = recommendMusic.artist
-            cell.albumImageView.addGestureRecognizer(musicGesture)
-            cell.albumImageView.isUserInteractionEnabled = true
+            musicGesture.musicTitle = trackData.music.title
+            musicGesture.musicId = trackData.music.id
+            musicGesture.musicImageURL = trackData.music.image
+            musicGesture.artist = trackData.artist
+            cell.touchView.addGestureRecognizer(musicGesture)
+            cell.touchView.isUserInteractionEnabled = nextTracks?.count != 1
 
             // 아티스트 탭 제스처
             let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-            tapArtistGesture.artist = recommendMusic.artist
-            tapArtistGesture.album = recommendMusic.album.title
+            tapArtistGesture.artist = trackData.artist
+            tapArtistGesture.album = trackData.album.title
+            cell.detailLabel.addGestureRecognizer(tapArtistGesture)
+            cell.detailLabel.isUserInteractionEnabled = nextTracks?.count != 1
+
+            // 앨범 으로 이동 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = trackData.artist
+            tapAlbumGesture.album = trackData.album.title
+            cell.overflowView.goToAlbumButton.isUserInteractionEnabled = nextTracks?.count != 1
+            cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+
+            // etc 버튼 눌렀을 때의 제스처
+            cell.moreButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+            cell.moreButton.isUserInteractionEnabled = nextTracks?.count != 1
+            cell.setOverflowView(type: .other)
+            
+            // 노래 보관함으로 이동 탭 제스처
+            let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+            tapGoToLibraryGesture.musicId = trackData.music.id
+            cell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
+            
+            
+            return cell
+        case segmentView.lyricsCollectionView: // 가사
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: LyricsCell.identifier, for: indexPath) as? LyricsCell else {
+                fatalError("LyricsCell 에러")
+            }
+            let isHighlighted = indexPath.row == (lyrics?.count ?? 0) / 2
+            cell.configure(text: lyrics?[indexPath.row] ?? "", isHighlighted: isHighlighted)
+            return cell
+        case segmentView.albumCollectionView: // 추천 노래
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackCell.identifier, for: indexPath) as? TrackCell else {
+                return UICollectionViewCell()
+            }
+            let trackData = recommendMusic[indexPath.row]
+            cell.configure(dto: trackData)
+
+            // 노래 재생 제스처
+            let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+            musicGesture.musicTitle = trackData.music.title
+            musicGesture.musicId = trackData.music.id
+            musicGesture.musicImageURL = trackData.music.image
+            musicGesture.artist = trackData.artist
+            cell.touchView.addGestureRecognizer(musicGesture)
+            cell.touchView.isUserInteractionEnabled = true
+
+            // 아티스트 탭 제스처
+            let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+            tapArtistGesture.artist = trackData.artist
+            tapArtistGesture.album = trackData.album.title
             cell.detailLabel.addGestureRecognizer(tapArtistGesture)
             cell.detailLabel.isUserInteractionEnabled = true
 
-            return cell
+            // 앨범 으로 이동 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = trackData.artist
+            tapAlbumGesture.album = trackData.album.title
+            cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+            cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
 
-        } else if collectionView == segmentView.albumRecommendCollectionView {
+            // etc 버튼 눌렀을 때의 제스처
+            cell.moreButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+            cell.moreButton.isUserInteractionEnabled = recommendMusic.count != 1
+            cell.setOverflowView(type: .other)
+            
+            // 노래 보관함으로 이동 탭 제스처
+            let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+            tapGoToLibraryGesture.musicId = trackData.music.id
+            cell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
+            
+
+            
+            return cell
+        case segmentView.albumRecommendCollectionView: // 엘범 추천
             // 앨범 추천 - 가로 스크롤
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumCell.identifier, for: indexPath) as? AlbumCell else {
                 fatalError("AlbumCell 에러")
             }
-            guard let recommendAlbums = recommendAlbums?[indexPath.item] else { return cell }
+            let recommendAlbums = recommendAlbums[indexPath.row]
             cell.configure(dto: recommendAlbums)
-
-            // 앨범 선택 제스처
-            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-            tapAlbumGesture.artist = recommendAlbums.artist
-            tapAlbumGesture.album = recommendAlbums.album.title
-            cell.albumImageView.addGestureRecognizer(tapAlbumGesture)
-            cell.albumImageView.isUserInteractionEnabled = true
-
-            // 아티스트 선택 제스처
+            
+            // 아티스트 탭 제스처
             let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
             tapArtistGesture.artist = recommendAlbums.artist
             tapArtistGesture.album = recommendAlbums.album.title
             cell.artistLabel.addGestureRecognizer(tapArtistGesture)
             cell.artistLabel.isUserInteractionEnabled = true
 
+            // 앨범 으로 이동 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = recommendAlbums.artist
+            tapAlbumGesture.album = recommendAlbums.album.title
+            cell.albumImageView.isUserInteractionEnabled = true
+            cell.albumImageView.addGestureRecognizer(tapAlbumGesture)
             return cell
-        }
-
-            
-       
-
-        return UICollectionViewCell()
-    }
-}
-
-class TrackCell: UICollectionViewCell {
-    static let identifier = "TrackCell"
-    
-    public let albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
-        imageView.image = UIImage(named: "placeholder") // 기본 이미지
-        imageView.isUserInteractionEnabled = true
-        return imageView
-    }()
-    
-    public let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        label.textColor = .white
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let detailLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .gray
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let moreButton : UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named :  "etc"), for: .normal)
-        button.tintColor = .white
-        return button
-    }()
-    
-    // 더보기 뷰
-    public let overflowView = OverflowView().then { view in
-        view.isHidden = true
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .black
-        setupViews()
-        setupConstraints()
-        // 버튼 눌릴 시 타게팅
-      
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    public let touchView = UIView()
-    
-    private func setupViews() {
-        
-        contentView.addSubview(albumImageView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(touchView)
-        contentView.addSubview(detailLabel)
-        contentView.addSubview(moreButton)
-        contentView.addSubview(overflowView)
-    }
-    
-    private func setupConstraints() {
-        // 앨범 이미지
-        albumImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(10)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(50)
-        }
-        
-        // 제목
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(albumImageView.snp.trailing).offset(12)
-            make.top.equalTo(albumImageView.snp.top).offset(2)
-            make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
-        }
-        touchView.snp.makeConstraints{
-            $0.leading.equalTo(albumImageView.snp.leading)
-            $0.trailing.equalTo(moreButton.snp.leading)
-            $0.height.equalToSuperview()
-        }
-        
-        // 아티스트와 연도
-        detailLabel.snp.makeConstraints { make in
-            make.leading.equalTo(albumImageView.snp.trailing).offset(12)
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
-        }
-        
-        // 점 세 개 버튼
-        moreButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-10)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(24)
-        }
-        overflowView.snp.makeConstraints { make in
-            make.width.equalTo(97)
-            make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
-            make.centerY.equalToSuperview()
-            make.trailing.equalTo(moreButton).offset(-7)
-        }
-
-    }
-    
-    public func setOverflowView(type: OverflowType){
-        overflowView.setType(type: type)
-        switch type {
-        case .inAlbum:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(26)
-            }
-//        case .inLibrary:
-//            overflowView.snp.updateConstraints { make in
-//                make.height.equalTo(26)
-//            }
         default:
-            return
+            return UICollectionViewCell()
         }
     }
-    
-    func configure(dto: SelectionResponseDTO) {
-        titleLabel.text = dto.music.title
-        detailLabel.text = "\(dto.artist) · \(dto.music.releaseTime.prefixBeforeDash())"
-        albumImageView.kf.setImage(with: URL(string: dto.music.image))
-    }
-
-    func configure(dto: RecommendMusicResponseDTO) {
-        titleLabel.text = dto.music.title
-        detailLabel.text = "\(dto.artist) · \(dto.album.releaseTime.prefixBeforeDash())"
-        albumImageView.kf.setImage(with: URL(string: dto.album.image))
-    }
-
-
 }
-
-
-
-class AlbumCell: UICollectionViewCell {
-    static let identifier = "AlbumCell"
-    
-    public let albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.isUserInteractionEnabled = true
-        return imageView
-    }()
-    
-    public let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .white
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let artistLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .gray
-        label.textAlignment = .center
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        setupViews()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-   
-    
-    private func setupViews() {
-        contentView.addSubview(albumImageView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(artistLabel)
-    }
-    
-    private func setupConstraints() {
-        albumImageView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        artistLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            // 앨범 이미지
-            albumImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            albumImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            albumImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            albumImageView.heightAnchor.constraint(equalTo: albumImageView.widthAnchor), // 정사각형
-            
-            // 제목
-            titleLabel.topAnchor.constraint(equalTo: albumImageView.bottomAnchor, constant: 5),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            
-            // 아티스트
-            artistLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 3),
-            artistLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            artistLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            artistLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor)
-        ])
-    }
-    
-    func configure(dto: AlbumRecommendAlbumResponseDTO) {
-        let album = dto.album
-        titleLabel.text = album.title
-        titleLabel.lineBreakMode = .byTruncatingTail // 말줄임표 설정
-          titleLabel.numberOfLines = 1 // 한 줄만 표시
-
-        artistLabel.text = dto.artist
-        albumImageView.kf.setImage(with: URL(string: album.image))
-    }
-
-
-}
-
-
 
 // 제스처 함수 - Extension
 extension MusicSegmentVC: UIGestureRecognizerDelegate  {
@@ -761,14 +549,17 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
         guard let album = sender.album, let artist = sender.artist else { return }
         
         // 최상위 모달을 dismiss 후
-        self.view.window?.rootViewController?.dismiss(animated: false, completion: {
-            // dismiss가 완료된 후 presentingViewController에서 navigationController를 참조
-            if let navigationController = self.presentingViewController?.navigationController {
-                let nextVC = ArtistViewController(artist: artist, album: album)
-                navigationController.pushViewController(nextVC, animated: true)
-            }
-        })
+//        self.view.window?.rootViewController?.dismiss(animated: false, completion: {
+//            // dismiss가 완료된 후 presentingViewController에서 navigationController를 참조
+//            let nextVC = ArtistViewController(artist: artist, album: album)
+//            if let navigationController = self.presentingViewController?.navigationController {
+//                navigationController.pushViewController(nextVC, animated: true)
+//            }
+//        })
         
+        let nextVC = ArtistViewController(artist: artist, album: album)
+        self.navigationController?.pushViewController(nextVC, animated: true)
+//
         print("tapArtistLabelGesture")
     }
 
@@ -777,11 +568,6 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
-    }
-    
-    // 다음트랙 받아오기
-    public func setNextTracks(nextTracks: [SelectionResponseDTO]) {
-        self.nextTracks = nextTracks
     }
 }
 extension UIView {

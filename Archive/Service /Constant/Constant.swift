@@ -7,7 +7,6 @@
 
 import Foundation
 
-public let FloatingViewHeight = 66
 
 public enum Constant {
     static let FloatingViewHeight = 66 // 탭바

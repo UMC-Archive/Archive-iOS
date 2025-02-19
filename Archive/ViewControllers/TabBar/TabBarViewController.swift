@@ -26,7 +26,7 @@ class TabBarViewController: UITabBarController {
         floatingView.snp.makeConstraints { make in
             make.horizontalEdges.equalToSuperview()
             make.bottom.equalTo(tabBar.snp.top) // 탭 바 위에 배치
-            make.height.equalTo(FloatingViewHeight)
+            make.height.equalTo(Constant.FloatingViewHeight)
          }
 
         setTabBarItem()

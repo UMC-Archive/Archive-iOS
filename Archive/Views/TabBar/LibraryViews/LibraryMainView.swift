@@ -162,28 +162,28 @@ class LibraryMainView : UIView {
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
 //            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         songCollectionView.snp.makeConstraints{
 //            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
 //            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         albumCollectionView.snp.makeConstraints{
 //            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
 //            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         artistCollectionView.snp.makeConstraints{
 //            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
 //            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
     }
 }
