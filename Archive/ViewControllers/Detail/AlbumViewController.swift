@@ -103,14 +103,12 @@ class AlbumViewController: UIViewController {
     private func updateTrackViewHeight(){
         // 앨범 리스트가 4개 이하일 경우
         let musicCount = self.trackListData.count
-        print("musicCount: \(musicCount)")
         if musicCount <= 4 {
             albumView.trackView.pageControl.isHidden = true
             
             let baseHeight: CGFloat = 120 + 17 * 2 + 20
             let trackHeight: CGFloat = CGFloat(musicCount) * 50.0 + (CGFloat(musicCount - 1) * 10.0)
             let totalHeight = baseHeight + trackHeight
-            print("totalHeight \(totalHeight)")
             
             albumView.trackView.snp.updateConstraints { make in
                 make.height.equalTo(totalHeight)
@@ -145,13 +143,13 @@ class AlbumViewController: UIViewController {
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                tapAlbumGesture.artist = self.artist
+                tapAlbumGesture.artist = artist
                 tapAlbumGesture.album = album.title
                 bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = self.artist
+                tapArtistGesture.artist = artist
                 tapArtistGesture.album = album.title
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
 
@@ -164,13 +162,13 @@ class AlbumViewController: UIViewController {
                 
                 // 앨범 탭 제스처
                 let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
-                tapAlbumGesture.artist = self.artist
+                tapAlbumGesture.artist = artist
                 tapAlbumGesture.album = album.title
                 bannerCell.imageView.addGestureRecognizer(tapAlbumGesture)
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-                tapArtistGesture.artist = self.artist
+                tapArtistGesture.artist = artist
                 tapArtistGesture.album = album.title
                 bannerCell.artistLabel.addGestureRecognizer(tapArtistGesture)
                 
@@ -330,7 +328,6 @@ class AlbumViewController: UIViewController {
             guard let self = self else {return}
             switch result {
             case .success(let response):
-                print("getTrackList() 성공")
                 guard let response = response else {return}
                 self.trackListData = response.tracks
                 self.albumView.trackView.trackCollectionView.reloadData()
@@ -426,7 +423,6 @@ extension AlbumViewController: UIGestureRecognizerDelegate  {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

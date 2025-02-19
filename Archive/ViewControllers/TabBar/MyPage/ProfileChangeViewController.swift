@@ -21,11 +21,26 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname)
-        rootView.nicknameLabel.placeholder = nickname
+//        let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname)
+//        rootView.nicknameLabel.placeholder = nickname
+        
+        setProfileImage()
         
         
     }
+    
+    
+    // 프로필 이미지 설정 함수
+    private func setProfileImage() {
+        if let profileImage = KeychainService.shared.load(account: .userInfo, service: .profileImage) {
+            self.rootView.profileImage.kf.setImage(with: URL(string: profileImage))
+        }
+        
+        if let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname) {
+            rootView.nicknameLabel.text = nickname
+        }
+    }
+    
     private func controlTapped() {
         rootView.navigationView.popButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
 

@@ -67,8 +67,6 @@ class PointOfViewCell: UICollectionViewCell {
     }
     
     public func config(userHistory: UserHistoryResponseDTO, imageURL: String?) {
-        
-        print("imageURL: \(String(describing: imageURL))")
         if let imageURL = imageURL {
             albumImageView.kf.setImage(with: URL(string: imageURL))
         }

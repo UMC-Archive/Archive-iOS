@@ -28,7 +28,6 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
   
     }
     @objc private func leftButtonTapped(){
-        print("눌림!")
         let moveVC = LoginVC()
         navigationController?.pushViewController(moveVC,animated: true)
     }
@@ -51,7 +50,6 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                       case .success(let response):
                           self.registerView.errorLabel.isHidden = true
                           self.registerView.successLabel.isHidden = false
-                          print("Verification Code Sent: \(response ?? "No message")")
                           
                           if let cipherCode = response {
                               //  Keychain에 cipherCode 저장

@@ -31,7 +31,7 @@ class PreferArtistVC: UIViewController {
             DispatchQueue.main.async {
                 switch result {
                 case .success(let response):
-                    if let artists = response?.artists {
+                    if let artists = response {
                         self.allArtists = artists
                         self.preferArtistView.ArtistCollectionView.reloadData()
                     }
@@ -92,8 +92,8 @@ class PreferArtistVC: UIViewController {
         // 회원가입 API
         postSignUp()
         //  회원가입 완료 후 로그인 화면으로 이동
-        let loginVC = LoginVC()
-        navigationController?.pushViewController(loginVC, animated: true)
+//        let loginVC = LoginVC()
+//        navigationController?.pushViewController(loginVC, animated: true)
     }
     
     private func postSignUp(){
