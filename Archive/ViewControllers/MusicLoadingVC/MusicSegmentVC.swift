@@ -65,6 +65,7 @@ class MusicSegmentVC: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        self.navigationController?.navigationBar.isHidden = true
 
         segmentView.tabBar.selectedSegmentIndex = segmentIndexNum
         setupInitialView(index: segmentIndexNum)
@@ -112,7 +113,7 @@ class MusicSegmentVC: UIViewController {
     }
 
     @objc private func segmentChanged() {
-        var index = segmentView.tabBar.selectedSegmentIndex
+        let index = segmentView.tabBar.selectedSegmentIndex
 
         let underbarWidth = segmentView.tabBar.frame.width / 3
         let newLeading = CGFloat(index) * underbarWidth
@@ -133,7 +134,7 @@ class MusicSegmentVC: UIViewController {
 
 // 어떤 컬렉션 뷰 보여줄지
     private func setupInitialView(index: Int) {
-        var index = index
+        let index = index
         switch index {
         case 0:
             segmentView.nextTrackCollectionView.isHidden = false
@@ -273,7 +274,15 @@ class MusicSegmentVC: UIViewController {
             }
         }
     
+    // 다음트랙 받아오기
+    public func setInfo(segmentIndex: Int, lyrics: [String]?, nextTracks: [SelectionResponseDTO]) {
+        self.segmentIndexNum = segmentIndex
+        self.lyrics = lyrics
+        self.nextTracks = nextTracks.isEmpty ? Constant.NextTrackLoadingData : nextTracks
+        
+        segmentChanged()
     }
+}
 
 
 extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -440,236 +449,6 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
     }
 }
 
-class TrackCell: UICollectionViewCell {
-    static let identifier = "TrackCell"
-    
-    public let albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 5
-        imageView.image = UIImage(named: "placeholder") // 기본 이미지
-        imageView.isUserInteractionEnabled = true
-        return imageView
-    }()
-    
-    public let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-        label.textColor = .white
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let detailLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 13)
-        label.textColor = .gray
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let moreButton : UIButton = {
-        let button = UIButton()
-        button.setImage(UIImage(named :  "etc"), for: .normal)
-        button.tintColor = .white
-        return button
-    }()
-    
-    // 더보기 뷰
-    public let overflowView = OverflowView().then { view in
-        view.isHidden = true
-    }
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .black
-        setupViews()
-        setupConstraints()
-        // 버튼 눌릴 시 타게팅
-      
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    public let touchView = UIView()
-    
-    private func setupViews() {
-        
-        contentView.addSubview(albumImageView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(touchView)
-        contentView.addSubview(detailLabel)
-        contentView.addSubview(moreButton)
-        contentView.addSubview(overflowView)
-    }
-    
-    private func setupConstraints() {
-        // 앨범 이미지
-        albumImageView.snp.makeConstraints { make in
-            make.leading.equalToSuperview().offset(10)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(50)
-        }
-        
-        // 제목
-        titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(albumImageView.snp.trailing).offset(12)
-            make.top.equalTo(albumImageView.snp.top).offset(2)
-            make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
-        }
-        touchView.snp.makeConstraints{
-            $0.leading.equalTo(albumImageView.snp.leading)
-            $0.trailing.equalTo(moreButton.snp.leading)
-            $0.height.equalToSuperview()
-        }
-        
-        // 아티스트와 연도
-        detailLabel.snp.makeConstraints { make in
-            make.leading.equalTo(albumImageView.snp.trailing).offset(12)
-            make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
-        }
-        
-        // 점 세 개 버튼
-        moreButton.snp.makeConstraints { make in
-            make.trailing.equalToSuperview().offset(-10)
-            make.centerY.equalToSuperview()
-            make.width.height.equalTo(24)
-        }
-        overflowView.snp.makeConstraints { make in
-            make.width.equalTo(97)
-            make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
-            make.centerY.equalToSuperview()
-            make.trailing.equalTo(moreButton).offset(-7)
-        }
-
-    }
-    
-    public func setOverflowView(type: OverflowType){
-        overflowView.setType(type: type)
-        switch type {
-        case .inAlbum:
-            overflowView.snp.updateConstraints { make in
-                make.height.equalTo(26)
-            }
-//        case .inLibrary:
-//            overflowView.snp.updateConstraints { make in
-//                make.height.equalTo(26)
-//            }
-        default:
-            return
-        }
-    }
-    
-    func configure(dto: SelectionResponseDTO) {
-        titleLabel.text = dto.music.title
-        detailLabel.text = "\(dto.artist) · \(dto.music.releaseTime.prefixBeforeDash())"
-        albumImageView.kf.setImage(with: URL(string: dto.music.image))
-    }
-
-    func configure(dto: RecommendMusicResponseDTO) {
-        titleLabel.text = dto.music.title
-        detailLabel.text = "\(dto.artist) · \(dto.album.releaseTime.prefixBeforeDash())"
-        albumImageView.kf.setImage(with: URL(string: dto.album.image))
-    }
-
-
-}
-
-
-
-class AlbumCell: UICollectionViewCell {
-    static let identifier = "AlbumCell"
-    
-    public let albumImageView: UIImageView = {
-        let imageView = UIImageView()
-        imageView.contentMode = .scaleAspectFill
-        imageView.clipsToBounds = true
-        imageView.layer.cornerRadius = 10
-        imageView.isUserInteractionEnabled = true
-        return imageView
-    }()
-    
-    public let titleLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
-        label.textColor = .white
-        label.numberOfLines = 2
-        label.textAlignment = .center
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    public let artistLabel: UILabel = {
-        let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
-        label.textColor = .gray
-        label.textAlignment = .center
-        label.isUserInteractionEnabled = true
-        return label
-    }()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        setupViews()
-        setupConstraints()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-   
-    
-    private func setupViews() {
-        contentView.addSubview(albumImageView)
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(artistLabel)
-    }
-    
-    private func setupConstraints() {
-        albumImageView.translatesAutoresizingMaskIntoConstraints = false
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        artistLabel.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            // 앨범 이미지
-            albumImageView.topAnchor.constraint(equalTo: contentView.topAnchor),
-            albumImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            albumImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            albumImageView.heightAnchor.constraint(equalTo: albumImageView.widthAnchor), // 정사각형
-            
-            // 제목
-            titleLabel.topAnchor.constraint(equalTo: albumImageView.bottomAnchor, constant: 5),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            titleLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            
-            // 아티스트
-            artistLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 3),
-            artistLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
-            artistLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
-            artistLabel.bottomAnchor.constraint(lessThanOrEqualTo: contentView.bottomAnchor)
-        ])
-    }
-    
-    func configure(dto: AlbumRecommendAlbumResponseDTO) {
-        let album = dto.album
-        titleLabel.text = album.title
-        titleLabel.lineBreakMode = .byTruncatingTail // 말줄임표 설정
-          titleLabel.numberOfLines = 1 // 한 줄만 표시
-
-        artistLabel.text = dto.artist
-        albumImageView.kf.setImage(with: URL(string: album.image))
-    }
-
-
-}
-
-
-
 // 제스처 함수 - Extension
 extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     
@@ -777,11 +556,6 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {
         let nextVC = DetailViewController(section: section, item: item)
         self.navigationController?.pushViewController(nextVC, animated: true)
-    }
-    
-    // 다음트랙 받아오기
-    public func setNextTracks(nextTracks: [SelectionResponseDTO]) {
-        self.nextTracks = nextTracks
     }
 }
 extension UIView {

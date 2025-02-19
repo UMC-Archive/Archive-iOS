@@ -18,7 +18,7 @@ class MusicLoadVC: UIViewController {
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
     
-    private var musicSegmentVC: MusicSegmentVC?
+    private var musicSegmentVC: MusicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: [])
     private var music: String
     private var artist: String
     let libraryService = LibraryService()
@@ -100,6 +100,7 @@ class MusicLoadVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.nextTracks = data
+            
 //                DispatchQueue.main.async {
 //                    
 //                    print("성공")
@@ -276,32 +277,40 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc public func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
-        self.musicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
-        nextTrackVC.segmentIndexNum = 0
-        present(nextTrackVC, animated: true)
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+//        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: lyrics, nextTracks: self.nextTracks)
+//        nextTrackVC.segmentIndexNum = 0
+//        present(nextTrackVC, animated: true)
+        musicSegmentVC.setInfo(segmentIndex: 0, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
+        present(nextVC,animated: true)
     }
-    private var lyricsVC: MusicSegmentVC?
+//    private var lyricsVC: MusicSegmentVC?
 
     @objc private func goToLyrics() {
-        if let lyricsVC = lyricsVC {
-            lyricsVC.segmentIndexNum = 1
-            present(lyricsVC, animated: true)
-        } else {
-            guard let currentTrack = musicInfo else { return }
-            
-            let newLyricsVC = MusicSegmentVC(
-                segmentIndexNum: 1,
-//                musicTitle: currentTrack.title,
-//                artistName: currentTrack.id
-                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
-
-            )
-            
-            lyricsVC = newLyricsVC // 생성된 거 저장해두기
-            present(newLyricsVC, animated: true)
-        }
+//        if let lyricsVC = lyricsVC {
+//            lyricsVC.segmentIndexNum = 1
+//            present(lyricsVC, animated: true)
+//        } else {
+//            guard let currentTrack = musicInfo else { return }
+//            
+//            let newLyricsVC = MusicSegmentVC(
+//                segmentIndexNum: 1,
+////                musicTitle: currentTrack.title,
+////                artistName: currentTrack.id
+//                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
+//
+//            )
+//            
+//            lyricsVC = newLyricsVC // 생성된 거 저장해두기
+//            present(newLyricsVC, animated: true)
+        
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+        musicSegmentVC.setInfo(segmentIndex: 1, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
+        present(nextVC,animated: true)
     }
+    
 
     // 가사 화면으로 이동
 //    @objc private func goToLyrics() {
@@ -317,9 +326,16 @@ class MusicLoadVC: UIViewController {
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil, nextTracks: self.nextTracks)
-        recommendVC.segmentIndexNum = 2
-        let nextVC = UINavigationController(rootViewController: recommendVC)
+//        guard let musicInfo = musicInfo else { return }
+//        let lyrics = musicInfo.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+//        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: lyrics, nextTracks: self.nextTracks)
+//        recommendVC.segmentIndexNum = 2
+//        let nextVC = UINavigationController(rootViewController: recommendVC)
+//        present(nextVC,animated: true)
+        
+        let lyrics = musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+        musicSegmentVC.setInfo(segmentIndex: 2, lyrics: lyrics, nextTracks: self.nextTracks)
+        let nextVC = UINavigationController(rootViewController: musicSegmentVC)
         present(nextVC,animated: true)
     }
 
