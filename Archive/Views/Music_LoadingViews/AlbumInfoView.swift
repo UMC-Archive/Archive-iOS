@@ -13,6 +13,11 @@ class AlbumInfoView: UIView {
         lbl.isHidden = true
     }
     
+    // 밑줄
+    private let underLineView = UIView().then { view in
+        view.backgroundColor = .white_35
+    }
+    
     // 음악 정보 그룹 뷰
     public let musicInfoGroupView = UIView()
     
@@ -72,7 +77,7 @@ class AlbumInfoView: UIView {
     init(inMusicView: Bool = false) {
         self.inMusicView = inMusicView
         super.init(frame: .zero)
-        backgroundColor = .black_70
+        backgroundColor = inMusicView ? .black_100 : .black_70
         setupViews()
         setupConstraints()
     }
@@ -92,6 +97,7 @@ class AlbumInfoView: UIView {
         addSubview(playButton)
         addSubview(overlappingSquaresButton)
         addSubview(emptyLabel)
+        addSubview(underLineView)
     }
 
     private func setupConstraints() {
@@ -133,6 +139,12 @@ class AlbumInfoView: UIView {
             make.centerY.equalToSuperview()
             make.trailing.equalToSuperview().offset(-25)
             make.width.height.equalTo(20)
+        }
+        
+        underLineView.snp.makeConstraints { make in
+            make.height.equalTo(1)
+            make.horizontalEdges.equalToSuperview()
+            make.bottom.equalToSuperview()
         }
     }
 

@@ -306,13 +306,11 @@ class MusicSegmentVC: UIViewController {
     
     // 노래 재생 / 정지 버튼
     @objc private func touchUpInsidePlayButton() {
-        print("touchUpInsidePlayButton() 호출")
         (self.presentingViewController as? MusicLoadVC)?.playPauseMusic()
     }
     
     // 라이브러리 저장 버튼
     @objc private func touchUpInsideLibraryButton() {
-        print("touchUpInsideLibraryButton() 호출")
         fetchMusicId()
     }
 }
@@ -575,8 +573,8 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
         // 최상위 모달을 dismiss 후
         self.view.window?.rootViewController?.dismiss(animated: false, completion: {
             // dismiss가 완료된 후 presentingViewController에서 navigationController를 참조
+            let nextVC = ArtistViewController(artist: artist, album: album)
             if let navigationController = self.presentingViewController?.navigationController {
-                let nextVC = ArtistViewController(artist: artist, album: album)
                 navigationController.pushViewController(nextVC, animated: true)
             }
         })
