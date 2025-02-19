@@ -124,7 +124,7 @@ class TrackCell: UICollectionViewCell {
             make.height.equalTo(52.5)
 //            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
             make.centerY.equalToSuperview()
-            make.trailing.equalTo(moreButton).offset(-7)
+            make.trailing.equalTo(moreButton).offset(-15)
         }
 
     }

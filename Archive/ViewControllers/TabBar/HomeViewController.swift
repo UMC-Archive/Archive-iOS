@@ -216,7 +216,7 @@ class HomeViewController: UIViewController {
                 verticalCell.setOverflowView(type: .other)
                 
                 // 노래 보관함으로 이동 탭 제스처
-                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self!.goToLibrary(_:)))
+                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self?.goToLibrary(_:)))
                 tapGoToLibraryGesture.musicId = data.music.id
                 verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
 
