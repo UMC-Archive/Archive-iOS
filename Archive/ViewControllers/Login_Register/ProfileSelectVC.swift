@@ -33,9 +33,12 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         print("눌림!")
         let moveVC = Register2VC()
         navigationController?.pushViewController(moveVC,animated: true)
-        
-       
     }
+        
+        override func viewWillAppear(_ animated: Bool){
+            super.viewWillAppear(animated)
+        }
+    
         private func setupActions() {
             // 프로필 이미지 선택 이벤트
             profileSelectView.onProfileImageTapped = { [weak self] in
@@ -97,13 +100,19 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         
         @objc private func handleNext() {
             
-            let nickname = profileSelectView.profileName.text
-            
-            if nickname == "" {
+
+            guard let nickname = profileSelectView.profileName.text, !nickname.isEmpty else {
                 showAlert(message: "프로필 이름을 입력해주세요.")
                 return
             }
             
+            if let defaultImage = UIImage(named: "profileSample"),
+               let currentImageData = profileSelectView.profileImage.image?.pngData(),
+               let defaultImageData = defaultImage.pngData(),
+               currentImageData == defaultImageData {
+                showAlert(message: "프로필 이미지를 선택해주세요.")
+                return
+            }
             
             
             // 닉네임 텍스트 필드 저장
@@ -112,12 +121,12 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             let preferGenreVC = PreferGenreVC() // 다음 화면
             navigationController?.pushViewController(preferGenreVC, animated: true)
         }
+
         private func showAlert(message: String) {
             let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
             alert.addAction(okAction)
             present(alert, animated: true)
         }
-    }
     
-
+}

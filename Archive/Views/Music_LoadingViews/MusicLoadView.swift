@@ -249,7 +249,7 @@ class MusicLoadView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     // UI 업데이트 함수
-      func updateUI(imageUrl: String, title: String, artist: String, musicUrl: String) {
+    func updateUI(imageUrl: String, title: String, artist: String, musicUrl: String? = nil) {
           albumImageView.kf.setImage(with: URL(string: imageUrl), placeholder: UIImage(named: "placeholder"))
           titleLabel.text = title
           artistLabel.text = artist

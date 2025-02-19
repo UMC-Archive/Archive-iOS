@@ -12,3 +12,9 @@ public struct SelectionResponseDTO: Decodable {
     let album: AlbumInfoReponseDTO
     let artist: String
 }
+
+extension SelectionResponseDTO {
+    static func loadingData() -> SelectionResponseDTO {
+        return SelectionResponseDTO(music: MusicInfoResponseDTO.loadingData(), album: AlbumInfoReponseDTO.loadingData(), artist: Constant.LoadString)
+    }
+}
