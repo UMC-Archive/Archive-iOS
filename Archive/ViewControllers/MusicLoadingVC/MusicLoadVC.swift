@@ -54,12 +54,11 @@ class MusicLoadVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-//        setupActions()
+
     }
     
     public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
-//            let artist = "NewJeans" // 임시 데이터
-//            let song = "Supernatural"
+
 
         musiceservice.musicInfo(artist: artist, music: music) { [weak self] (result: Result<MusicResponseDTO?, NetworkError>) in
                 switch result {
@@ -67,15 +66,7 @@ class MusicLoadVC: UIViewController {
                     guard let data = response else { return }
                     self?.musicInfo = data
                     
-                    // UI 업데이트
-//                    DispatchQueue.main.async {
-//                        self?.musicLoadView.updateUI(
-//                            imageUrl: data.music.image,
-//                            title: data.music.title,
-//                            artist: data.artist.name,
-//                            musicUrl: data.music.music
-//                        )
-//                    }
+
                     
                     NotificationCenter.default.post(
                                  name: .didChangeMusic,
@@ -323,17 +314,7 @@ class MusicLoadVC: UIViewController {
     }
     
 
-    // 가사 화면으로 이동
-//    @objc private func goToLyrics() {
-//        guard let currentTrack = musicInfo else { return }
-//        let lyricsVC = MusicSegmentVC(
-//            segmentIndexNum: 1,
-//            musicTitle: currentTrack.title,
-//            artistName: currentTrack.id // id가 아티스트명이라면
-//        )
-//        present(lyricsVC, animated: true)
-//    }
-//
+ 
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
@@ -439,47 +420,7 @@ class MusicLoadVC: UIViewController {
     @objc private func shuffleTracks(){
         
     }
-//    // 트랙 받아오고 셔플
-//    private func loadNextTracks() {
-//        musiceservice.selection { [weak self] result in
-//            switch result {
-//            case .success(let response):
-//                guard let data = response else { return }
-//                DispatchQueue.main.async {
-//                    self?.nextTracks = data
-//                    self?.shuffleTracks()
-//                    self?.playTrack(at: 0) // 첫 번째 곡부터 시작
-//                }
-//            case .failure(let error):
-//                print("다음 트랙 로드 실패: \(error)")
-//            }
-//        }
-//    }
 
-   
-//    // 다음 노래 버튼 누르면
-//    @objc private func goToNextTrack() {
-//        let nextIndex = currentTrackIndex + 1
-//        if nextIndex < nextTracks.count {
-//            playTrack(at: nextIndex)
-//        } else {
-//            print("마지막 곡입니다.")
-//        }
-//    }
-    // 전 노래 버튼 누르면
-//    @objc private func goToPreviousTrack() {
-//        let previousIndex = currentTrackIndex - 1
-//        if previousIndex >= 0 {
-//            playTrack(at: previousIndex)
-//        } else {
-//            print("처음 곡입니다.")
-//        }
-//    }
-    // 셔플
-//    @objc private func shuffleAndPlay() {
-//        shuffleTracks()
-//        playTrack(at: 0)
-//    }
 //    // 시간에 따라 움직이기 위해 시간 관찰자 생성하기
     private var timeObserverToken: Any?
 
