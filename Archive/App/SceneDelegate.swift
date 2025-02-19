@@ -22,7 +22,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
 
-        let musicLoadVC = TabBarViewController()
+        let musicLoadVC = ProfileSelectVC()
         let navigationController = UINavigationController(rootViewController: musicLoadVC)
 
         window?.rootViewController = navigationController
