@@ -49,6 +49,16 @@ class AlbumCell: UICollectionViewCell {
     }
    
     
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        albumImageView.image = nil
+        titleLabel.text = nil
+        artistLabel.text = nil
+       
+        gestureRecognizers = nil
+    }
+    
     private func setupViews() {
         contentView.addSubview(albumImageView)
         contentView.addSubview(titleLabel)

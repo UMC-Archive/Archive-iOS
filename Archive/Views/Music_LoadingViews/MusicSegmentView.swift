@@ -121,7 +121,7 @@ class MusicSegmentView: UIView {
     private func setupConstraints() {
         albumInfoView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(10)
-            make.leading.trailing.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview()
             make.height.equalTo(70)
         }
 
@@ -159,24 +159,27 @@ class MusicSegmentView: UIView {
         albumCollectionView.snp.makeConstraints { make in
             make.top.equalTo(tabBar.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(300)
+//            make.height.equalTo(300)
+            make.bottom.equalTo(recommendTitleLabel.snp.top).offset(-30)
         }
         recommendTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
+//            make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
+            make.bottom.equalTo(albumRecommendCollectionView.snp.top).offset(-20)
             make.leading.equalToSuperview().offset(10)
         }
         
         rightButton.snp.makeConstraints { make in
             make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
             make.centerY.equalTo(recommendTitleLabel)
-            make.leading.equalTo(recommendTitleLabel.snp.trailing).offset(146)
+            make.trailing.equalToSuperview().inset(20)
         }
        
 
         albumRecommendCollectionView.snp.makeConstraints { make in
             make.top.equalTo(recommendTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
+            make.bottom.equalToSuperview().inset(50)
         }
     }
     

@@ -60,6 +60,20 @@ class TrackCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.albumImageView.image = nil
+        self.titleLabel.text = nil
+        self.detailLabel.text = nil
+        self.moreButton.removeTarget(nil, action: nil, for: .allEvents)
+        self.overflowView.gestureRecognizers = nil
+        
+        self.gestureRecognizers = nil
+    }
+    
+    
     public let touchView = UIView()
     
     private func setupViews() {

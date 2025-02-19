@@ -113,9 +113,16 @@ class LyricsCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        self.label.text = nil
+    }
+    
     func configure(text: String, isHighlighted: Bool) {
         label.text = text
         label.textColor = isHighlighted ? .white : .lightGray
         label.font = isHighlighted ? UIFont.boldSystemFont(ofSize: 18) : UIFont.systemFont(ofSize: 16)
     }
-} 
+}

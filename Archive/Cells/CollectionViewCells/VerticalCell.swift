@@ -58,8 +58,8 @@ class VerticalCell: UICollectionViewCell {
         super.prepareForReuse()
         
         imageView.image = nil
-        titleLabel.text = ""
-        artistYearLabel.text = ""
+        titleLabel.text = nil
+        artistYearLabel.text = nil
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
         
         gestureRecognizers = nil
