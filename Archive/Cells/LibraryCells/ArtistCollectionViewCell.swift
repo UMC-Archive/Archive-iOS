@@ -27,7 +27,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private let artistImage = UIImageView().then{
         $0.layer.cornerRadius = 25
         $0.clipsToBounds = true
@@ -119,6 +119,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         let imageUrl = URL(string: image)
         artistImage.kf.setImage(with: imageUrl)
         artistNameLabel.text = artistName
+
     }
     public func setOverflowView(type: OverflowType){
         overflowView.setType(type: type)

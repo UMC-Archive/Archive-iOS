@@ -28,7 +28,9 @@ class ListenRecordViewController: UIViewController, UIGestureRecognizerDelegate 
         setDataSource()
         controlTapped()
         self.navigationController?.navigationBar.isHidden = true
+        
     }
+
     private func setDataSource(){
         rootView.collectionView.dataSource = self
     }

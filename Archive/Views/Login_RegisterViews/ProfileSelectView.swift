@@ -74,7 +74,10 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         imageView.isUserInteractionEnabled = true // 터치 가능
         return imageView
     }()
-
+    private let divideLine = UIView().then{
+        $0.layer.borderColor = UIColor.white.cgColor
+        $0.layer.borderWidth = 0.5
+    }
     // 프로필 이름 입력 필드
     lazy var profileName: UITextField = {
         let textField = UITextField()
@@ -85,7 +88,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
             string: "이름을 입력해주세요",
             attributes: [
                 .foregroundColor: UIColor.white,
-                .font: UIFont.customFont(font: .SFPro, ofSize: 26, rawValue: 700)
+                .font: UIFont.customFont(font: .SFPro, ofSize: 28, rawValue: 700)
             ]
         )
         textField.borderStyle = .none
@@ -138,6 +141,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         addSubview(profileImage)
         addSubview(progress3)
         addSubview(profileName)
+        addSubview(divideLine)
         addSubview(penImage)
         addSubview(completeButton)
     }
@@ -174,7 +178,13 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
             make.top.equalTo(profileImage.snp.bottom).offset(30)
             make.centerX.equalToSuperview()
         }
-
+        divideLine.snp.makeConstraints{
+            $0.top.equalTo(profileName.snp.bottom).offset(8.5)
+            $0.leading.equalToSuperview().offset(20)
+            $0.trailing.equalToSuperview().offset(-20)
+//            $0.width.equalTo(330)
+            $0.height.equalTo(1)
+        }
         penImage.snp.makeConstraints { make in
             make.centerY.equalTo(profileName) // 같은 수직선상
             make.leading.equalTo(profileName.snp.trailing).offset(8)
