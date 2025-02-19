@@ -27,14 +27,18 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
         $0.clipsToBounds = true
     }
     
+
+    
     private func setComponent(){
         addSubview(AlbumImage)
+ 
         
         AlbumImage.snp.makeConstraints{
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
             $0.height.width.equalTo(120)
         }
+
     }
     private func setupCell() {
         AlbumImage.frame = contentView.bounds
@@ -42,14 +46,14 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
         contentView.addSubview(AlbumImage)
         
         darkOverlay.frame = contentView.bounds
-        darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.6) // 반투명 어두운 효과
+        darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.4) // 반투명 어두운 효과
 //        darkOverlay.isHidden = true
         contentView.addSubview(darkOverlay)
     }
        
     func updateOverlayVisibility(_ darkRatio: CGFloat) {
         print("----------\(darkRatio)")
-        self.darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(darkRatio)
+        self.darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(darkRatio * 0.6)
         self.darkOverlay.layer.layoutIfNeeded()
     }
 

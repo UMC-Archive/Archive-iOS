@@ -214,7 +214,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
                 genreColors[data[2].name]?.cgColor ?? UIColor.white,
                 genreColors[data[0].name]?.cgColor ?? UIColor.white,
             ]
-            gradient.locations = [0.0, 0.17, 0.5, 0.83, 1.0]
+            gradient.locations = [0.0, 0.16, 0.5, 0.84, 1.0]
            
         } else if data.count == 5 , data[4].name == "Others"{
             gradient.colors = [
