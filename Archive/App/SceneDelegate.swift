@@ -24,6 +24,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
         let rootVC = OnBoarding1VC()
+
         let navigationController = UINavigationController(rootViewController: rootVC)
 
 
