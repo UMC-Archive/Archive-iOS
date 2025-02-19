@@ -18,6 +18,7 @@ class MusicLoadVC: UIViewController {
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
     
+    private var musicSegmentVC: MusicSegmentVC?
     private var music: String
     private var artist: String
     let libraryService = LibraryService()
@@ -36,6 +37,7 @@ class MusicLoadVC: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         setupActions()
+        loadNextTracks()
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +47,7 @@ class MusicLoadVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupActions()
+//        setupActions()
     }
     
     public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
@@ -79,7 +81,6 @@ class MusicLoadVC: UIViewController {
                                      "lyrics": data.music.lyrics
                                  ]
                              )
-                    self?.loadNextTracks()
                     if playMusic {
                         self?.resetPlayer()
                         self?.playPauseMusic()
@@ -275,7 +276,8 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc public func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil)
+        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
+        self.musicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
         nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
     }
@@ -292,7 +294,7 @@ class MusicLoadVC: UIViewController {
                 segmentIndexNum: 1,
 //                musicTitle: currentTrack.title,
 //                artistName: currentTrack.id
-                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
 
             )
             
@@ -315,7 +317,7 @@ class MusicLoadVC: UIViewController {
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil)
+        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil, nextTracks: self.nextTracks)
         recommendVC.segmentIndexNum = 2
         let nextVC = UINavigationController(rootViewController: recommendVC)
         present(nextVC,animated: true)
