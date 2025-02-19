@@ -91,31 +91,19 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
     }
 
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-       
-        
 dismiss(animated: true)
-        
-        
     }
 
     @objc private func handleNext() {
         
-        guard let nickname = profileSelectView.profileName.text, !nickname.isEmpty else {
-                showAlert(message: "프로필 이름을 입력해주세요.")
-                return
-            }
+        let nickname = profileSelectView.profileName.text
+               
+               if nickname == "" {
+                   showAlert(message: "프로필 이름을 입력해주세요.")
+                   return
+               }
 
-            // 프로필 이미지 선택 여부 체크
-        if let defaultImage = UIImage(named: "profileSample"),
-           let currentImageData = profileSelectView.profileImage.image?.pngData(),
-           let defaultImageData = defaultImage.pngData(),
-           currentImageData == defaultImageData {
-            showAlert(message: "프로필 이미지를 선택해주세요.")
-            return
-        }
-
-
-
+     
         
         // 닉네임 텍스트 필드 저장
         UserSignupData.shared.nickname = profileSelectView.profileName.text ?? ""
