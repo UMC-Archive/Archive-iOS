@@ -13,7 +13,7 @@ class LyricsCell: UICollectionViewCell {
 
     private let label: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 16)
+        label.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 700)
         label.textColor = .lightGray
         label.textAlignment = .center
         return label
