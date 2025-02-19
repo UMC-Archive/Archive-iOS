@@ -17,6 +17,14 @@ class MusicLoadVC: UIViewController {
     public var musicInfo : MusicResponseDTO?
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
+
+
+
+    let libraryService = LibraryService()
+
+    private var playerItemObserver: Any?
+
+
     
     private var musicSegmentVC: MusicSegmentVC?
     private var music: String
@@ -26,6 +34,7 @@ class MusicLoadVC: UIViewController {
     
     // 초기 반복재생 버튼 상태
     private var repeatState: MusicLoadView.RepeatState = .RepeatAll
+
     
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정

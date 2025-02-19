@@ -34,6 +34,38 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         let moveVC = Register2VC()
         navigationController?.pushViewController(moveVC,animated: true)
     }
+
+    
+    private func setupActions() {
+        // 프로필 이미지 선택 이벤트
+        profileSelectView.onProfileImageTapped = { [weak self] in
+            self?.showImagePicker()
+        }
+        
+        // 완료 버튼 액션
+        profileSelectView.completeButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+    }
+    
+    private func showImagePicker() {
+        let imagePicker = UIImagePickerController()
+        imagePicker.delegate = self
+        imagePicker.sourceType = .photoLibrary
+        present(imagePicker, animated: true)
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
+        if let selectedImage = info[.originalImage] as? UIImage {
+            profileSelectView.profileImage.image = selectedImage
+            UserSignupData.shared.profileImage = selectedImage
+        }
+        dismiss(animated: true)
+    }
+    
+    func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
+        
+        
+        dismiss(animated: true)
+
         
         override func viewWillAppear(_ animated: Bool){
             super.viewWillAppear(animated)
@@ -51,6 +83,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             profileSelectView.completeButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
         }
         
+
         
         private func updateCompleteButtonState() {
             let isNicknameEntered = !(profileSelectView.profileName.text?.isEmpty ?? true)
@@ -65,6 +98,43 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             }
         }
         
+
+    }
+    
+    @objc private func handleNext() {
+        
+        let nickname = profileSelectView.profileName.text
+        
+        if nickname == "" {
+            showAlert(message: "프로필 이름을 입력해주세요.")
+            return
+        }
+        
+        // 프로필 이미지 선택 여부 체크
+        if let defaultImage = UIImage(named: "profileSample"),
+           let currentImageData = profileSelectView.profileImage.image?.pngData(),
+           let defaultImageData = defaultImage.pngData(),
+           currentImageData == defaultImageData {
+            showAlert(message: "프로필 이미지를 선택해주세요.")
+            return
+        }
+        
+        // 닉네임 텍스트 필드 저장
+        UserSignupData.shared.nickname = profileSelectView.profileName.text ?? ""
+        
+        let preferGenreVC = PreferGenreVC() // 다음 화면
+        navigationController?.pushViewController(preferGenreVC, animated: true)
+    }
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+}
+
+
+
         @objc private func nicknameEditingChanged() {
             let isNicknameEntered = !(profileSelectView.profileName.text?.isEmpty ?? true)
             let isImageSelected = profileSelectView.profileImage.image != UIImage(named: "profileSample")
@@ -130,3 +200,4 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         }
     
 }
+
