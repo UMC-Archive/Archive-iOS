@@ -73,6 +73,7 @@ class KeychainService {
         return SecItemUpdate(query as CFDictionary, attributesToUpdate as CFDictionary)
     }
     
+    @discardableResult
     func delete(account : KeychainAccountType, service : KeychainServiceType) -> OSStatus{
         
         let query : [String : Any] = [
@@ -82,6 +83,20 @@ class KeychainService {
         ]
         
         return SecItemDelete(query as CFDictionary)
+    }
+    
+    // 키체인 전부 삭제
+    func deleteAllKeychainData() {
+        let query: [String: Any] = [kSecClass as String: kSecClassGenericPassword]
+        let status = SecItemDelete(query as CFDictionary)
+        
+        if status == errSecSuccess {
+            print("✅ Keychain 데이터 전체 삭제 완료")
+        } else if status == errSecItemNotFound {
+            print("⚠️ Keychain에 저장된 데이터가 없음")
+        } else {
+            print("❌ Keychain 삭제 실패: \(status)")
+        }
     }
 }
 

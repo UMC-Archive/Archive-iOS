@@ -14,8 +14,19 @@ public struct RecentPlayMusicResponseDTO: Decodable, Hashable {
     let artist: ArtistInfoReponseDTO
 }
 
+extension RecentPlayMusicResponseDTO {
+    static func loadingData() -> RecentPlayMusicResponseDTO {
+        return RecentPlayMusicResponseDTO(userId: "1", play: RecentPlayResponseDTO(id: "2"), music: RecentMusicDTO.loadingData(), album: AlbumInfoReponseDTO.loadingData(), artist: ArtistInfoReponseDTO.loadingData())
+    }
+}
+
+
 public struct RecentPlayResponseDTO: Decodable, Hashable {
     let id: String
+            
+    init(id: String) {
+        self.id = id
+    }
     
     enum CodingKeys: CodingKey {
         case id

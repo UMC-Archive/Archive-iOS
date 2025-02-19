@@ -51,6 +51,7 @@ class TabBarViewController: UITabBarController {
     // 음악 정보 뷰 탭 제스처
     @objc private func musicInfoTapGesture(_ sender: UITapGestureRecognizer) {
         guard let musicLoadVC = musicLoadVC else { return }
+        musicLoadVC.modalPresentationStyle = .fullScreen
         self.present(musicLoadVC, animated: true)
     }
     
@@ -142,21 +143,5 @@ class TabBarViewController: UITabBarController {
         self.tabBar.isTranslucent = false   // 탭 바의 배경 불투명으로 설정
         self.tabBar.backgroundColor = UIColor.black_100
         self.view.backgroundColor = UIColor.black_100
-    }
-    
-    // 사용자 정보 불러오기
-    private func getUserInfo() {
-        userService.userInfo { [weak self] result in
-            guard let self = self else {return}
-            switch result {
-            case .success(let response):
-                guard let response = response else { return }
-                // 키체인 저장
-                KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response.profileImage)
-            case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
-                self.present(alert, animated: true)
-            }
-        }
     }
 }

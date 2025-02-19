@@ -16,10 +16,10 @@ class AlbumViewController: UIViewController {
     
     private let albumView = AlbumView()
     private let data = AlbumCurationDummyModel.dummy()
-    private var albumData: AlbumInfoReponseDTO?
-    private var trackListData: [TrackListResponse]? // 트랙 리스트 데이터
-    private var recommendAlbumData: [(AlbumRecommendAlbum, String)]? // 추천 앨범
-    private var anotherAlbum: [(AnotherAlbumResponseDTO, String)]? // 이 아티스트의 다른 앨범
+    private var albumData: AlbumInfoReponseDTO = Constant.AlbumInfoLoadingData // 앨범 데이터
+    private var trackListData: [TrackListResponse] = Constant.TrackListLoadingData// 트랙 리스트 데이터
+    private var recommendAlbumData: [(AlbumRecommendAlbum, String)] = Constant.ArchiveLoadingData // 추천 앨범
+    private var anotherAlbum: [(AnotherAlbumResponseDTO, String)] = Constant.AnotherAlbumLoadingData // 이 아티스트의 다른 앨범
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
     
     private var libraryService = LibraryService()
@@ -88,8 +88,7 @@ class AlbumViewController: UIViewController {
     
     // 라이브러리 추가 버튼
     @objc private func tapAddLibrayButton() {
-        guard let data = albumData else { return }
-        libraryService.albumPost(albumId: data.id ){[weak self] result in
+        libraryService.albumPost(albumId: albumData.id ){[weak self] result in
             guard let self = self else{return}
             switch result {
             case .success:
@@ -217,16 +216,15 @@ class AlbumViewController: UIViewController {
         snapshot.appendSections([anotherAlbumSection, recommendAlbumSection])
         
         // 이 아티스트의 다른 앨범
-        if let anotherAlbum = anotherAlbum {
             let anotherAlbumItem = anotherAlbum.map{Item.AnotherAlbum($0.0, $0.1)}
             snapshot.appendItems(anotherAlbumItem, toSection: anotherAlbumSection)
-        }
+        
         
         // 당신을 위한 추천 앨범
-        if let recommendAlbumData = recommendAlbumData {
+        
             let recommendAlbumItem = recommendAlbumData.map{Item.RecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        }
+        
 
         dataSource?.apply(snapshot)
     }
@@ -247,9 +245,10 @@ class AlbumViewController: UIViewController {
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 정보" , description: error.description, retryAction: { [weak self] in
+                    self?.postAlbumInfo(artist: artist, album: album) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
+                self.present(alert, animated: true)
             }
         }
     }
@@ -261,14 +260,15 @@ class AlbumViewController: UIViewController {
             
             switch result {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
-                guard let response = response, let data = self.albumData else { return }
-                albumView.config(data: data, artist: artist, description: response.description)
+                guard let response = response else { return }
+                albumView.config(data: albumData, artist: artist, description: response.description)
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 큐레이션" , description: error.description, retryAction: { [weak self] in
+                    self?.postAlbumCuration(albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
+                self.present(alert, animated: true)
             }
         }
     }
@@ -285,9 +285,8 @@ class AlbumViewController: UIViewController {
                 self.setSnapshot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 앨범 추천" , description: error.description, retryAction: getRecommendAlbum)
+                self.present(alert, animated: true)
             }
         }
     }
@@ -322,7 +321,9 @@ class AlbumViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "이 아티스트의 다른 앨범" , description: error.description, retryAction: { [weak self] in
+                    self?.getAnotherAlbum(artistId: artistId, albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -343,7 +344,9 @@ class AlbumViewController: UIViewController {
                 updateTrackViewHeight()
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "수록곡 소개" , description: error.description, retryAction: { [weak self] in
+                    self?.getTrackList(albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -450,11 +453,11 @@ extension AlbumViewController: UIGestureRecognizerDelegate  {
 
 extension AlbumViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.trackListData?.count ?? 0
+        return self.trackListData.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell, let trackListData = trackListData else {return UICollectionViewCell()
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: VerticalCell.id, for: indexPath) as? VerticalCell else {return UICollectionViewCell()
         }
         cell.configTrackList(music: trackListData[indexPath.row])
         

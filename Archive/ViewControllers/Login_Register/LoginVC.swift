@@ -23,23 +23,25 @@ class LoginVC: UIViewController {
         
         
         // 음악 재생 기록 예시
-        let param = UserPlayingRecordRequestDTO(musicId: 1)
-        postPlayingRecord(param: param)
+//        let param = UserPlayingRecordRequestDTO(musicId: 1)
+//        postPlayingRecord(param: param)
     }
 
     private func setupActions() {
         // 회원가입 버튼 액션
-        loginView.onRegisterButtonTapped = { [weak self] in
-            self?.navigateToRegister()
-        }
+//        loginView.onRegisterButtonTapped = { [weak self] in
+//            self?.navigateToRegister()
+//        }
+//        
+        loginView.emailButton.addTarget(self, action: #selector(navigateToRegister), for: .touchUpInside)
 
         // 로그인 버튼 액션
         loginView.loginButton.addTarget(self, action: #selector(handleLoginButtonTap), for: .touchUpInside)
     }
 
-    private func navigateToRegister() {
-        let registerVC = RegisterVC() // 회원가입 화면 생성
-        navigationController?.pushViewController(registerVC, animated: true)
+    @objc private func navigateToRegister() {
+        let nextVC = RegisterVC() // 회원가입 화면 생성
+        navigationController?.pushViewController(nextVC, animated: true)
     }
 
     @objc private func handleLoginButtonTap() {
@@ -57,16 +59,16 @@ class LoginVC: UIViewController {
         userService.login(parameter: loginParameter) { [weak self] result in
             switch result {
             case .success(let response):
-                DispatchQueue.main.async {
-                    // 다음 화면으로 전환
                 //토큰 추가해야함 keychain
                     if let token = response {
                         KeychainService.shared.save(account: .token, service: .serverAccessToken, value: token)
                         print(" 토큰 저장 완료: \(token)")
+                        self?.getUserInfo()
                     }
 
+                DispatchQueue.main.async {
+                    // 다음 화면으로 전환
                     self?.navigateToNextScreen()
-                    
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -84,8 +86,8 @@ class LoginVC: UIViewController {
     private func navigateToNextScreen() {
         // 로그인 성공 시 이동할 화면 여기를 다른거로 이으면 돼요
         let nextVC = OnBoarding2VC()
-        self.present(nextVC, animated: true)
-        //navigationController?.pushViewController(nextVC, animated: true)
+//        self.present(nextVC, animated: true)
+        self.navigationController?.pushViewController(nextVC, animated: true)
     }
 
     private func showAlert(title: String, message: String) {
@@ -113,6 +115,22 @@ class LoginVC: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
                 print("실패: \(error.description)")
+            }
+        }
+    }
+    
+    // 사용자 정보 불러오기
+    private func getUserInfo() {
+        userService.userInfo { [weak self] result in
+            guard let self = self else {return}
+            switch result {
+            case .success(let response):
+                guard let response = response else { return }
+                // 키체인 저장
+                KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response.profileImage)
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
             }
         }
     }

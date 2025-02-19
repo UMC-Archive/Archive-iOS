@@ -14,6 +14,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.isHidden = true
 
         // 배경색 설정
         view.backgroundColor = .black

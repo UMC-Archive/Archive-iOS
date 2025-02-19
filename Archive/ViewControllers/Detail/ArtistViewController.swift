@@ -18,9 +18,9 @@ class ArtistViewController: UIViewController {
     private let artist: String
     private let album: String
     private var artistInfo: ArtistInfoReponseDTO?
-    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)]? // 비슷한 아티스트
-    private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)]? // 아티스트 인기곡
-    private var sameArtistAnoterAlbum: [(SameArtistAnotherAlbumResponseDTO, String)]? // 앨범 둘러보기
+    private var similarArtist: [(ArtistInfoReponseDTO, AlbumInfoReponseDTO)] = Constant.SimilarArtistLoadinData // 비슷한 아티스트
+    private var popularMusic: [(MusicInfoResponseDTO, AlbumInfoReponseDTO, String)] = Constant.PopularMusicLoadingData // 아티스트 인기곡
+    private var sameArtistAnoterAlbum: [(SameArtistAnotherAlbumResponseDTO, String)] = Constant.SameArtistAnotherAlbumLoadingData // 앨범 둘러보기
 
     init(artist: String, album: String) {
         self.artist = artist
@@ -199,29 +199,26 @@ class ArtistViewController: UIViewController {
         let musicVideoSection = Section.MusicVideoCell(.MusicVideo) // 뮤직 비디오
         let similarArtistSection = Section.Circle(.SimilarArtist)   // 다른 비슷한 아티스트
         
-        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, musicVideoSection, similarArtistSection])
+        snapshot.appendSections([popularMusicSection, sameArtistAnotherAlbumSection, similarArtistSection, musicVideoSection])
         
         // 아티스트 인기곡
-        if let popularMusic = popularMusic {
-            let popularMusicItem = popularMusic.map{Item.ArtistPopularMusic($0.0, $0.1, $0.2)}
-            snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
-        }
+        let popularMusicItem = popularMusic.map{Item.ArtistPopularMusic($0.0, $0.1, $0.2)}
+        snapshot.appendItems(popularMusicItem, toSection: popularMusicSection)
+        
         
         // 앨범 둘러보기
-        if let sameArtistAnoterAlbum = sameArtistAnoterAlbum {
-            let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0.0, $0.1)}
-            snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
-        }
+        let anotherAlbumItem = sameArtistAnoterAlbum.map{Item.SameArtistAnotherAlbum($0.0, $0.1)}
+        snapshot.appendItems(anotherAlbumItem, toSection: sameArtistAnotherAlbumSection)
+        
         
         // 뮤직 비디오
         let musicVideoItem = artistData.musicVideoList.map{Item.MusicVideo($0)}
         snapshot.appendItems(musicVideoItem, toSection: musicVideoSection)
         
         // 다른 비슷한 아티스트
-        if let similarArtist = similarArtist {
-            let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
-            snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
-        }
+        let similarArtistItem = similarArtist.map{Item.SimilarArtist($0.0, $0.1)}
+        snapshot.appendItems(similarArtistItem, toSection: similarArtistSection)
+        
         
         dataSource?.apply(snapshot)
     }
@@ -267,9 +264,10 @@ class ArtistViewController: UIViewController {
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 정보" , description: error.description, retryAction: { [weak self] in
+                    self?.postArtistInfo(artist: artist, album: album) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -286,9 +284,10 @@ class ArtistViewController: UIViewController {
 
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 큐레이션" , description: error.description, retryAction: { [weak self] in
+                    self?.postArtistCuration(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
-                print("실패: \(error.description)")
             }
         }
     }
@@ -304,7 +303,9 @@ class ArtistViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "비슷한 아티스트" , description: error.description, retryAction: { [weak self] in
+                    self?.getSimilarArtist(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -332,7 +333,9 @@ class ArtistViewController: UIViewController {
                 artistView.playButton.addGestureRecognizer(playTabGesture)
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "아티스트 인기곡" , description: error.description, retryAction: { [weak self] in
+                    self?.getArtistPopularMusic(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -351,7 +354,9 @@ class ArtistViewController: UIViewController {
                 self.setSnapshot()
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 둘러보기" , description: error.description, retryAction: { [weak self] in
+                    self?.getSameArtistAnotherAlbum(artistId: artistId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }

@@ -13,12 +13,17 @@ class MusicLoadVC: UIViewController {
     private let musicLoadView = MusicLoadView()
     private var player: AVPlayer?
     private let musiceservice = MusicService()
-    public var musicInfo : MusicInfoResponseDTO?
+    private let userService = UserService()
+    public var musicInfo : MusicResponseDTO?
     private var music: String
     private var artist: String
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
+
     let libraryService = LibraryService()
+
+    private var playerItemObserver: Any?
+
     
     override func loadView() {
         self.view = musicLoadView // MusicLoadView를 메인 뷰로 설정
@@ -46,7 +51,7 @@ class MusicLoadVC: UIViewController {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
 
-        musiceservice.musicInfo(artist: artist, music: music) { [weak self] (result: Result<MusicInfoResponseDTO?, NetworkError>) in
+        musiceservice.musicInfo(artist: artist, music: music) { [weak self] (result: Result<MusicResponseDTO?, NetworkError>) in
                 switch result {
                 case .success(let response):
                     guard let data = response else { return }
@@ -55,10 +60,10 @@ class MusicLoadVC: UIViewController {
                     // UI 업데이트
                     DispatchQueue.main.async {
                         self?.musicLoadView.updateUI(
-                            imageUrl: data.image,
-                            title: data.title,
-                            artist: data.id,
-                            musicUrl: data.music
+                            imageUrl: data.music.image,
+                            title: data.music.title,
+                            artist: data.artist.name,
+                            musicUrl: data.music.music
                         )
                     }
                     
@@ -66,9 +71,9 @@ class MusicLoadVC: UIViewController {
                                  name: .didChangeMusic,
                                  object: nil,
                                  userInfo: [
-                                     "title": data.title,
-                                     "artist": data.id,
-                                     "lyrics": data.lyrics
+                                     "title": data.music.title,
+                                     "artist": data.music.id,
+                                     "lyrics": data.music.lyrics
                                  ]
                              )
                     self?.loadNextTracks()
@@ -77,6 +82,9 @@ class MusicLoadVC: UIViewController {
                         self?.playPauseMusic()
                     }
                 case .failure(let error):
+                    // 네트워크 연결 실패 얼럿
+                    let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                    self?.present(alert, animated: true)
                     print(" 음악 정보 API 오류: \(error)")
                 }
             }
@@ -87,10 +95,11 @@ class MusicLoadVC: UIViewController {
             switch result {
             case .success(let response):
                 guard let data = response else { return }
-                DispatchQueue.main.async {
-                    self?.nextTracks = data
-                    print("성공")
-                }
+                self?.nextTracks = data
+//                DispatchQueue.main.async {
+//                    
+//                    print("성공")
+//                }
             case .failure(let error):
                 print("다음 트랙 로드 실패: \(error)")
             }
@@ -130,6 +139,9 @@ class MusicLoadVC: UIViewController {
 
         player = AVPlayer(url: musicUrl)
         player?.play()
+        
+       let musicId = track.music.id
+        postPlayingRecord(musicId: musicId) // 음악 재생 기록
 
         musicLoadView.updateUI(
             imageUrl: track.music.image,
@@ -203,7 +215,7 @@ class MusicLoadVC: UIViewController {
         musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
         // 앨범 으로 이동 제스처
         let GoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
-        GoToLibraryGesture.musicId = musicInfo?.id
+        GoToLibraryGesture.musicId = musicInfo?.music.id
 
         self.musicLoadView.titleIcon.isUserInteractionEnabled = true
         self.musicLoadView.titleIcon.addGestureRecognizer(GoToLibraryGesture)
@@ -257,7 +269,7 @@ class MusicLoadVC: UIViewController {
                 segmentIndexNum: 1,
 //                musicTitle: currentTrack.title,
 //                artistName: currentTrack.id
-                lyrics: musicInfo?.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
 
             )
             
@@ -288,7 +300,7 @@ class MusicLoadVC: UIViewController {
 
     // 재생 버튼 누를 시에 음악 재생하기
     @objc public func playPauseMusic() {
-            guard let musicUrlString = musicInfo?.music, let url = URL(string: musicUrlString) else {
+        guard let musicUrlString = musicInfo?.music.music, let url = URL(string: musicUrlString), let musicId = musicInfo?.music.id else {
                 print(" 음악 URL이 유효하지 않습니다.")
                 return
             }
@@ -296,6 +308,7 @@ class MusicLoadVC: UIViewController {
             if player == nil {
                 player = AVPlayer(url: url)
                 addPeriodicTimeObserver()
+                self.postPlayingRecord(musicId: musicId) // 음악 재생 기록
             }
 
             if player?.timeControlStatus == .playing {
@@ -432,6 +445,23 @@ class MusicLoadVC: UIViewController {
         }
     }
 
+    
+    // 음악 재생 기록 API
+    private func postPlayingRecord(musicId: String) {
+        guard let musicId = Int(musicId) else { return }
+        let param = UserPlayingRecordRequestDTO(musicId: musicId)
+        userService.playingRecord(parameter: param) { [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success:
+                break
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
     
 }
 extension Notification.Name {
