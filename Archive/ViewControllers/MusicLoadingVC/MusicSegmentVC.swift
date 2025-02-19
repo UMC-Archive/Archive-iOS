@@ -43,6 +43,8 @@ class MusicSegmentVC: UIViewController {
         print(segmentIndexNum)
         //   preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
         segmentView.rightButton.addTarget(self,action : #selector(rightButtonTapped), for: .touchUpInside)
+        segmentView.albumInfoView.playButton.addTarget(self, action: #selector(touchUpInsidePlayButton), for: .touchUpInside)
+        segmentView.albumInfoView.overlappingSquaresButton.addTarget(self, action: #selector(touchUpInsideLibraryButton), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
@@ -284,6 +286,34 @@ class MusicSegmentVC: UIViewController {
         self.segmentView.nextTrackCollectionView.reloadData()
         self.segmentView.lyricsCollectionView.reloadData()
         segmentChanged()
+    }
+    
+    // 뮤직 아이디 받아오기
+    private func fetchMusicId() {
+        guard let music = musicTitle else { return }
+        musicService.allInfo(music: music) { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .success(let response):
+                guard let musicId = response.music.info.id else { return }
+                self.postAddMusicInLibary(musicId: musicId)
+            case .failure(let error):
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
+    }
+    
+    // 노래 재생 / 정지 버튼
+    @objc private func touchUpInsidePlayButton() {
+        print("touchUpInsidePlayButton() 호출")
+        (self.presentingViewController as? MusicLoadVC)?.playPauseMusic()
+    }
+    
+    // 라이브러리 저장 버튼
+    @objc private func touchUpInsideLibraryButton() {
+        print("touchUpInsideLibraryButton() 호출")
+        fetchMusicId()
     }
 }
 
