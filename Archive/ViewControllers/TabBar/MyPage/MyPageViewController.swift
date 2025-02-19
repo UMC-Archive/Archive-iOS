@@ -54,8 +54,6 @@ class MyPageViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("------------- 장르")
-                print(response)
                 Task{
                     
                     self.genreResponseDate = response
@@ -100,7 +98,7 @@ class MyPageViewController: UIViewController {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc func recapButtonTapped(){
-        if genreResponseDate?.count ?? 2 <= 2 {
+        if genreResponseDate?.count ?? 2 <= 2 { //장르가 두개 이하면 아직 데이트를 수집중이라는 메시지 띄움
             let alert = RecapAlert.shared.getAlertController(type: .recap)
             self.present(alert, animated: true)
             return
@@ -128,8 +126,8 @@ class MyPageViewController: UIViewController {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     
-    func buildGradient() {
-        let genreColors: [String: UIColor] = [
+    func buildGradient() { //많이 들은 장르의 색깔에 따라 cd 생성
+        let genreColors: [String: UIColor] = [ // 받아온 장르 데이터를 1대1로 대응시켜 색깔 적용
             "Pop": UIColor.Pop ?? .black,
             "HipHop": UIColor.HipHop ?? .black,
             "Afrobeats": UIColor.Afrobeats ?? .black,
@@ -178,7 +176,7 @@ class MyPageViewController: UIViewController {
                 genreColors[data[4].name]?.cgColor ?? UIColor.white,
                 genreColors[data[0].name]?.cgColor ?? UIColor.white
             ]
-            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0] // 5개가 아니라 6개의 색으로 구성한 이유는 마지막 색이 끊겨보여서 한 색의 비율을 반으로 나눠 처음과 끝에 둬서 자연스럽게 만듬
         }
         else {
             gradient.colors = [
@@ -206,8 +204,6 @@ class MyPageViewController: UIViewController {
             
             switch result {
             case .success(let response):
-                print("------------- 최근추가 노래")
-                print(response)
                 Task{
                     
                     
@@ -227,8 +223,6 @@ class MyPageViewController: UIViewController {
             guard let self else {return}
             switch result {
             case .success(let response):
-                print("------------- 최근들은 노래")
-                print(response)
                 Task{
                     
                     self.recentlyPlayData = response
@@ -250,7 +244,6 @@ class MyPageViewController: UIViewController {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

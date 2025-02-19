@@ -11,10 +11,9 @@ class ListenRecordViewController: UIViewController, UIGestureRecognizerDelegate 
     private let rootView = ListenRecordView()
     let libraryService = LibraryService()
 
-    public var responseData: [RecentPlayMusicResponseDTO]? {
+    public var responseData: [RecentPlayMusicResponseDTO]? { // 정보가 넘어온후 컬렉션뷰의 정보를 로드
         didSet {
             DispatchQueue.main.async { [weak self] in
-                print("📌 responseData 변경됨: \(self?.responseData?.count ?? 0)개") // 디버깅 로그
                 self?.rootView.collectionView.reloadData()
             }
         }
@@ -39,13 +38,12 @@ class ListenRecordViewController: UIViewController, UIGestureRecognizerDelegate 
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         overflowElseTapGesture.cancelsTouchesInView = false
-        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        overflowElseTapGesture.delegate = self   //  제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         rootView.addGestureRecognizer(overflowElseTapGesture)
         
     }
-    
+    //더보기 버튼 클릭시 메소드
     @objc private func touchUpInsideOverflowButton(_ gesture: UITapGestureRecognizer) {
-        print("---")
         
         switch gesture.view?.superview {
         case let cell as GenreCollectionViewCell:
@@ -100,7 +98,6 @@ class ListenRecordViewController: UIViewController, UIGestureRecognizerDelegate 
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

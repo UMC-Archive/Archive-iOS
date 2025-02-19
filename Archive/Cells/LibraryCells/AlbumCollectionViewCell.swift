@@ -32,7 +32,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true
     }
-    
+    //터치 제스처를 위한 뷰
     public let touchView = UIView()
     
     public let albumNameLabel = UILabel().then{

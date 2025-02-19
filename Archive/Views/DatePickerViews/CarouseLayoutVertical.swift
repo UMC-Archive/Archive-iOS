@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CarouseLayoutVertical: UICollectionViewFlowLayout {
+class CarouseLayoutVertical: UICollectionViewFlowLayout { //recap의 cd 컬렉션뷰의 레이아웃을 세로 바전으로 변경
     
     public var sideItemScale: CGFloat = 0.8
     public var sideItemAlpha: CGFloat = 0.1
@@ -67,8 +67,8 @@ class CarouseLayoutVertical: UICollectionViewFlowLayout {
         let maxDistance = 10 * (self.itemSize.height + self.minimumLineSpacing)
         let distance = min(abs(collectionCenter - center), maxDistance)
         
-        let ratio = (maxDistance - distance) / maxDistance //11
-//        let ratio = (maxDistance - UIScreen.main.screenHeight/2) / maxDistance
+        let ratio = (maxDistance - distance) / maxDistance
+
         
         let alpha = max(ratio * (0.8 - self.sideItemAlpha) + self.sideItemAlpha, minAlpha)
         let scale = ratio * (1 - self.sideItemScale) + self.sideItemScale

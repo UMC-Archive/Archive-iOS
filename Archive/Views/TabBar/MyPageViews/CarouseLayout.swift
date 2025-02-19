@@ -9,8 +9,8 @@ import UIKit
 
 class CarouselLayout: UICollectionViewFlowLayout {
     
-    public var sideItemScale: CGFloat = 0.5
-    public var sideItemAlpha: CGFloat = 0.5
+    public var sideItemScale: CGFloat = 0.5 // 뒤 아이템이 작아지는 비율
+    public var sideItemAlpha: CGFloat = 0.5 // 뒤 아이템이 투명해지는 비율
     public var spacing: CGFloat = 0
 
     public var isPagingEnabled: Bool = false
@@ -36,7 +36,7 @@ class CarouselLayout: UICollectionViewFlowLayout {
         self.sectionInset = UIEdgeInsets(top: yInset, left: xInset, bottom: yInset, right: xInset)
         
         let itemWidth = self.itemSize.width
-        
+        //아이템 거리 계산
         let scaledItemOffset =  (itemWidth - (itemWidth*(self.sideItemScale + (1 - self.sideItemScale)/2))) / 2
         self.minimumLineSpacing = spacing - scaledItemOffset * 4
 
@@ -55,7 +55,7 @@ class CarouselLayout: UICollectionViewFlowLayout {
         return attributes.map({ self.transformLayoutAttributes(attributes: $0) })
     }
     
-    private func transformLayoutAttributes(attributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {
+    private func transformLayoutAttributes(attributes: UICollectionViewLayoutAttributes) -> UICollectionViewLayoutAttributes {//아이템들과 컬렉션 뷰의 중앙의 거리차를 이용하여 투명도, 작아지는정도를 계산
         
         guard let collectionView = self.collectionView else {return attributes}
         
@@ -85,7 +85,7 @@ class CarouselLayout: UICollectionViewFlowLayout {
         
         return attributes
     }
-    
+    // 스크롤이 끝날 때 자동으로 가장 가까운 셀로 정렬되도록 조정하는 메서드
     override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
 
         guard let collectionView = self.collectionView else {

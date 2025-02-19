@@ -84,7 +84,6 @@ class ProfileChangeView : UIView {
         }
         nicknameLabel.snp.makeConstraints{
             $0.centerY.equalTo(nickLabel.snp.centerY)
-//            $0.size.equalTo(CGSize(width: 26, height: 17))
             $0.height.equalTo(17)
             $0.trailing.equalToSuperview().inset(20)
             $0.leading.equalTo(nickLabel.snp.trailing).offset(62)

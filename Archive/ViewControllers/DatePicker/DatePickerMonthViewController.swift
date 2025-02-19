@@ -46,9 +46,6 @@ class DatePickerMonthViewController : UIViewController {
             if let cell = rootView.collectionView.cellForItem(at: indexPath) as? DatePickerMonthCell {
                 let data = cell.month.text // 셀에서 데이터 가져오기
                 
-                // 로그 출력
-                print("선택된 데이터: \(data)")
-                
                 // 데이터 전달을 위해 새로운 ViewController 생성
                 let viewController = DatePickerWeekViewController()
                 viewController.rootView.month.text = data // 전달할 데이터 설정
@@ -58,7 +55,7 @@ class DatePickerMonthViewController : UIViewController {
                 self.navigationController?.pushViewController(viewController, animated: true)
             }
         } else {
-            print("alpha가 1인 셀을 찾을 수 없습니다.")
+
         }
     }
     @objc func nextButtonTapped() {
@@ -78,8 +75,7 @@ class DatePickerMonthViewController : UIViewController {
             if let cell = rootView.collectionView.cellForItem(at: indexPath) as? DatePickerMonthCell {
                 let data = cell.month.text // 셀에서 데이터 가져오기
                 
-                // 로그 출력
-                print("선택된 데이터: \(data)")
+               
                 
                 // 데이터 전달을 위해 새로운 ViewController 생성
                 let viewController = DatePickerWeekViewController()
@@ -90,7 +86,7 @@ class DatePickerMonthViewController : UIViewController {
                 self.navigationController?.pushViewController(viewController, animated: true)
             }
         } else {
-            print("alpha가 1인 셀을 찾을 수 없습니다.")
+
         }
     }
     @objc func backButtonTapped() {

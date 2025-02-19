@@ -13,7 +13,6 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
     public var responseData: [RecapResponseDTO]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
-                print("📌 responseData 변경됨: \(self?.responseData?.count ?? 0)개") // 디버깅 로그
                 self?.rootView.collectionView.reloadData()
             }
         }
@@ -26,8 +25,7 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
         view.backgroundColor = .white
         setDataSource()
         controlTapped()
-        
-//        rootView.collectionView.reloadData()
+
     }
     
     private func setDataSource(){
@@ -40,11 +38,11 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         overflowElseTapGesture.cancelsTouchesInView = false
-        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        overflowElseTapGesture.delegate = self   // 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         rootView.addGestureRecognizer(overflowElseTapGesture)
     }
     @objc private func touchUpInsideOverflowButton(_ gesture: UITapGestureRecognizer) {
-        print("---")
+
         
         switch gesture.view?.superview {
         case let cell as GenreCollectionViewCell:
@@ -76,23 +74,18 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
     
     @objc private func goToLibrary(_ sender: CustomTapGesture) {
         guard let musicId = sender.musicId else {
-            print("nil")
             return }
-        print("-------musicId\(musicId)")
         
         libraryService.musicPost(musicId: musicId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print("postMusicInfo() 성공")
-                print(response)
+
                 Task{
-                    print("-----------------musicPost 성공")
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -121,7 +114,6 @@ class RecapCollectionViewViewController: UIViewController, UIGestureRecognizerDe
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

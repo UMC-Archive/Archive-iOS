@@ -16,10 +16,10 @@ public enum UserTargetType {
     case userPlayingRecord(parameter: UserPlayingRecordRequestDTO) // 재생 기록
     case getHistory // 최근 탐색 연도 불러오기 API
     case info // 사용자 정보 불러오기
-    case postHistory(date: PostHistoryRequestDTO)
-    case getRecap
-    case preference
-    case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO)
+    case postHistory(date: PostHistoryRequestDTO) //탐색연도 설정
+    case getRecap //recap결산 음악 가져오기
+    case preference //선호 장르 정보 가져오기
+    case profileChange(image: UIImage, parameter: ProfileChangePostRequestDTO) //프로필 사진, 닉네임 변경
     case getRecentMusic // 최근 추가한 노래
     case getRecentlyPlayedMusic // 최근 들은 노래, 청취 기록
    }

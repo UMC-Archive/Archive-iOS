@@ -21,9 +21,7 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
     }
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname)
-//        rootView.nicknameLabel.placeholder = nickname
-        
+
         setProfileImage()
         
         
@@ -54,7 +52,6 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
 
     @objc func backButtonTapped(){
         self.navigationController?.popViewController(animated: true)
-        print("1")
     }
     @objc func saveButtonTapped(){
         
@@ -69,8 +66,6 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
                 
                 switch result {
                 case .success(let response):
-                    print("post profile() 성공")
-                    print(response)
                     KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response?.profileImage ?? "")
                     KeychainService.shared.save(account: .userInfo, service: .nickname, value: response?.nickname ?? "닉네임")
                     self.navigationController?.popViewController(animated: true)

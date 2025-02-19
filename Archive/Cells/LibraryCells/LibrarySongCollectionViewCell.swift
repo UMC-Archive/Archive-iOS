@@ -14,8 +14,6 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
     static let librarySongCollectionViewIdentifier = "librarySongCollectionViewIdentifier"
     
     private enum constant {
-        static let playListAlbumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 50, height: 50) : CGSize(width: 50, height: 50)
-        static let playListLabelStackViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 101, height: 39) : CGSize(width: 101, height: 39)
         static let etcImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 3, height: 17) : CGSize(width: 3, height: 17)
     }
     
@@ -40,6 +38,7 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    //터치 제스처를 위한 뷰
     public let touchView = UIView()
     
     public let artistYearLabel = UILabel().then{
@@ -74,7 +73,6 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
             $0.top.equalToSuperview()
             $0.leading.equalToSuperview()
             $0.width.height.equalTo(50)
-//            $0.size.equalTo(constant.playListAlbumImageSize)
         }
         
         songLabel.snp.makeConstraints{
@@ -101,7 +99,6 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
         overflowView.snp.makeConstraints { make in
             make.width.equalTo(97)
             make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
             make.centerY.equalToSuperview()
             make.trailing.equalTo(etcImage).offset(-7)
         }

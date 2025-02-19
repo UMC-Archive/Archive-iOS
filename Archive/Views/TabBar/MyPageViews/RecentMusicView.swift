@@ -34,7 +34,7 @@ class RecentMusicView: UIView {
         $0.isScrollEnabled = true
         $0.showsVerticalScrollIndicator = false
         $0.register(GenreCollectionViewCell.self, forCellWithReuseIdentifier: "genreCollectionViewIdentifier")
-//        $0.register(RecapCollectionViewVerticalCell.self, forCellWithReuseIdentifier: "recapCollectionViewVerticalCellIdentifier")
+
     }
     
     
