@@ -76,10 +76,9 @@ class PreferArtistVC: UIViewController {
     }
     // 아티스트 한명이상은 선택해야 한다
     private func updateNextButtonState() {
-        let isEnabled = !selectedArtists.isEmpty
-        preferArtistView.nextButton.isEnabled = isEnabled
-        preferArtistView.updateNextButtonState(isEnabled: isEnabled)
+        preferArtistView.nextButton.isEnabled = true
     }
+
     
     
     @objc private func handleNext() {

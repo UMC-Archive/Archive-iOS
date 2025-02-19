@@ -26,8 +26,11 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         profileSelectView.snp.makeConstraints { make in
             make.edges.equalToSuperview() // 부모 뷰의 모든 가장자리에 맞춤
         }
-        
+       
         setupActions()
+        updateCompleteButtonState()
+        profileSelectView.completeButton.isEnabled = true
+
     }
     @objc private func leftButtonTapped(){
         print("눌림!")
@@ -86,16 +89,15 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
 
         
         private func updateCompleteButtonState() {
-            let isNicknameEntered = !(profileSelectView.profileName.text?.isEmpty ?? true)
-            let isImageSelected = profileSelectView.profileImage.image != UIImage(named: "profileSample")
-            
-            // 두 개 다 만족해야 버튼이 활성화됨
-            let isEnabled = isNicknameEntered && isImageSelected
-            
-            DispatchQueue.main.async {
-                self.profileSelectView.completeButton.isEnabled = isEnabled
-                self.profileSelectView.updateNextButtonState(isEnabled: isEnabled)
-            }
+            profileSelectView.completeButton.isEnabled = true
+             
+             // 버튼 색상 변경만 처리 (원하는 스타일이면 사용, 아니면 생략해도 됨)
+             let isNicknameEntered = !(profileSelectView.profileName.text?.isEmpty ?? true)
+             let isImageSelected = profileSelectView.profileImage.image != UIImage(named: "profileSample")
+
+             let isEnabled = isNicknameEntered && isImageSelected
+             profileSelectView.updateNextButtonState(isEnabled: isEnabled)
+
         }
         
 
@@ -171,6 +173,21 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         @objc private func handleNext() {
             
 
+            let nickname = profileSelectView.profileName.text
+              let isNicknameEntered = !(nickname?.isEmpty ?? true)
+              let isImageSelected = profileSelectView.profileImage.image != UIImage(named: "profileSample")
+
+              if !isNicknameEntered {
+                  showAlert(message: "프로필 이름을 입력해주세요.")
+                  return
+              }
+
+              if !isImageSelected {
+                  showAlert(message: "프로필 사진을 선택해주세요.")
+                  return
+              }
+
+
             guard let nickname = profileSelectView.profileName.text, !nickname.isEmpty else {
                 showAlert(message: "프로필 이름을 입력해주세요.")
                 return
@@ -185,9 +202,10 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             }
             
             
+
             // 닉네임 텍스트 필드 저장
             UserSignupData.shared.nickname = profileSelectView.profileName.text ?? ""
-            
+            print("닉네임 있음 -> 다음 화면")
             let preferGenreVC = PreferGenreVC() // 다음 화면
             navigationController?.pushViewController(preferGenreVC, animated: true)
         }
@@ -196,7 +214,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
             alert.addAction(okAction)
-            present(alert, animated: true)
+            self.present(alert, animated: true, completion: nil)
         }
     
 }
