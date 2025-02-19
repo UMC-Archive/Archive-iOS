@@ -21,11 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window = UIWindow(frame: windowScene.coordinateSpace.bounds)
         window?.windowScene = windowScene
         window?.backgroundColor = UIColor.black_100
-
-        let musicLoadVC = RegisterVC()
-        let navigationController = UINavigationController(rootViewController: musicLoadVC)
-
-        window?.rootViewController = navigationController
+        window?.rootViewController = OnBoarding1VC()
 
         window?.makeKeyAndVisible()
       
