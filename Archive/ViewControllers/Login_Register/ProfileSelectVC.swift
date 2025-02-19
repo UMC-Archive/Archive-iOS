@@ -29,6 +29,9 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
 
         setupActions()
     }
+    override func viewWillAppear(_ animated: Bool){
+        super.viewWillAppear(animated)
+    }
 
     private func setupActions() {
         // 프로필 이미지 선택 이벤트

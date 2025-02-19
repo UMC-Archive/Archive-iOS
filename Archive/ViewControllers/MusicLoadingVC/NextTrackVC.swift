@@ -141,10 +141,11 @@ class NextTrackVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             label.textColor = .gray
             return label
         }()
+        let touchView = UIView()
         
         private let moreButton : UIButton = {
             let button = UIButton()
-            button.setImage(UIImage(systemName: "ellipsis"), for: .normal)
+            button.setImage(UIImage(systemName: "etc"), for: .normal)
             button.tintColor = .white
             return button
         }()
@@ -164,6 +165,7 @@ class NextTrackVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
             
             contentView.addSubview(albumImageView)
             contentView.addSubview(titleLabel)
+            contentView.addSubview(touchView)
             contentView.addSubview(detailLabel)
             contentView.addSubview(moreButton)
         }
@@ -182,7 +184,11 @@ class NextTrackVC: UIViewController, UICollectionViewDelegate, UICollectionViewD
                 make.top.equalTo(albumImageView.snp.top).offset(2)
                 make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
             }
-            
+            touchView.snp.makeConstraints{
+                $0.top.equalToSuperview()
+                $0.leading.equalToSuperview()
+                $0.trailing.equalTo(moreButton.snp.leading)
+            }
             // 아티스트와 연도
             detailLabel.snp.makeConstraints { make in
                 make.leading.equalTo(albumImageView.snp.trailing).offset(12)

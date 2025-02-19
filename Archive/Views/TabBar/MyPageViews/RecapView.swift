@@ -86,7 +86,6 @@ class RecapView: UIView {
         $0.contentInsetAdjustmentBehavior = .never
         $0.register(RecapCollectionViewCell.self, forCellWithReuseIdentifier: "recapCollectionViewIdentifier")
     }
-    
     // CDView 및 CDHoleView
     public var CDView = UIView().then {
         $0.clipsToBounds = true
@@ -221,11 +220,11 @@ class RecapView: UIView {
             $0.top.equalTo(CDBackgroundView.snp.bottom).offset(46)
             $0.centerX.equalToSuperview()
         }
-//        genreCollectionViewBackgound.snp.makeConstraints{
-//            $0.centerX.centerY.equalTo(genreCollectionView)
-//            $0.width.equalTo(423)
-//            $0.height.equalTo(58)
-//        }
+        genreCollectionViewBackgound.snp.makeConstraints{
+            $0.centerX.centerY.equalTo(genreCollectionView)
+            $0.width.equalTo(423)
+            $0.height.equalTo(58)
+        }
         
         // genreCollectionView 제약 조건
         genreCollectionView.snp.makeConstraints {

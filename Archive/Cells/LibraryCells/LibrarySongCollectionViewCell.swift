@@ -28,7 +28,7 @@ class LibrarySongCollectionViewCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     private let songAlbumImage = UIImageView().then{
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true

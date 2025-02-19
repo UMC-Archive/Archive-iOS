@@ -85,6 +85,8 @@ class ForYouRecommendAlbumCell : UICollectionViewCell {
         lbl.numberOfLines = 1
         lbl.isUserInteractionEnabled = true
     }
+
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         

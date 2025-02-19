@@ -70,6 +70,8 @@ class MusicSegmentVC: UIViewController {
         fetchRecommendAlbums()
         fetchRecommendMusic()
     }
+
+
     // 오른쪽 버튼 눌렀을 때 앨범 추천으로 가게
     @objc func rightButtonTapped() {
         print("눌림!")
@@ -264,6 +266,7 @@ class MusicSegmentVC: UIViewController {
                         }
             }
         }
+    
     }
 
 
@@ -297,14 +300,15 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
                 musicGesture.musicId = trackData.music.id
                 musicGesture.musicImageURL = trackData.music.image
                 musicGesture.artist = trackData.artist
-                cell.titleLabel.addGestureRecognizer(musicGesture)
-                cell.albumImageView.addGestureRecognizer(musicGesture)
+                cell.touchView.addGestureRecognizer(musicGesture)
+                cell.touchView.isUserInteractionEnabled = true
                 
                 // 아티스트 탭 제스처
                 let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
                 tapArtistGesture.artist = trackData.artist
                 tapArtistGesture.album = trackData.album.title
                 cell.detailLabel.addGestureRecognizer(tapArtistGesture)
+                cell.detailLabel.isUserInteractionEnabled = true
 
                 
             } else {
@@ -325,6 +329,7 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
                 tapArtistGesture.artist = trackData.artist
                 tapArtistGesture.album = trackData.album.title
                 cell.detailLabel.addGestureRecognizer(tapArtistGesture)
+                cell.detailLabel.isUserInteractionEnabled = true
 
                 
             }
@@ -398,11 +403,13 @@ class TrackCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    public let touchView = UIView()
     
     private func setupViews() {
         
         contentView.addSubview(albumImageView)
         contentView.addSubview(titleLabel)
+        contentView.addSubview(touchView)
         contentView.addSubview(detailLabel)
         contentView.addSubview(moreButton)
     }
@@ -420,6 +427,11 @@ class TrackCell: UICollectionViewCell {
             make.leading.equalTo(albumImageView.snp.trailing).offset(12)
             make.top.equalTo(albumImageView.snp.top).offset(2)
             make.trailing.lessThanOrEqualTo(moreButton.snp.leading).offset(-8)
+        }
+        touchView.snp.makeConstraints{
+            $0.leading.equalTo(albumImageView.snp.leading)
+            $0.trailing.equalTo(moreButton.snp.leading)
+            $0.height.equalToSuperview()
         }
         
         // 아티스트와 연도
@@ -496,6 +508,7 @@ class AlbumCell: UICollectionViewCell {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+   
     
     private func setupViews() {
         contentView.addSubview(albumImageView)
@@ -630,15 +643,22 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
-    
-    // 아티스트 버튼
+
     @objc private func tapArtistLabelGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        let nextVC = ArtistViewController(artist: artist, album: album)
-        self.navigationController?.pushViewController(nextVC, animated: true)
+        
+        // 최상위 모달을 dismiss 후
+        self.view.window?.rootViewController?.dismiss(animated: false, completion: {
+            // dismiss가 완료된 후 presentingViewController에서 navigationController를 참조
+            if let navigationController = self.presentingViewController?.navigationController {
+                let nextVC = ArtistViewController(artist: artist, album: album)
+                navigationController.pushViewController(nextVC, animated: true)
+            }
+        })
         
         print("tapArtistLabelGesture")
     }
+
     
     // 자세히 보기 버튼
     private func tapDetailButton(for section: Section, item: NSDiffableDataSourceSectionSnapshot<Item>) {

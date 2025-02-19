@@ -19,6 +19,7 @@ class MusicLoadVC: UIViewController {
     private var artist: String
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
+    let libraryService = LibraryService()
     private var playerItemObserver: Any?
     
     override func loadView() {
@@ -43,7 +44,6 @@ class MusicLoadVC: UIViewController {
         setupActions()
     }
     
-
     public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
 //            let artist = "NewJeans" // 임시 데이터
 //            let song = "Supernatural"
@@ -210,6 +210,36 @@ class MusicLoadVC: UIViewController {
         
         // 뒤로 가기
         musicLoadView.popButton.addTarget(self, action: #selector(popButton), for: .touchUpInside)
+        // 앨범 으로 이동 제스처
+        let GoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self.goToLibrary(_:)))
+        GoToLibraryGesture.musicId = musicInfo?.id
+
+        self.musicLoadView.titleIcon.isUserInteractionEnabled = true
+        self.musicLoadView.titleIcon.addGestureRecognizer(GoToLibraryGesture)
+
+    }
+    // 라이브러리로 이동 액션
+    @objc private func goToLibrary(_ sender: CustomTapGesture) {
+        guard let musicId = sender.musicId else { return }
+        postAddMusicInLibary(musicId: musicId)
+
+    }
+    // 보관함 노래 추가 함수
+    private func postAddMusicInLibary(musicId: String) {
+        libraryService.musicPost(musicId: musicId){ [weak self] result in
+            guard let self = self else { return }
+            
+            switch result {
+            case .success(let response):
+                break
+                print("보관함 이동 성공입니당")
+                // 성공 alert 띄우기
+            case .failure(let error):
+                // 네트워크 연결 실패 얼럿
+                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                self.present(alert, animated: true)
+            }
+        }
     }
     
     // 뒤로 가기 액션

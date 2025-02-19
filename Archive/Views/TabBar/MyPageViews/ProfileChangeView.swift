@@ -89,8 +89,8 @@ class ProfileChangeView : UIView {
         }
         divideLine.snp.makeConstraints{
             $0.top.equalTo(nickLabel.snp.bottom).offset(8.5)
-            $0.leading.equalToSuperview().offset(22.35)
-            $0.width.equalTo(330)
+            $0.leading.equalToSuperview().offset(20)
+            $0.trailing.equalToSuperview().offset(-20)
             $0.height.equalTo(1)
         }
         button.snp.makeConstraints{
