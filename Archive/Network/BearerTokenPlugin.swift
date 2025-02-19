@@ -15,9 +15,9 @@ final class BearerTokenPlugin: PluginType {
 
 
 //
-        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTk0NzYwMywiZXhwIjoxNzM5OTYyMDAzfQ.RGnXOoU0oGkyUgLlldlb8MK1Bo4HOd0kzFDojaQiJwM"
+        return "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJwYXlsb2FkIjp7InVzZXJJZCI6IjEiLCJ0eXBlIjoiUlQiLCJpc3N1ZXIiOiJBcmNoaXZlQVBJU2VydmVyIn0sImlhdCI6MTczOTk2MDY3OSwiZXhwIjoxNzM5OTc1MDc5fQ.zdtgns4HgLh4dJnY1Tws5VfBnc64mC5jfiZ5zkOdavE"
 
-        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
+//        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
 
     }
     

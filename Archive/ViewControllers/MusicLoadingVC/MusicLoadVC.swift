@@ -367,11 +367,6 @@ class MusicLoadVC: UIViewController {
            )
     }
     
-
-    // 초기 반복재생 버튼 상태
-    private var repeatState: MusicLoadView.RepeatState = .RepeatAll
-   // layItemObserver가 있어야 시간 흐르는걸 인식함
-    
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {
