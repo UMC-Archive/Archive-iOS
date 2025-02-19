@@ -351,6 +351,7 @@ class MusicLoadVC: UIViewController {
             isPlaying = true
                 musicLoadView.updatePlayButton(isPlaying: true)
         }
+
         
         //  현재 재생 중인 곡 정보 Notification 전송 -> 가사에서 사용하려고
            NotificationCenter.default.post(
@@ -367,7 +368,10 @@ class MusicLoadVC: UIViewController {
     }
     
 
-
+    // 초기 반복재생 버튼 상태
+    private var repeatState: MusicLoadView.RepeatState = .RepeatAll
+   // layItemObserver가 있어야 시간 흐르는걸 인식함
+    
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {

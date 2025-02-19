@@ -316,6 +316,22 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
                 cell.detailLabel.addGestureRecognizer(tapArtistGesture)
                 cell.detailLabel.isUserInteractionEnabled = true
 
+                // 앨범 으로 이동 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                tapAlbumGesture.artist = trackData.artist
+                tapAlbumGesture.album = trackData.music.albumId
+                cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+                cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+                
+                // etc 버튼 눌렀을 때의 제스처
+                let songEtcTapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpInsideOverflowButton(_:)))
+                cell.moreButton.addGestureRecognizer(songEtcTapGesture)
+                songEtcTapGesture.delegate = self
+                cell.moreButton.isUserInteractionEnabled = true
+                cell.setOverflowView(type: .inLibrary)
+                
+              
+                
                 
             } else {
                 guard let trackData = recommendMusic?[indexPath.item] else { return cell }
@@ -337,6 +353,21 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
                 cell.detailLabel.addGestureRecognizer(tapArtistGesture)
                 cell.detailLabel.isUserInteractionEnabled = true
 
+                // 앨범 으로 이동 제스처
+                let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+                tapAlbumGesture.artist = trackData.artist
+                tapAlbumGesture.album = trackData.music.albumId
+                cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+                cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
+                
+                // etc 버튼 눌렀을 때의 제스처
+                let songEtcTapGesture = UITapGestureRecognizer(target: self, action: #selector(touchUpInsideOverflowButton(_:)))
+                cell.moreButton.addGestureRecognizer(songEtcTapGesture)
+                songEtcTapGesture.delegate = self
+                cell.moreButton.isUserInteractionEnabled = true
+                cell.setOverflowView(type: .inLibrary)
+                
+              
                 
             }
 
@@ -350,14 +381,60 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
             cell.configure(text: lyrics?[indexPath.item] ?? "", isHighlighted: isHighlighted)
             return cell
 
+        }
+        else if collectionView == segmentView.albumCollectionView {
+            // 앨범 추천 - 세로 스크롤
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: TrackCell.identifier, for: indexPath) as? TrackCell else {
+                fatalError("AlbumCell 에러")
+            }
+            guard let recommendMusic = recommendMusic?[indexPath.item] else { return cell }
+            cell.configure(dto: recommendMusic)
+
+            // 노래 재생 제스처
+            let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
+            musicGesture.musicTitle = recommendMusic.music.title
+            musicGesture.musicId = recommendMusic.music.id
+            musicGesture.musicImageURL = recommendMusic.music.image
+            musicGesture.artist = recommendMusic.artist
+            cell.albumImageView.addGestureRecognizer(musicGesture)
+            cell.albumImageView.isUserInteractionEnabled = true
+
+            // 아티스트 탭 제스처
+            let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+            tapArtistGesture.artist = recommendMusic.artist
+            tapArtistGesture.album = recommendMusic.album.title
+            cell.detailLabel.addGestureRecognizer(tapArtistGesture)
+            cell.detailLabel.isUserInteractionEnabled = true
+
+            return cell
+
         } else if collectionView == segmentView.albumRecommendCollectionView {
+            // 앨범 추천 - 가로 스크롤
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: AlbumCell.identifier, for: indexPath) as? AlbumCell else {
                 fatalError("AlbumCell 에러")
             }
-            guard let recommendAlbums = recommendAlbums else { return cell }
-            cell.configure(dto: recommendAlbums[indexPath.item])
+            guard let recommendAlbums = recommendAlbums?[indexPath.item] else { return cell }
+            cell.configure(dto: recommendAlbums)
+
+            // 앨범 선택 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = recommendAlbums.artist
+            tapAlbumGesture.album = recommendAlbums.album.title
+            cell.albumImageView.addGestureRecognizer(tapAlbumGesture)
+            cell.albumImageView.isUserInteractionEnabled = true
+
+            // 아티스트 선택 제스처
+            let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
+            tapArtistGesture.artist = recommendAlbums.artist
+            tapArtistGesture.album = recommendAlbums.album.title
+            cell.artistLabel.addGestureRecognizer(tapArtistGesture)
+            cell.artistLabel.isUserInteractionEnabled = true
+
             return cell
         }
+
+            
+       
 
         return UICollectionViewCell()
     }
@@ -399,11 +476,18 @@ class TrackCell: UICollectionViewCell {
         return button
     }()
     
+    // 더보기 뷰
+    public let overflowView = OverflowView().then { view in
+        view.isHidden = true
+    }
+
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .black
         setupViews()
         setupConstraints()
+        // 버튼 눌릴 시 타게팅
+      
     }
     
     required init?(coder: NSCoder) {
@@ -418,6 +502,7 @@ class TrackCell: UICollectionViewCell {
         contentView.addSubview(touchView)
         contentView.addSubview(detailLabel)
         contentView.addSubview(moreButton)
+        contentView.addSubview(overflowView)
     }
     
     private func setupConstraints() {
@@ -453,8 +538,31 @@ class TrackCell: UICollectionViewCell {
             make.centerY.equalToSuperview()
             make.width.height.equalTo(24)
         }
+        overflowView.snp.makeConstraints { make in
+            make.width.equalTo(97)
+            make.height.equalTo(52.5)
+//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
+            make.centerY.equalToSuperview()
+            make.trailing.equalTo(moreButton).offset(-7)
+        }
+
     }
     
+    public func setOverflowView(type: OverflowType){
+        overflowView.setType(type: type)
+        switch type {
+        case .inAlbum:
+            overflowView.snp.updateConstraints { make in
+                make.height.equalTo(26)
+            }
+//        case .inLibrary:
+//            overflowView.snp.updateConstraints { make in
+//                make.height.equalTo(26)
+//            }
+        default:
+            return
+        }
+    }
     
     func configure(dto: SelectionResponseDTO) {
         titleLabel.text = dto.music.title
@@ -577,8 +685,7 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     // overflow 버튼 클릭 시 실행될 메서드
     @objc private func touchUpInsideOverflowButton(_ sender: UIButton) {
         // 버튼의 superview를 통해 셀 찾기
-        guard let cell = sender.superview as? VerticalCell ?? sender.superview?.superview as? VerticalCell else { return
-        }
+        guard let cell = sender.superview as? TrackCell ?? sender.superview?.superview as? TrackCell else { return }
 
         // isHidden 토글
         cell.overflowView.isHidden.toggle()
@@ -590,7 +697,7 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
         
         // 현재 보이는 모든 셀을 순회하면서 overflowView 숨기기
         for cell in segmentView.nextTrackCollectionView.visibleCells {
-            if let verticalCell = cell as? VerticalCell {
+            if let verticalCell = cell as? TrackCell {
                 if !verticalCell.overflowView.frame.contains(touchLocation) {
                     verticalCell.overflowView.isHidden = true
                 }
@@ -675,5 +782,17 @@ extension MusicSegmentVC: UIGestureRecognizerDelegate  {
     // 다음트랙 받아오기
     public func setNextTracks(nextTracks: [SelectionResponseDTO]) {
         self.nextTracks = nextTracks
+    }
+}
+extension UIView {
+    func findCollectionViewCell() -> UICollectionViewCell? {
+        var superview = self.superview
+        while let view = superview {
+            if let cell = view as? UICollectionViewCell {
+                return cell
+            }
+            superview = view.superview
+        }
+        return nil
     }
 }

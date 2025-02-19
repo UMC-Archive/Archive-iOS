@@ -9,24 +9,24 @@ import UIKit
 import Foundation
 
 class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-
+    
     private let profileSelectView = ProfileSelectView()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
-
+        
         // 배경색 설정
         view.backgroundColor = .black
-
+        
         // ProfileSelectView 추가
         view.addSubview(profileSelectView)
-
+        
         // Auto Layout 설정
         profileSelectView.snp.makeConstraints { make in
             make.edges.equalToSuperview() // 부모 뷰의 모든 가장자리에 맞춤
         }
-
+        
         setupActions()
     }
     @objc private func leftButtonTapped(){
@@ -38,7 +38,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         override func viewWillAppear(_ animated: Bool){
             super.viewWillAppear(animated)
         }
-        
+    
         private func setupActions() {
             // 프로필 이미지 선택 이벤트
             profileSelectView.onProfileImageTapped = { [weak self] in
@@ -95,21 +95,17 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         }
         
         func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
-            
-            
             dismiss(animated: true)
-            
-            
         }
         
         @objc private func handleNext() {
             
+
             guard let nickname = profileSelectView.profileName.text, !nickname.isEmpty else {
                 showAlert(message: "프로필 이름을 입력해주세요.")
                 return
             }
             
-            // 프로필 이미지 선택 여부 체크
             if let defaultImage = UIImage(named: "profileSample"),
                let currentImageData = profileSelectView.profileImage.image?.pngData(),
                let defaultImageData = defaultImage.pngData(),
@@ -119,14 +115,13 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
             }
             
             
-            
-            
             // 닉네임 텍스트 필드 저장
             UserSignupData.shared.nickname = profileSelectView.profileName.text ?? ""
             
             let preferGenreVC = PreferGenreVC() // 다음 화면
             navigationController?.pushViewController(preferGenreVC, animated: true)
         }
+
         private func showAlert(message: String) {
             let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
             let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
@@ -135,4 +130,3 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         }
     
 }
-

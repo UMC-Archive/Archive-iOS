@@ -23,6 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = UIColor.black_100
         window?.rootViewController = OnBoarding1VC()
 
+
         window?.makeKeyAndVisible()
       
     }
