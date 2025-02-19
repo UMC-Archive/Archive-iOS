@@ -79,8 +79,8 @@ public final class MusicService: NetworkManager {
     }
     
     // 선택 아티스트 정보 조회
-    public func chooseArtistInfo(searchArtist: String? = nil, parameter: ChooseArtistRequestDTO, completion: @escaping(Result<ChooseArtistResponseDTO?, NetworkError>) -> Void) {
-        requestOptional(target: .chooseArtistInfo(searchArtist: searchArtist, parameter: parameter), decodingType: ChooseArtistResponseDTO.self, completion: completion)
+    public func chooseArtistInfo(searchArtist: String? = nil, parameter: ChooseArtistRequestDTO, completion: @escaping(Result<[ArtistInfoReponseDTO]?, NetworkError>) -> Void) {
+        requestOptional(target: .chooseArtistInfo(searchArtist: searchArtist, parameter: parameter), decodingType: [ArtistInfoReponseDTO].self, completion: completion)
     }
     
     // 당신을 위한 추천곡(탐색 뷰)

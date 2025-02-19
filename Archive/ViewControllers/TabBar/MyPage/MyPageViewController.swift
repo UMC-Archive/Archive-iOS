@@ -357,6 +357,10 @@ class MyPageViewController: UIViewController {
                 rootView.topView.config(profileImage: profileImage)
                 self.rootView.profileView.kf.setImage(with: URL(string: profileImage))
             }
+            
+            if let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname) {
+                rootView.profileLabel.text = nickname
+            }
         }
         
     }

@@ -128,6 +128,7 @@ class LoginVC: UIViewController {
                 guard let response = response else { return }
                 // 키체인 저장
                 KeychainService.shared.save(account: .userInfo, service: .profileImage, value: response.profileImage)
+                KeychainService.shared.save(account: .userInfo, service: .nickname  , value: response.nickname)
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
