@@ -7,7 +7,7 @@
 
 import UIKit
 
-class CarouselLayout2: UICollectionViewFlowLayout {
+class CarouselLayout2: UICollectionViewFlowLayout { // 투명도가 아닌 view의 업데이트를 통해 뒷열의 셀을 어둡게하는 부분만 다름
     
     public var sideItemScale: CGFloat = 0.5
     public var sideItemAlpha: CGFloat = 0.5

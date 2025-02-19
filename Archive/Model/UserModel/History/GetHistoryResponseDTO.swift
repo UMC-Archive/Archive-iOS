@@ -38,28 +38,3 @@ extension UserHistoryResponseDTO {
         return UserHistoryResponseDTO(id: "1", history: "탐색해주세요.")
     }
 }
-
-
-/*
- "result": [
-     {
-       "userHistory": {
-         "id": "16",
-         "userId": "1",
-         "history": "2010-02-02T00:00:00.000Z",
-         "createdAt": "2025-02-11T06:59:16.830Z",
-         "updatedAt": "2025-02-11T06:59:16.830Z"
-       },
-       "historyImage": "https://example.com/history_image"
-     },
-     {
-       "userHistory": {
-         "id": "15",
-         "userId": "1",
-         "history": "1984-06-08T00:00:00.000Z",
-         "createdAt": "2025-02-10T15:58:32.008Z",
-         "updatedAt": "2025-02-10T15:58:32.008Z"
-       },
-       "historyImage": "https://example.com/history_image"
-     },
- */

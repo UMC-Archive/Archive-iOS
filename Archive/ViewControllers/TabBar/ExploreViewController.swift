@@ -320,7 +320,6 @@ class ExploreViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else {return}
-                print("recommendMusic() 성공")
                 self.recommendMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapShot()
@@ -340,7 +339,7 @@ class ExploreViewController: UIViewController {
             switch result {
             case .success(let response): // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
                 guard let response = response else {return}
-                print("getRecommendAlbum")
+
                 self.recommendAlbumData = response.map{($0.album, $0.artist)}
                 setDataSource()
                 setSnapShot()
@@ -359,7 +358,8 @@ class ExploreViewController: UIViewController {
             switch result {
             case .success(let response):
                 guard let response = response else {return}
-                print("getHiddenMusic() 성공")
+
+    
                 self.hiddenMusic = response.map{($0.music, $0.album, $0.artist)}
                 self.setDataSource()
                 self.setSnapShot()
@@ -467,7 +467,6 @@ extension ExploreViewController: UIGestureRecognizerDelegate  {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }

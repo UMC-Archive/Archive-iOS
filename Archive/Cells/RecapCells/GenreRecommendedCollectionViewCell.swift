@@ -47,10 +47,9 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
         
         darkOverlay.frame = contentView.bounds
         darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.4) // 반투명 어두운 효과
-//        darkOverlay.isHidden = true
         contentView.addSubview(darkOverlay)
     }
-       
+    // 장르 컬렉션뷰의 2,3열이 어둡게 보이도록 뷰를 업데이트
     func updateOverlayVisibility(_ darkRatio: CGFloat) {
         print("----------\(darkRatio)")
         self.darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(darkRatio * 0.6)
@@ -63,7 +62,7 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
     }
     public func config(data : GenrePreferenceResponseDTO){
         let genre = data.name
-        switch genre {
+        switch genre { //장르 데이터가 string 값으로 와서 response에 따라 cdView의 gradient의 색상을 달리하기 위해 만듬
         case "Pop":
             AlbumImage.image = .popPattern
         case "Hip hop":

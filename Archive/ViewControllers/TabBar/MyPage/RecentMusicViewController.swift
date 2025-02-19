@@ -13,7 +13,7 @@ class RecentMusicViewController: UIViewController, UIGestureRecognizerDelegate {
     public var responseData: [RecentMusicResponseDTO]? {
         didSet {
             DispatchQueue.main.async { [weak self] in
-                print("📌 responseData 노래 변경됨: \(self?.responseData?.count ?? 0)개") // 디버깅 로그
+
                 self?.rootView.collectionView.reloadData()
             }
         }
@@ -38,13 +38,13 @@ class RecentMusicViewController: UIViewController, UIGestureRecognizerDelegate {
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         overflowElseTapGesture.cancelsTouchesInView = false
-        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        overflowElseTapGesture.delegate = self   // 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         rootView.addGestureRecognizer(overflowElseTapGesture)
         
     }
     
     @objc private func touchUpInsideOverflowButton(_ gesture: UITapGestureRecognizer) {
-        print("---")
+
         
         switch gesture.view?.superview {
         case let cell as GenreCollectionViewCell:
@@ -99,7 +99,6 @@ class RecentMusicViewController: UIViewController, UIGestureRecognizerDelegate {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -137,11 +136,7 @@ extension RecentMusicViewController: UICollectionViewDataSource {
         ) as? GenreCollectionViewCell else {
             fatalError("Failed to dequeue genreCollectionViewCell")
         }
-//        // releaseTime이 nil일 경우를 고려하여 기본값을 설정
-//        let releaseTime = responseData?[indexPath.row].music.releaseTime ?? "2022"
-//        guard let year = extractYear(from: releaseTime) else {
-//            return UICollectionViewCell() // year 추출이 실패하면 기본 셀 반환
-//        }
+
         let dateString = responseData?[indexPath.row].music.releaseTime ?? "2022"
         let date = Int(dateString.getWeekTuple().year)
         cell.config(image: responseData?[indexPath.row].music.image ?? "", songName: responseData?[indexPath.row].music.title ?? "", artist: responseData?[indexPath.row].artist.name ?? "", year: date ?? 2023)

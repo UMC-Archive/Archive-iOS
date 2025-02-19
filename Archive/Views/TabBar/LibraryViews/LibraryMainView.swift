@@ -133,8 +133,7 @@ class LibraryMainView : UIView {
             addSubview($0)
         }
         
-        topView.snp.makeConstraints{
-//            $0.top.equalTo(safeAreaLayoutGuide).offset(46 * UIScreen.main.screenHeight / 667)
+        topView.snp.makeConstraints
             $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(librarySegmentControl)
             $0.horizontalEdges.equalToSuperview().inset(20)
@@ -158,30 +157,22 @@ class LibraryMainView : UIView {
             $0.height.equalTo(1)
         }
         playlistCollectionView.snp.makeConstraints{
-//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-//            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
             $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         songCollectionView.snp.makeConstraints{
-//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-//            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
             $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         albumCollectionView.snp.makeConstraints{
-//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-//            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
             $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         artistCollectionView.snp.makeConstraints{
-//            $0.size.equalTo(constant.playlistCollectionViewSize)
             $0.top.equalTo(librarySegmentControl.snp.bottom).offset(20 * UIScreen.main.screenHeight / 667)
-//            $0.leading.equalTo(librarySegmentControl.snp.leading)
             $0.horizontalEdges.equalTo(librarySegmentControl)
             $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }

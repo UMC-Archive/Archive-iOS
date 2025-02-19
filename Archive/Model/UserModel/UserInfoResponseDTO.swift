@@ -29,17 +29,3 @@ public struct UserInfoResponseDTO: Decodable {
     }
 }
 
-/*
- result": {
-     "id": "1",
-     "nickname": "닉네임",
-     "email": "user@example.com",
-     "password": "hidden",
-     "profileImage": "https://example.com/image.jpg",
-     "status": "active",
-     "socialType": "local",
-     "inactiveDate": "2025-02-06",
-     "createdAt": "2025-02-06",
-     "updatedAt": "2025-02-06"
-   }
- */

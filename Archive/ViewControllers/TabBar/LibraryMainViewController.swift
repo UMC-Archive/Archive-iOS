@@ -26,10 +26,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
         setupActions()
         showCollectionView(for: segmentIndexNum)
     }
-//    override func viewDidDisappear(_ animated: Bool) {
-//        super.viewDidDisappear(animated)
-//        navigationController?.navigationBar.isHidden = false
-//    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.navigationBar.isHidden = true
@@ -71,8 +68,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     
     @objc private func touchUpInsideOverflowButton(_ gesture: UITapGestureRecognizer) {
-        print("---")
-        
+
         switch gesture.view?.superview {
         case let cell as LibrarySongCollectionViewCell:
             // 첫 번째 superview로 셀 찾기
@@ -111,7 +107,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     
     @objc private func segmentChanged() {
         segmentIndexNum = rootView.librarySegmentControl.selectedSegmentIndex
-        let underbarWidth = rootView.librarySegmentControl.frame.width / 4
+        let underbarWidth = rootView.librarySegmentControl.frame.width / 4 //세그먼트 주제? 개수로 나눠서 길이 가져옴
         let newLeading = CGFloat(segmentIndexNum) * underbarWidth
         
         
@@ -121,10 +117,11 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
                 $0.leading.equalTo(self.rootView.librarySegmentControl.snp.leading).offset(newLeading)
                 $0.width.equalTo(underbarWidth)
             }
-            print(self.segmentIndexNum)
+
+            
             self.rootView.layoutIfNeeded()
         })
-        hideAllCollectionViews()
+        hideAllCollectionViews() //컬렉션뷰를 다 가린후 선택된 인덱스의 컬렉션뷰를 설정
         showCollectionView(for: segmentIndexNum)
     }
     
@@ -157,7 +154,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
             switch result {
                         // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
             case .success(let response): // response는 AlbumInfoReponseDTO 타입
-                print("libraryMusic 성공 ")
+ 
                 Task{
                     self.musicResponse = response
                     self.rootView.songCollectionView.reloadData()
@@ -166,7 +163,6 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
                 self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
             }
         }
     }
@@ -177,7 +173,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
             switch result {
                         // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
             case .success(let response): // response는 AlbumInfoReponseDTO 타입
-                print("libraryAtrist성공 ")
+
                 Task{
                     self.artistResponse = response
                     self.rootView.artistCollectionView.reloadData()
@@ -186,7 +182,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
                 self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+
             }
         }
     }
@@ -197,7 +193,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
             switch result {
                         // 네트워크 연결 성공 시 데이터를 UI에 연결 작업
             case .success(let response): // response는 AlbumInfoReponseDTO 타입
-                print("libraryAlbum성공 ")
+
                            
                 Task{
                     self.albumResponse = response
@@ -207,7 +203,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
                 // 네트워크 연결 실패 얼럿
                 let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
                 self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+
             }
         }
     }
@@ -237,24 +233,24 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     @objc private func songDelete(_ sender: CustomTapGesture) {
         guard let musicId = sender.musicId else {
-            print("nil")
+
             return }
-        print("-------musicId\(musicId)")
+
         
         libraryService.musicDelete(musicId: musicId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print(response)
+
                 Task{
                     
-                    print("-----------------musicdelete 성공")
+
                     self.getMusicInfo()
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
+
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -262,24 +258,23 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     @objc private func artistDelete(_ sender: CustomTapGesture) {
         guard let artistId = sender.artistId else {
-            print("nil")
+
             return }
-        print("-------musicId\(artistId)")
+
         
         libraryService.artistDelete(artistId: artistId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print(response)
+   
                 Task{
-                    
-                    print("-----------------artistdelete 성공")
+
                     self.getArtistInfo()
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
+
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -287,24 +282,24 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     @objc private func albumDelete(_ sender: CustomTapGesture) {
         guard let albumId = sender.albumId else {
-            print("nil")
+    
             return }
-        print("-------musicId\(albumId)")
+   
         
         libraryService.albumDelete(albumId: albumId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print(response)
+               
                 Task{
                     
-                    print("-----------------artistdelete 성공")
+                   
                     self.getAlbumInfo()
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
+               
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -319,7 +314,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
+
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -333,16 +328,16 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             return PlayListDummy.dummy().count
             
         case rootView.songCollectionView:
-            //            getMusicInfo()
+
             return musicResponse?.count ?? 0
             
         case rootView.albumCollectionView:
-            //            getAlbumInfo()
+
             return albumResponse?.count ?? 0
             
             
         case rootView.artistCollectionView:
-            //            getArtistInfo()
+
             return artistResponse?.count ?? 0
             
         default:
@@ -370,13 +365,7 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             ) as? LibrarySongCollectionViewCell else {
                 fatalError("Failed to dequeue LibrarySongCollectionViewCell")
             }
-//            let dummy = SongCollectionViewModel.dummy()
-//            cell.config(
-//                image: dummy[indexPath.row].albumImage,
-//                songName: dummy[indexPath.row].songName,
-//                artist: dummy[indexPath.row].artist,
-//                year: dummy[indexPath.row].year
-//            )
+
             cell.config(
                 imageUrl: musicResponse?[indexPath.row].music.image ?? "",
                 songName: musicResponse?[indexPath.row].music.title ?? "",
@@ -427,11 +416,7 @@ extension LibraryMainViewController: UICollectionViewDataSource {
             ) as? AlbumCollectionViewCell else {
                 fatalError("Failed to dequeue albumCollectionViewCell")
             }
-//            let dummy = AlbumModel.dummy()
-//            cell.config(
-//                image: dummy[indexPath.row].albumImage,
-//                albumName: dummy[indexPath.row].albumName
-//            )
+
             cell.config(
                 image: albumResponse?[indexPath.row].image ?? "",
                 albumName: albumResponse?[indexPath.row].title ?? "",
@@ -464,10 +449,7 @@ extension LibraryMainViewController: UICollectionViewDataSource {
                 fatalError("Failed to dequeue genreCollectionViewCell")
             }
             let dummy = GenreModel.dummy()
-//            cell.config(
-//                image: dummy[indexPath.row].albumImage,
-//                artistName: dummy[indexPath.row].artist
-//            )
+
             cell.config(
                 image: artistResponse?[indexPath.row].artist.image ?? "",
                 artistName: artistResponse?[indexPath.row].artist.name ?? ""

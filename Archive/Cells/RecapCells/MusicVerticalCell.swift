@@ -106,7 +106,6 @@ class MusicVerticalCell: UICollectionViewCell {
         overflowView.snp.makeConstraints { make in
             make.width.equalTo(97)
             make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
             make.centerY.equalToSuperview()
             make.trailing.equalTo(overflowButton).offset(-7)
         }

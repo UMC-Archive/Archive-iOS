@@ -9,16 +9,16 @@
 import Foundation
 import Moya
 
-enum LibraryTargetType {
-    case libraryMusicInfo
-    case libraryArtistInfo
-    case libraryAlbumInfo
-    case musicPost(musicId: String)
-    case albumPost(albumId: String)
-    case artistPost(artistId: String)
-    case musicDelete(musicId: String)
-    case albumDelete(albumId: String)
-    case artistDelete(artistId: String)
+enum LibraryTargetType {// 보관함에 추가하거나 삭제하는 API
+    case libraryMusicInfo //노래 정보 가져오기
+    case libraryArtistInfo //아티스트 정보 가져오기
+    case libraryAlbumInfo // 앨범 정보 가져오기
+    case musicPost(musicId: String) // 음악 추가
+    case albumPost(albumId: String) // 앨범 추가
+    case artistPost(artistId: String) //아티스트 추가
+    case musicDelete(musicId: String) //음악 삭제
+    case albumDelete(albumId: String) //앨범 삭제
+    case artistDelete(artistId: String) //아티스트 삭제
 }
 
 

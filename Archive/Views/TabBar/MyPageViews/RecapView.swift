@@ -252,7 +252,6 @@ class RecapView: UIView {
             $0.width.equalTo(537)
             $0.height.equalTo(333)
             $0.centerX.equalToSuperview()
-//            $0.bottom.equalToSuperview()
         }
         headerView.snp.makeConstraints{
             $0.top.equalTo( recapCollectionView.snp.bottom).offset(42)
@@ -267,7 +266,6 @@ class RecapView: UIView {
         collectionView.snp.makeConstraints{
             $0.top.equalTo(headerView.snp.bottom).offset(20)
             $0.leading.equalTo(headerView)
-//            $0.width.equalToSuperview()
             $0.trailing.equalToSuperview()
             $0.height.equalTo(317)
         }

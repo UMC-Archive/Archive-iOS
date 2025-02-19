@@ -45,6 +45,7 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         $0.font = UIFont.customFont(font: .SFPro, ofSize: 18, rawValue: 400)
         $0.textColor = .white
     }
+    //터치 제스처를 위한 뷰
     public let touchView = UIView()
     
     private let artistLabel = UILabel().then{
@@ -108,7 +109,6 @@ class ArtistCollectionViewCell: UICollectionViewCell {
         overflowView.snp.makeConstraints { make in
             make.width.equalTo(97)
             make.height.equalTo(52.5)
-//            make.top.equalTo(overflowButton.snp.bottom).offset(7.5)
             make.centerY.equalToSuperview()
             make.trailing.equalTo(etcImage).offset(-7)
         }
@@ -128,10 +128,6 @@ class ArtistCollectionViewCell: UICollectionViewCell {
             overflowView.snp.updateConstraints { make in
                 make.height.equalTo(26)
             }
-//        case .inLibrary:
-//            overflowView.snp.updateConstraints { make in
-//                make.height.equalTo(26)
-//            }
         default:
             return
         }

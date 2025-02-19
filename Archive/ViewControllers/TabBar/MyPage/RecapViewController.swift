@@ -64,7 +64,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         setData()
     
     }
-    public func setData(){
+    public func setData(){ //본인 닉네임으로 라벨 변경
         let nickName = KeychainService.shared.load(account: .userInfo, service: .nickname) ?? "닉네임"
         
         rootView.genreInfoLabel.text = "2025 상반기 \(nickName)님이 가장 즐겨들은 장르\n 상위 5가지로 CD를 제작했어요. "
@@ -72,7 +72,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         rootView.CDInfoLabel.text = "\(nickName)님이 올해 상반기 가장 많이 들은 음악이에요"
     }
     
-    private func updateGenreLabel() {
+    private func updateGenreLabel() { //장르 컬렉션뷰의 라벨을 현재 가장 하이라이트된 장르의 이름으로 변경 // 컬렉션뷰의 중앙에서 가장 가까운셀 계산
         if let layout = rootView.genreCollectionView.collectionViewLayout as? CarouselLayout2 {
             let centerX = rootView.genreCollectionView.contentOffset.x + rootView.genreCollectionView.bounds.width / 2
             let visibleCellsAttributes = rootView.genreCollectionView.indexPathsForVisibleItems.compactMap { indexPath -> UICollectionViewLayoutAttributes? in
@@ -82,7 +82,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             // 화면 중앙에 가장 가까운 셀을 찾음
             if let closestAttributes = visibleCellsAttributes.min(by: {
                 abs($0.center.x - centerX) < abs($1.center.x - centerX)
-            }) { print("\(rootView.genreTasteLabel2.text)라벨")
+            }) {
                 
                 let indexPath = closestAttributes.indexPath
                 
@@ -93,7 +93,6 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
                     }else{
                         rootView.genreTasteLabel2.text = genreResponseDate[indexPath.row].name
                     }
-                    print("\(rootView.genreTasteLabel2.text)라벨")
                 }
             }
         }
@@ -111,7 +110,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         overflowElseTapGesture.cancelsTouchesInView = false
-        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        overflowElseTapGesture.delegate = self   //제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         rootView.addGestureRecognizer(overflowElseTapGesture)
     }
     // overflow 버튼 클릭 시 실행될 메서드
@@ -137,23 +136,22 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     }
     @objc private func goToLibrary(_ sender: CustomTapGesture) {
         guard let musicId = sender.musicId else {
-            print("nil")
+
             return }
-        print("-------musicId\(musicId)")
+
         
         libraryService.musicPost(musicId: musicId){ [weak self] result in
             guard let self = self else { return }
             
             switch result {
             case .success(let response):
-                print("postMusicInfo() 성공")
-                print(response)
+
                 Task{
-                    print("-----------------musicPost 성공")
+
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                print("-----------fail")
+
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
             }
@@ -185,8 +183,8 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
         gradient.frame = rootView.CDView.bounds
     }
     
-    func buildGradient() {
-        let genreColors: [String: UIColor] = [
+    func buildGradient() { //장르로 cd제작 
+        let genreColors: [String: UIColor] = [ // 받아온 장르 데이터를 1대1로 대응시켜 색깔 적용
             "Pop": UIColor.Pop ?? .black,
             "HipHop": UIColor.HipHop ?? .black,
             "Afrobeats": UIColor.Afrobeats ?? .black,
@@ -235,7 +233,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
                 genreColors[data[4].name]?.cgColor ?? UIColor.white,
                 genreColors[data[0].name]?.cgColor ?? UIColor.white
             ]
-            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0] // 5개가 아니라 6개의 색으로 구성한 이유는 마지막 색이 끊겨보여서 한 색의 비율을 반으로 나눠 처음과 끝에 둬서 자연스럽게 만듬
         }
         else {
             gradient.colors = [
@@ -263,8 +261,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             
             switch result {
             case .success(let response):
-                print("recentMusicInfo() 성공")
-                print(response)
+
                 Task{
                     
                     let viewController = RecapCollectionViewViewController()
@@ -286,8 +283,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
             
             switch result {
             case .success(let response):
-                print("------------- 장르")
-                print(response)
+
                 Task{
                     
                     self.genreResponseDate = response
@@ -325,7 +321,7 @@ class RecapViewController: UIViewController, UIGestureRecognizerDelegate {
     // 앨범 버튼
     @objc private func tapGoToAlbumGesture(_ sender: CustomTapGesture) {
         guard let album = sender.album, let artist = sender.artist else { return }
-        print("TapAlbumImageGesture: \(album), \(artist)")
+
         let nextVC = AlbumViewController(artist: artist, album: album)
         self.navigationController?.pushViewController(nextVC, animated: true)
     }
@@ -381,8 +377,7 @@ extension RecapViewController : UICollectionViewDataSource, UICollectionViewDele
             guard let cell = rootView.collectionView.dequeueReusableCell(withReuseIdentifier: "MusicVerticalCell", for: indexPath)as? MusicVerticalCell else {
                 fatalError("Failed to dequeue CollectionViewCell")
             }
-            //            let dummy = MusicDummyModel.dummy()
-            //            cell.config(albumURL: dummy[indexPath.row].albumURL, musicTitle: dummy[indexPath.row].musicTitle, artist: dummy[indexPath.row].artist, year: String(dummy[indexPath.row].year))
+
                
             cell.config(albumURL: recapResponseData?[indexPath.row].image ?? "CDSample", musicTitle: recapResponseData?[indexPath.row].title ?? "", artist: recapResponseData?[indexPath.row].artists ?? "", year:recapResponseData?[indexPath.row].releaseYear ?? 0)
             
