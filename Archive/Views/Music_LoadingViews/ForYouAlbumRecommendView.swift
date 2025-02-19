@@ -53,17 +53,16 @@ class ForYouAlbumRecommendView : UIView {
     }
     private func setupConstraints(){
         leftArrowButton.snp.makeConstraints{make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(46)
+            make.top.equalTo(safeAreaLayoutGuide)
             make.leading.equalToSuperview().offset(19)
             
         }
         titleLabel.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(46)
+            make.top.equalTo(safeAreaLayoutGuide)
             make.leading.equalTo(leftArrowButton).offset(20)
         }
         ForYouRecommendAlbumCollectionView.snp.makeConstraints { make in
             make.top.equalTo(titleLabel).offset(30)
-            make.centerX.equalToSuperview()
             make.bottom.equalToSuperview().offset(FloatingViewHeight)
             make.leading.equalToSuperview()
             make.trailing.equalToSuperview()

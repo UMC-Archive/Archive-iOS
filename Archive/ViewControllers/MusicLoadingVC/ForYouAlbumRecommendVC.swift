@@ -7,15 +7,15 @@
 import UIKit
 
 class ForYouAlbumRecommendVC : UIViewController {
-    private var recommendMusic: [AlbumRecommendAlbumResponseDTO]?
+    private var recommendAlbum: [AlbumRecommendAlbumResponseDTO]?
     private let libraryService = LibraryService()
    
    private let forYouRecommendAlbumView = ForYouAlbumRecommendView()
     override func loadView() {
         self.view = forYouRecommendAlbumView
     }
-    init(recommendMusic : [AlbumRecommendAlbumResponseDTO]){
-        self.recommendMusic = recommendMusic
+    init(recommendAlbum : [AlbumRecommendAlbumResponseDTO]){
+        self.recommendAlbum = recommendAlbum
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -62,7 +62,7 @@ extension ForYouAlbumRecommendVC : UICollectionViewDataSource, UICollectionViewD
     
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return recommendMusic?.count ?? 0
+        return recommendAlbum?.count ?? 0
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         if collectionView == forYouRecommendAlbumView.ForYouRecommendAlbumCollectionView {
@@ -70,24 +70,20 @@ extension ForYouAlbumRecommendVC : UICollectionViewDataSource, UICollectionViewD
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: ForYouRecommendAlbumCell.identifier, for: indexPath) as? ForYouRecommendAlbumCell else {
                 fatalError("ForYouRecommendAlbumCell 에러")
             }
-            guard let trackData = recommendMusic?[indexPath.row] else { return cell }
-            cell.configure(dto: trackData)
+            guard let album = recommendAlbum?[indexPath.row] else { return cell }
+            cell.configure(dto: album)
             
-            // 노래 재생 제스처
-            let musicGesture = CustomTapGesture(target: self, action: #selector(self.musicPlayingGesture(_:)))
-            musicGesture.musicTitle = trackData.album.title
-            musicGesture.musicId = trackData.album.id
-            musicGesture.musicImageURL = trackData.album.image
-            musicGesture.artist = trackData.artist
-            cell.titleLabel.isUserInteractionEnabled = true
+            // 앨범 으로 이동 제스처
+            let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
+            tapAlbumGesture.artist = album.artist
+            tapAlbumGesture.album = album.album.title
             cell.imageView.isUserInteractionEnabled = true
-            cell.titleLabel.addGestureRecognizer(musicGesture)
-            cell.imageView.addGestureRecognizer(musicGesture)
+            cell.imageView.addGestureRecognizer(tapAlbumGesture)
             
             // 아티스트 탭 제스처
             let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
-            tapArtistGesture.artist = trackData.artist
-            tapArtistGesture.album = trackData.album.title
+            tapArtistGesture.artist = album.artist
+            tapArtistGesture.album = album.album.title
             cell.artistLabel.isUserInteractionEnabled = true
             cell.artistLabel.addGestureRecognizer(tapArtistGesture)
             

@@ -87,7 +87,7 @@ class MusicSegmentVC: UIViewController {
     @objc func rightButtonTapped() {
 
         if recommendAlbums.count == 1 { return }
-        let secondVC = ForYouAlbumRecommendVC(recommendMusic: recommendAlbums)
+        let secondVC = ForYouAlbumRecommendVC(recommendAlbum: recommendAlbums)
         navigationController?.pushViewController(secondVC, animated: true)
 
     }
