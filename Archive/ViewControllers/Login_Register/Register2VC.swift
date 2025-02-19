@@ -25,8 +25,7 @@ class Register2VC: UIViewController {
         register2View.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
     }
     @objc private func leftButtonTapped(){
-        let moveVC = RegisterVC()
-        navigationController?.pushViewController(moveVC,animated: true)
+        navigationController?.popViewController(animated: true)
     }
     @objc private func handlePasswordInput() {
         guard let password = register2View.PWField.text else { return }

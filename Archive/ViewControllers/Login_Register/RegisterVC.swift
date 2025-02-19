@@ -28,8 +28,7 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
   
     }
     @objc private func leftButtonTapped(){
-        let moveVC = LoginVC()
-        navigationController?.pushViewController(moveVC,animated: true)
+        navigationController?.popViewController(animated: true)
     }
 
     @objc private func handleEmailButtonTap() {
