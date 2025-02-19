@@ -33,6 +33,9 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         print("눌림!")
         let moveVC = Register2VC()
         navigationController?.pushViewController(moveVC,animated: true)
+
+    override func viewWillAppear(_ animated: Bool){
+        super.viewWillAppear(animated)
     }
 
     private func setupActions() {

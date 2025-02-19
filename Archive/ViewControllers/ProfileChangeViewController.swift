@@ -19,6 +19,13 @@ class ProfileChangeViewController : UIViewController, UIImagePickerControllerDel
         controlTapped()
         setupActions()
     }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        let nickname = KeychainService.shared.load(account: .userInfo, service: .nickname)
+        rootView.nicknameLabel.placeholder = nickname
+        
+        
+    }
     private func controlTapped() {
         rootView.navigationView.popButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
 

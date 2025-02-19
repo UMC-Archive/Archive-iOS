@@ -77,9 +77,11 @@ class CarouselLayout2: UICollectionViewFlowLayout {
         cell?.updateOverlayVisibility(1 - darkRatio)
         
         
+        
         let visibleRect = CGRect(origin: collectionView.contentOffset, size: collectionView.bounds.size)
         let dist = attributes.frame.midX - visibleRect.midX
         var transform = CATransform3DScale(CATransform3DIdentity, scale, scale, 1)
+        
         transform = CATransform3DTranslate(transform, 0, 0, -abs(dist/1000))
         attributes.transform3D = transform
         

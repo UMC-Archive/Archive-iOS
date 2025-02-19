@@ -35,7 +35,7 @@ extension NetworkError {
         case .serverError(let message):
             "\(message)"
         case .networkError(let message):
-            "네트워크 에러: \(message)"
+            "\(message)"
         case .requestFailed(let message):
             "서버 요청 실패: \(message)"
         case .parameterEncodingError(let message):

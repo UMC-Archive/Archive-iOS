@@ -26,8 +26,8 @@ public final class MusicService: NetworkManager {
     
     
     // 노래 정보 가져오기
-    public func musicInfo(artist: String, music: String, completion: @escaping (Result<MusicInfoResponseDTO?, NetworkError>) -> Void) {
-        requestOptional(target: .musicInfo(artist: artist, music: music), decodingType: MusicInfoResponseDTO.self, completion: completion)
+    public func musicInfo(artist: String, music: String, completion: @escaping (Result<MusicResponseDTO?, NetworkError>) -> Void) {
+        requestOptional(target: .musicInfo(artist: artist, music: music), decodingType: MusicResponseDTO.self, completion: completion)
     }
     
     // 앨범 정보 가져오기

@@ -27,6 +27,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
     
+    
     private let albumImage = UIImageView().then{
         $0.layer.cornerRadius = 10
         $0.clipsToBounds = true

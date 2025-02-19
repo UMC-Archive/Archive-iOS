@@ -16,6 +16,11 @@ public struct UserHistoryResponseDTO: Decodable, Hashable {
     let id: String
     let history: String
     
+    init(id: String, history: String) {
+        self.id = id
+        self.history = history
+    }
+    
     enum CodingKeys: CodingKey {
         case id
         case history
@@ -27,6 +32,13 @@ public struct UserHistoryResponseDTO: Decodable, Hashable {
         self.history = try container.decode(String.self, forKey: .history)
     }
 }
+
+extension UserHistoryResponseDTO {
+    static func loadingData() -> UserHistoryResponseDTO {
+        return UserHistoryResponseDTO(id: "1", history: "탐색해주세요.")
+    }
+}
+
 
 /*
  "result": [

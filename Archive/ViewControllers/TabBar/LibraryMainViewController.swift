@@ -139,7 +139,6 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
            switch index {
            case 0:
                rootView.playlistCollectionView.isHidden = false
-               self.rootView.playlistCollectionView.layoutIfNeeded()
            case 1:
                rootView.songCollectionView.isHidden = false
            case 2:

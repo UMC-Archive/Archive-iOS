@@ -100,6 +100,11 @@ class MyPageViewController: UIViewController {
         self.navigationController?.pushViewController(viewController, animated: true)
     }
     @objc func recapButtonTapped(){
+        if genreResponseDate?.count ?? 2 <= 2 {
+            let alert = RecapAlert.shared.getAlertController(type: .recap)
+            self.present(alert, animated: true)
+            return
+        }
         let viewController = RecapViewController(data: genreResponseDate ?? [])
         
         self.navigationController?.pushViewController(viewController, animated: true)
@@ -124,7 +129,6 @@ class MyPageViewController: UIViewController {
     }
     
     func buildGradient() {
-        
         let genreColors: [String: UIColor] = [
             "Pop": UIColor.Pop ?? .black,
             "HipHop": UIColor.HipHop ?? .black,
@@ -144,38 +148,58 @@ class MyPageViewController: UIViewController {
         ]
         
         gradient.type = .conic
-        if let data = genreResponseDate, data.count == 5 {
-            print("""
-                                    \(data[0].name), \(data[1].name), \(data[2].name), \(data[3].name),\(data[4].name)
-                    """)
+        guard let data = genreResponseDate else {return}
+        // genreResponseDate가 nil이 아니고 count가 5일 때
+        if data.count == 5 , data[3].name == "Others" && data[4].name == "Others"{
+            gradient.colors = [
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+            ]
+            gradient.locations = [0.0, 0.16, 0.5, 0.84, 1.0]
+           
+        } else if data.count == 5 , data[4].name == "Others"{
+            gradient.colors = [
+                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[1].name]?.cgColor ?? UIColor.white,
+                genreColors[data[2].name]?.cgColor ?? UIColor.white,
+                genreColors[data[3].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white
+            ]
+            gradient.locations = [0.0, 0.125, 0.375, 0.625, 0.875, 1.0]
+            
+        }else if data.count == 5 {
             gradient.colors = [
                 genreColors[data[0].name]?.cgColor ?? UIColor.white,
                 genreColors[data[1].name]?.cgColor ?? UIColor.white,
                 genreColors[data[2].name]?.cgColor ?? UIColor.white,
                 genreColors[data[3].name]?.cgColor ?? UIColor.white,
                 genreColors[data[4].name]?.cgColor ?? UIColor.white,
-                genreColors[data[0].name]?.cgColor ?? UIColor.white,
+                genreColors[data[0].name]?.cgColor ?? UIColor.white
             ]
-        }else{
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+        }
+        else {
             gradient.colors = [
                 UIColor.dance_100?.cgColor ?? UIColor.red,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
                 UIColor.dance_100?.cgColor ?? UIColor.red,
-                UIColor.dance_100?.cgColor ?? UIColor.red,
+                UIColor.dance_100?.cgColor ?? UIColor.red
             ]
+            gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
+
         }
         
         
-        gradient.locations = [0.0, 0.08, 0.25, 0.42, 0.59, 0.76, 0.92, 1.0]
         gradient.startPoint = CGPoint(x: 0.5, y: 0.5) // 중심점
         gradient.endPoint = CGPoint(x: 1.0, y: 1.0)   // conic 그라데이션은 중심을 공유
         
-        
         rootView.CDView.layer.addSublayer(gradient)
     }
-    
+
     private func getRecentMusic(){
         userService.RecentlyMusic(){ [weak self] result in
             guard let self = self else { return }

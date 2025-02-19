@@ -245,9 +245,10 @@ class AlbumViewController: UIViewController {
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 정보" , description: error.description, retryAction: { [weak self] in
+                    self?.postAlbumInfo(artist: artist, album: album) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
+                self.present(alert, animated: true)
             }
         }
     }
@@ -264,9 +265,10 @@ class AlbumViewController: UIViewController {
                 
             case .failure(let error): // 네트워크 연결 실패 시 얼럿 호출
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "앨범 큐레이션" , description: error.description, retryAction: { [weak self] in
+                    self?.postAlbumCuration(albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
+                self.present(alert, animated: true)
             }
         }
     }
@@ -283,9 +285,8 @@ class AlbumViewController: UIViewController {
                 self.setSnapshot()
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
-                let alert = NetworkAlert.shared.getAlertController(title: error.description) // 얼럿 생성
-                self.present(alert, animated: true) // 얼럿 띄우기
-                print("실패: \(error.description)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "당신을 위한 앨범 추천" , description: error.description, retryAction: getRecommendAlbum)
+                self.present(alert, animated: true)
             }
         }
     }
@@ -320,7 +321,9 @@ class AlbumViewController: UIViewController {
                 self.setDataSource()
                 self.setSnapshot()
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "이 아티스트의 다른 앨범" , description: error.description, retryAction: { [weak self] in
+                    self?.getAnotherAlbum(artistId: artistId, albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
@@ -341,7 +344,9 @@ class AlbumViewController: UIViewController {
                 updateTrackViewHeight()
                 
             case .failure(let error):
-                let alert = NetworkAlert.shared.getAlertController(title: error.description)
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "수록곡 소개" , description: error.description, retryAction: { [weak self] in
+                    self?.getTrackList(albumId: albumId) // 🔄 재시도 버튼을 누르면 다시 API 호출
+                })
                 self.present(alert, animated: true)
             }
         }
