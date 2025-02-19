@@ -31,9 +31,7 @@ class PreferGenreVC: UIViewController {
         preferGenreView.nextButton.isEnabled = true
     }
     @objc private func leftButtonTapped(){
-        print("눌림!")
-        let moveVC = ProfileSelectVC()
-        navigationController?.pushViewController(moveVC,animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     //  서버에서 장르 정보 가져오기

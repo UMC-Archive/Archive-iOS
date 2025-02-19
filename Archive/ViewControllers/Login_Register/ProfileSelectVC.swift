@@ -34,8 +34,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
     }
     
     @objc private func leftButtonTapped() {
-        let moveVC = Register2VC()
-        navigationController?.pushViewController(moveVC, animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func nicknameEditingChanged() {

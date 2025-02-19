@@ -442,10 +442,12 @@ class MusicLoadVC: UIViewController {
     }
 // 시간 계산하는 함수
     private func formatTime(seconds: TimeInterval) -> String {
+        guard !seconds.isNaN else { return "0:00" } // NaN이면 0:00으로 표시
         let minutes = Int(seconds) / 60
         let seconds = Int(seconds) % 60
         return String(format: "%d:%02d", minutes, seconds)
     }
+
     // 슬라이더 사용자가 움직이게 하는 부분
     @objc private func sliderValueChanged(_ sender: UISlider) {
         guard let player = player, let duration = player.currentItem?.duration else { return }

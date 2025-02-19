@@ -42,9 +42,7 @@ class PreferArtistVC: UIViewController {
         }
     }
     @objc private func leftButtonTapped(){
-        print("눌림!")
-        let moveVC = PreferGenreVC()
-        navigationController?.pushViewController(moveVC,animated: true)
+        navigationController?.popViewController(animated: true)
     }
     
     // UICollectionView 설정
