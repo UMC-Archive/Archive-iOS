@@ -68,7 +68,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         imageView.contentMode = .scaleAspectFill
         imageView.clipsToBounds = true
         imageView.layer.cornerRadius = 100
-        imageView.image = UIImage(named: "PROFILE") // 기본 아이콘
+        imageView.image = UIImage(named: "profileSample") // 기본 아이콘
         imageView.tintColor = .lightGray
         imageView.backgroundColor = .darkGray
         imageView.isUserInteractionEnabled = true // 터치 가능
@@ -104,15 +104,19 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
 
     // 완료 버튼
     lazy var completeButton: UIButton = {
-        let button = UIButton()
-        button.setTitle("다음", for: .normal)
-        button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 700)
-        button.setTitleColor(.black, for: .normal)
-        button.backgroundColor = .white
-        button.layer.cornerRadius = 8
-        return button
-    }()
-
+       
+            let button = UIButton()
+            button.setTitle("다음", for: .normal)
+            button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
+            button.setTitleColor(.white, for: .normal)
+            button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
+            button.backgroundColor = .clear
+            button.layer.cornerRadius = 8
+            button.clipsToBounds = true
+            button.isEnabled = false // 초기 상태에서 비활성화
+            return button
+        }()
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .black
@@ -147,7 +151,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(40)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
         }
         progress3.snp.makeConstraints { make in
@@ -192,6 +196,19 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     @objc private func didTapProfileImage() {
         // ViewController에서 구현해야 함
         onProfileImageTapped?()
+    }
+    func updateNextButtonState(isEnabled: Bool) {
+        completeButton.isEnabled = isEnabled
+        
+        if isEnabled {
+            completeButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            completeButton.setTitleColor(.white, for: .normal)
+        } else {
+            completeButton.backgroundColor = .clear
+            completeButton.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+            completeButton.layer.borderWidth = 1
+            completeButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
+        }
     }
 
     // 클로저로 탭 이벤트 전달

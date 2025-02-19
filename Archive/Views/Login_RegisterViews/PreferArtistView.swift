@@ -16,8 +16,8 @@ class PreferArtistView: UIView {
     }()
     lazy var title = UILabel().then { make in
         make.textColor = .white
-        make.text = "회원가입"
-        make.font = UIFont.boldSystemFont(ofSize: 18)
+        make.text = "선호하는 아티스트를 선택해주세요"
+        make.font = .customFont(font: .SFPro, ofSize: 18, rawValue : 700)
         make.textAlignment = .center
     }
     lazy var pageIndicator: UIStackView = {
@@ -44,6 +44,9 @@ class PreferArtistView: UIView {
         let searchBar = UISearchBar()
         searchBar.placeholder = "아티스트 검색"
         searchBar.searchBarStyle = .minimal
+        searchBar.backgroundColor = .white_35
+        searchBar.layer.cornerRadius = 8
+        searchBar.clipsToBounds = true
         return searchBar
     }()
 
@@ -67,9 +70,13 @@ class PreferArtistView: UIView {
     lazy var nextButton: UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
+        button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = .darkGray
+        button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
+        button.backgroundColor = .clear
         button.layer.cornerRadius = 8
+        button.clipsToBounds = true
+        button.isEnabled = false // 초기 상태에서 비활성화
         return button
     }()
 
@@ -105,7 +112,9 @@ class PreferArtistView: UIView {
       
         title.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(10)
-            make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
+           
+            make.centerX.equalToSuperview()
+            
         }
         progress5.snp.makeConstraints { make in
             make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
@@ -121,7 +130,7 @@ class PreferArtistView: UIView {
         }
 
         ArtistCollectionView.snp.makeConstraints { make in
-            make.top.equalTo(searchBar.snp.bottom).offset(16)
+            make.top.equalTo(searchBar.snp.bottom).offset(24)
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(nextButton.snp.top).offset(-16)
         }
@@ -130,6 +139,19 @@ class PreferArtistView: UIView {
             make.leading.trailing.equalToSuperview().inset(16)
             make.bottom.equalTo(safeAreaLayoutGuide.snp.bottom).offset(-16)
             make.height.equalTo(50)
+        }
+    }
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        
+        if isEnabled {
+            nextButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            nextButton.setTitleColor(.white, for: .normal)
+        } else {
+            nextButton.backgroundColor = .clear
+            nextButton.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+            nextButton.layer.borderWidth = 1
+            nextButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
         }
     }
 }

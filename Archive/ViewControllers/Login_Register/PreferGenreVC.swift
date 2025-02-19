@@ -19,11 +19,22 @@ class PreferGenreVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.isHidden = true
         setupCollectionView()
         setupActions()
         fetchGenres()
+        updateNextButtonState()
     }
-
+    private func updateNextButtonState() {
+        let isEnabled = selectedGenres.count >= 3
+        
+        preferGenreView.updateNextButtonState(isEnabled: isEnabled)}
+    @objc private func leftButtonTapped(){
+        print("눌림!")
+        let moveVC = ProfileSelectVC()
+        navigationController?.pushViewController(moveVC,animated: true)
+    }
+    
     //  서버에서 장르 정보 가져오기
     private func fetchGenres() {
         musicService.chooseGenreInfo { [weak self] result in
@@ -53,9 +64,22 @@ class PreferGenreVC: UIViewController {
     // 버튼 액션 설정
     private func setupActions() {
         preferGenreView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        preferGenreView.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
+  
+    }
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 
     @objc private func handleNext() {
+        if selectedGenres.count < 3 {
+               showAlert(message: "장르를 3개 이상 선택해주세요.")
+               return
+           }
+           
         print("Selected Genres: \(selectedGenres.map { $0.name })")
         UserSignupData.shared.selectedGenres = selectedGenres.compactMap { Int($0.id) } // ID만 저장
         let preferArtistVC = PreferArtistVC()
@@ -94,6 +118,7 @@ extension PreferGenreVC: UICollectionViewDelegate, UICollectionViewDataSource {
             let genre = allGenres.remove(at: indexPath.row - selectedGenres.count)
             selectedGenres.insert(genre, at: 0)
             collectionView.reloadData()
+            updateNextButtonState()
         }
     }
 
@@ -102,6 +127,7 @@ extension PreferGenreVC: UICollectionViewDelegate, UICollectionViewDataSource {
             let genre = selectedGenres.remove(at: indexPath.row)
             allGenres.insert(genre, at: 0)
             collectionView.reloadData()
+            updateNextButtonState()
         }
     }
 }

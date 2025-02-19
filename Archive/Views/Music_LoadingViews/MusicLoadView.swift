@@ -29,7 +29,7 @@ class MusicLoadView: UIView {
     lazy var titleLabel = UILabel().then { make in
         make.text = "Supernatural"
         make.textColor = .white
-        make.font = UIFont.boldSystemFont(ofSize: 28)
+        make.font = .customFont(font: .SFPro, ofSize: 28,rawValue : 700)
         make.textAlignment = .left
     }
 
@@ -44,7 +44,7 @@ class MusicLoadView: UIView {
     lazy var artistLabel = UILabel().then { make in
         make.text = "NewJeans"
         make.textColor = .gray
-        make.font = UIFont.systemFont(ofSize: 16)
+        make.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         make.textAlignment = .left
     }
 

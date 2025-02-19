@@ -10,7 +10,9 @@ class Register2VC: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.isHidden = true
         setupActions()
+        
     }
 
     private func setupActions() {
@@ -20,9 +22,13 @@ class Register2VC: UIViewController {
           register2View.PWField2.addTarget(self, action: #selector(handlePasswordConfirmInput), for: .editingChanged)
           register2View.PWField2.addTarget(self, action: #selector(handleTextFieldEditingChanged), for: .editingChanged)
           register2View.nextButton.addTarget(self, action: #selector(handleNextButtonTap), for: .touchUpInside)
-
+        register2View.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
     }
-
+    @objc private func leftButtonTapped(){
+        print("눌림!")
+        let moveVC = RegisterVC()
+        navigationController?.pushViewController(moveVC,animated: true)
+    }
     @objc private func handlePasswordInput() {
         guard let password = register2View.PWField.text else { return }
         
@@ -75,15 +81,36 @@ class Register2VC: UIViewController {
         } else {
             sender.backgroundColor = UIColor(white: 0.2, alpha: 1) // 입력값이 없을 때 기본 배경색
         }
+     
     }
     @objc private func handleNextButtonTap() {
         print("다음 버튼 클릭됨")
+        guard let password = register2View.PWField.text, !password.isEmpty else {
+               showAlert(message: "비밀번호를 입력해주세요.")
+               return
+           }
+           
+           guard let confirmPassword = register2View.PWField2.text, !confirmPassword.isEmpty else {
+               showAlert(message: "비밀번호 확인을 입력해주세요.")
+               return
+           }
+
+           guard password == confirmPassword else {
+               showAlert(message: "비밀번호가 일치하지 않습니다.")
+               return
+           }
         // 다음 화면으로 전환 로직 추가
         UserSignupData.shared.password = register2View.PWField.text ?? ""
 
         let profileselectVC = ProfileSelectVC()
         navigationController?.pushViewController(profileselectVC, animated: true)
   
+    }
+    private func showAlert(message: String) {
+        let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 }
 

@@ -6,6 +6,7 @@ class PreferArtistVC: UIViewController {
     private var selectedArtists: [ArtistInfoReponseDTO] = [] // 선택된 아티스트 목록
     private var allArtists: [ArtistInfoReponseDTO] = [] // 서버에서 받아온 아티스트 목록
     private let musicService = MusicService() // 음악 서비스 추가
+    private var searchWorkItem: DispatchWorkItem?
 
     override func loadView() {
         self.view = preferArtistView
@@ -13,6 +14,7 @@ class PreferArtistVC: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        self.navigationController?.navigationBar.isHidden = true
         setupCollectionView()
         setupActions()
         fetchArtists()
@@ -21,7 +23,10 @@ class PreferArtistVC: UIViewController {
 
     //  서버에서 아티스트 목록 가져오기
     private func fetchArtists() {
-        musicService.chooseArtistInfo { [weak self] result in
+        let selectedGenre = UserSignupData.shared.selectedGenres
+        let searchText = preferArtistView.searchBar.searchTextField.text
+        let param = ChooseArtistRequestDTO(genre_id: selectedGenre)
+        musicService.chooseArtistInfo(searchArtist: searchText, parameter: param) { [weak self] result in
             guard let self = self else { return }
             DispatchQueue.main.async {
                 switch result {
@@ -36,6 +41,11 @@ class PreferArtistVC: UIViewController {
             }
         }
     }
+    @objc private func leftButtonTapped(){
+        print("눌림!")
+        let moveVC = PreferGenreVC()
+        navigationController?.pushViewController(moveVC,animated: true)
+    }
 
     // UICollectionView 설정
     private func setupCollectionView() {
@@ -48,6 +58,21 @@ class PreferArtistVC: UIViewController {
     // 버튼 액션 설정
     private func setupActions() {
         preferArtistView.nextButton.addTarget(self, action: #selector(handleNext), for: .touchUpInside)
+        
+        preferArtistView.searchBar.searchTextField.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+        preferArtistView.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
+  
+    }
+    
+    @objc private func textFieldDidChange(_ textField: UITextField) {
+        searchWorkItem?.cancel() // 기존 작업 취소
+
+        let workItem = DispatchWorkItem { [weak self] in
+            self?.fetchArtists()
+        }
+        
+        searchWorkItem = workItem
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.5, execute: workItem) // 500ms 후 실행
     }
 // 아티스트 한명이상은 선택해야 한다
     private func updateNextButtonState() {

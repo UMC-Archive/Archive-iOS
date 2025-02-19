@@ -17,10 +17,10 @@ class ExploreViewController: UIViewController {
     
     private let musicData = MusicDummyModel.dummy()
     private let albumData = AlbumDummyModel.dummy()
-    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)]? // 숨겨진 명곡 데이터
-    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)]? // 추천 음악 데이터
-    private var recommendAlbumData: [(ExploreRecommendAlbum, String)]? // 추천 앨범 데이터
-    private var mainCDData: [MainCDResponseDTO]? // 메인 CD 데이터
+    private var hiddenMusic: [(HiddenMusicResponse, ExploreRecommendAlbum, String)] = Constant.HiddenMusicLoadingData // 숨겨진 명곡 데이터
+    private var recommendMusic: [(ExploreRecommendMusic, ExploreRecommendAlbum, String)] = Constant.ExploreRecommnedMusicLoadingData // 추천 음악 데이터
+    private var recommendAlbumData: [(ExploreRecommendAlbum, String)] = Constant.RecommendAlbumLoadingData // 추천 앨범 데이터
+    private var mainCDData: [MainCDResponseDTO] = Constant.MainCDLoadingData// 메인 CD 데이터
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -49,7 +49,6 @@ class ExploreViewController: UIViewController {
         setDataSource()
         setSnapShot()
         setDelegate()
-        setRecapIndex()
         setGesture()
         setTarget()
 
@@ -267,22 +266,22 @@ class ExploreViewController: UIViewController {
         snapshot.appendSections([recommendMusicSection, recommendAlbumSection, hiddenMusicSection])
 
         // 추천곡
-        if let recommendMusic = recommendMusic {
+        
             let recommendMusicItem = recommendMusic.map{Item.ExploreRecommendMusic($0.0, $0.1, $0.2)}// 추천곡
             snapshot.appendItems(recommendMusicItem, toSection: recommendMusicSection)
-        }
+        
        
         // 숨겨진 명곡
-        if let hiddenMusic = hiddenMusic {
+        
             let hiddenMusicItem = hiddenMusic.map{Item.HiddenMusic($0.0, $0.1, $0.2)}
             snapshot.appendItems(hiddenMusicItem, toSection: hiddenMusicSection)
-        }
+        
         
         // 당신을 위한 추천 앨범
-        if let recommendAlbumData = recommendAlbumData {
+        
             let recommendAlbumItem = recommendAlbumData.map{Item.ExploreRecommendAlbum($0.0, $0.1)}
             snapshot.appendItems(recommendAlbumItem, toSection: recommendAlbumSection)
-        }
+        
         
         dataSource?.apply(snapshot)
     }
@@ -358,6 +357,7 @@ class ExploreViewController: UIViewController {
                 guard let response = response else {return}
                 self.mainCDData = response
                 self.exploreView.recapCollectionView.reloadData()
+                self.setRecapIndex()
             case .failure(let error):
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self.present(alert, animated: true)
@@ -468,7 +468,7 @@ extension ExploreViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
         switch collectionView {
         case exploreView.recapCollectionView:
-            return 3
+            return self.mainCDData.count == 1 ? 1 : 3
         default:
             return 0
         }
@@ -478,10 +478,6 @@ extension ExploreViewController: UICollectionViewDataSource {
         switch collectionView {
         case exploreView.recapCollectionView:
             let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecapCollectionViewCell.recapCollectionViewIdentifier, for: indexPath)
-            
-            guard let mainCDData = mainCDData else {
-                return cell
-            }
            
             (cell as? RecapCollectionViewCell)?.configMainCD(data: mainCDData[indexPath.row])
             

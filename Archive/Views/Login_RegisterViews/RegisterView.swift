@@ -102,9 +102,11 @@ class RegisterView: UIView {
     lazy var emailButton = UIButton().then { make in
         make.setTitle("인증메일 받기", for: .normal)
         make.titleLabel?.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 700)
-        make.setTitleColor(.white, for: .normal)
+        make.setTitleColor(.black, for: .normal)
         make.backgroundColor = .darkGray
+        
         make.layer.cornerRadius = 8
+        make.isUserInteractionEnabled = true
     }
 
     // 인증번호 입력 섹션
@@ -120,7 +122,7 @@ class RegisterView: UIView {
         make.borderStyle = .roundedRect
         make.font = .customFont(font: .SFPro, ofSize: 14,rawValue : 400)
         make.backgroundColor = UIColor(white: 0.2, alpha: 1)
-        make.textColor = .white
+        make.textColor = .black
         make.attributedPlaceholder = NSAttributedString(
             string: "인증번호",
             attributes: [.foregroundColor: UIColor.lightGray]
@@ -142,11 +144,15 @@ class RegisterView: UIView {
         make.isHidden = true
     }
     lazy var nextButton: UIButton = {
-        let button = UIButton()
+        let button = UIButton(type: .custom)
         button.setTitle("다음", for: .normal)
         button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
-        button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
+        
+      
+        button.backgroundColor = .clear
+        button.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+        button.layer.borderWidth = 1
+        button.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
         button.isEnabled = false // 초기 상태에서 비활성화
@@ -263,5 +269,32 @@ class RegisterView: UIView {
             make.height.equalTo(45)
         }
     }
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        
+        if isEnabled {
+            nextButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            nextButton.setTitleColor(.white, for: .normal)
+        } else {
+            nextButton.backgroundColor = .clear
+            nextButton.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+            nextButton.layer.borderWidth = 1
+            nextButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
+        }
+    }
+    func updateEmailButtonState(isEnabled: Bool) {
+        emailButton.isEnabled = isEnabled
+        if isEnabled {
+            emailButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            emailButton.setTitleColor(.white, for: .normal)
+        } else {
+            emailButton.backgroundColor = .clear
+            emailButton.setTitleColor(.white, for: .normal)
+            emailButton.layer.borderWidth = 1
+            emailButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
+        }
+    }
+
+
 }
 

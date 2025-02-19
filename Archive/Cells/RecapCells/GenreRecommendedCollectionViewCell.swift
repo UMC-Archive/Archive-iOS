@@ -9,11 +9,13 @@ import UIKit
 
 class GenreRecommendedCollectionViewCell: UICollectionViewCell {
     static let genreRecommendedCollectionViewIdentifier = "genreRecommendedCollectionViewIdentifier"
+    let darkOverlay = UIView()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         
         setComponent()
+        setupCell()
     }
     
     required init?(coder: NSCoder) {
@@ -34,6 +36,23 @@ class GenreRecommendedCollectionViewCell: UICollectionViewCell {
             $0.height.width.equalTo(120)
         }
     }
+    private func setupCell() {
+        AlbumImage.frame = contentView.bounds
+        AlbumImage.contentMode = .scaleAspectFill
+        contentView.addSubview(AlbumImage)
+        
+        darkOverlay.frame = contentView.bounds
+        darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(0.6) // 반투명 어두운 효과
+//        darkOverlay.isHidden = true
+        contentView.addSubview(darkOverlay)
+    }
+       
+    func updateOverlayVisibility(_ darkRatio: CGFloat) {
+        print("----------\(darkRatio)")
+        self.darkOverlay.backgroundColor = UIColor.black.withAlphaComponent(darkRatio)
+//        self.darkOverlay.layer.layoutIfNeeded()
+    }
+
     
     public func configExample(image: UIImage){
         AlbumImage.image = image

@@ -10,7 +10,7 @@ import UIKit
 class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
     let rootView = LibraryMainView()
     
-    private var segmentIndexNum: Int = 0
+    private var segmentIndexNum: Int = 1
     private let libraryService = LibraryService()
     private var musicResponse: [LibraryMusicResponseDTO]?
     private var artistResponse : [LibraryArtistResponseDTO]?
@@ -37,6 +37,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
         getAlbumInfo()
         getMusicInfo()
         setProfileImage()
+        segmentChanged()
     }
     
     // 프로필 이미지 설정 함수
@@ -64,7 +65,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
         // overflow 버튼 외 다른 영역 터치 시 overflowView 사라짐
         let overflowElseTapGesture = UITapGestureRecognizer(target: self, action: #selector(self.dismissOverflowView(_:)))
         overflowElseTapGesture.cancelsTouchesInView = false
-        overflowElseTapGesture.delegate = self   // ✅ 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
+        overflowElseTapGesture.delegate = self   // 제스처 델리게이트 설정 (버튼 터치는 무시하기 위해)
         rootView.addGestureRecognizer(overflowElseTapGesture)
         
     }
@@ -138,6 +139,7 @@ class LibraryMainViewController: UIViewController, UIGestureRecognizerDelegate {
            switch index {
            case 0:
                rootView.playlistCollectionView.isHidden = false
+               self.rootView.playlistCollectionView.layoutIfNeeded()
            case 1:
                rootView.songCollectionView.isHidden = false
            case 2:
