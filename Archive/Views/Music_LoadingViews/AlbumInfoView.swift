@@ -2,6 +2,7 @@ import UIKit
 import SnapKit
 
 class AlbumInfoView: UIView {
+    private let inMusicView: Bool
     
     // 재생 중인 음악이 없을 떄 뷰
     public let emptyLabel = UILabel().then { lbl in
@@ -23,7 +24,7 @@ class AlbumInfoView: UIView {
         imageView.clipsToBounds = true
         return imageView
     }()
-
+    
     // 곡 제목 레이블
     lazy var songTitleLabel: UILabel = {
         let label = UILabel()
@@ -31,7 +32,7 @@ class AlbumInfoView: UIView {
         label.font = UIFont.boldSystemFont(ofSize: 18)
         return label
     }()
-
+    
     // 아티스트 레이블
     lazy var artistLabel: UILabel = {
         let label = UILabel()
@@ -39,7 +40,7 @@ class AlbumInfoView: UIView {
         label.font = UIFont.systemFont(ofSize: 14)
         return label
     }()
-
+    
     // 재생 버튼
     lazy var playButton: UIButton = {
         let button = UIButton()
@@ -53,13 +54,13 @@ class AlbumInfoView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
+    
     // 겹치는 사각형 아이콘
     lazy var overlappingSquaresButton: UIButton = {
         let button = UIButton()
         var config = UIButton.Configuration.plain()
         
-        config.image = .playlist
+        config.image = inMusicView ? .libraryOn : .playlist
         config.contentInsets = NSDirectionalEdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
         button.configuration = config
         button.clipsToBounds = true
@@ -67,9 +68,10 @@ class AlbumInfoView: UIView {
         button.translatesAutoresizingMaskIntoConstraints = false
         return button
     }()
-
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    
+    init(inMusicView: Bool = false) {
+        self.inMusicView = inMusicView
+        super.init(frame: .zero)
         backgroundColor = .black_70
         setupViews()
         setupConstraints()

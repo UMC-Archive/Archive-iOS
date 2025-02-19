@@ -2,7 +2,7 @@ import UIKit
 
 class MusicSegmentView: UIView {
 
-    let albumInfoView = AlbumInfoView()
+    let albumInfoView = AlbumInfoView(inMusicView: true)
 
     let tabBar: UISegmentedControl = {
         let items = ["다음 트랙", "가사", "추천 콘텐츠"]

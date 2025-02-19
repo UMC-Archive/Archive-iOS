@@ -100,6 +100,9 @@ class MusicLoadVC: UIViewController {
             case .success(let response):
                 guard let data = response else { return }
                 self?.nextTracks = data
+                
+                let lyrics = self?.musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "")}
+                self?.musicSegmentVC.setInfo(segmentIndex: 1, lyrics: lyrics, nextTracks: data)
             
 //                DispatchQueue.main.async {
 //                    
@@ -248,7 +251,8 @@ class MusicLoadVC: UIViewController {
     }
     // 라이브러리로 이동 액션
     @objc private func goToLibrary(_ sender: CustomTapGesture) {
-        guard let musicId = sender.musicId else { return }
+//        guard let musicId = sender.musicId else { return }
+        guard let musicId = musicInfo?.music.id else { return }
         postAddMusicInLibary(musicId: musicId)
 
     }
@@ -258,9 +262,9 @@ class MusicLoadVC: UIViewController {
             guard let self = self else { return }
             
             switch result {
-            case .success(let response):
-                break
-                print("보관함 이동 성공입니당")
+            case .success:
+                let alert = LibraryAlert.shared.getAlertController(type: .music)
+                self.present(alert, animated: true)
                 // 성공 alert 띄우기
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
@@ -407,6 +411,8 @@ class MusicLoadVC: UIViewController {
     }
     
     @objc private func trackDidFinishPlaying() {
+        print("trackDidFinishPlaying 호출")
+        musicLoadView.updatePlayButton(isPlaying: false)
         switch repeatState {
         case .RepeatAll:
             playNextTrack() // 다음 곡 재생

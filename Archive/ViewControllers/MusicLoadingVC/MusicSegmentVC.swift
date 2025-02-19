@@ -134,6 +134,7 @@ class MusicSegmentVC: UIViewController {
 
 // 어떤 컬렉션 뷰 보여줄지
     private func setupInitialView(index: Int) {
+        self.segmentView.layoutIfNeeded()
         let index = index
         switch index {
         case 0:
@@ -280,6 +281,8 @@ class MusicSegmentVC: UIViewController {
         self.lyrics = lyrics
         self.nextTracks = nextTracks.isEmpty ? Constant.NextTrackLoadingData : nextTracks
         
+        self.segmentView.nextTrackCollectionView.reloadData()
+        self.segmentView.lyricsCollectionView.reloadData()
         segmentChanged()
     }
 }
