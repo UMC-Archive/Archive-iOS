@@ -49,6 +49,7 @@ class Register2View: UIView, UITextFieldDelegate {
         button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         button.setTitleColor(.white, for: .normal)
         button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
+        button.backgroundColor = .clear
         button.layer.cornerRadius = 8
         button.clipsToBounds = true
         button.isEnabled = false // 초기 상태에서 비활성화
@@ -97,6 +98,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var PWField: UITextField = {
         let textField = UITextField()
         textField.placeholder = "비밀번호"
+        textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
@@ -126,6 +128,7 @@ class Register2View: UIView, UITextFieldDelegate {
     lazy var PWField2: UITextField = {
         let textField = UITextField()
         textField.placeholder = "비밀번호 확인"
+        textField.isSecureTextEntry = true
         textField.borderStyle = .roundedRect
         textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
@@ -192,8 +195,9 @@ class Register2View: UIView, UITextFieldDelegate {
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(40)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalTo(leftArrowButton.snp.trailing).offset(8)
+           
         }
         progress2.snp.makeConstraints { make in
             make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
@@ -220,7 +224,7 @@ class Register2View: UIView, UITextFieldDelegate {
          }
         errorLabel.snp.makeConstraints { make in
             make.leading.equalTo(PWField)
-            make.top.equalTo(PWField.snp.bottom).offset(8)
+            make.top.equalTo(PWField.snp.bottom).offset(4)
         }
         
         register2.snp.makeConstraints { make in
@@ -239,9 +243,11 @@ class Register2View: UIView, UITextFieldDelegate {
         errorLabel2.snp.makeConstraints { make in
             make.leading.equalTo(PWField2)
             make.top.equalTo(PWField2.snp.bottom).offset(4)
+            make.height.equalTo(14)
         }
         successLabel2.snp.makeConstraints { make in
               make.leading.equalTo(PWField2)
+            make.height.equalTo(14)
             make.top.equalTo(PWField2.snp.bottom).offset(4) // 성공 메시지 아래 배치
           }
           
@@ -250,6 +256,19 @@ class Register2View: UIView, UITextFieldDelegate {
             make.centerX.equalToSuperview()
             make.width.equalTo(295)
             make.height.equalTo(45)
+        }
+    }
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        
+        if isEnabled {
+            nextButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            nextButton.setTitleColor(.white, for: .normal)
+        } else {
+            nextButton.backgroundColor = .clear
+            nextButton.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+            nextButton.layer.borderWidth = 1
+            nextButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
         }
     }
 }

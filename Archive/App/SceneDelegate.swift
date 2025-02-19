@@ -23,12 +23,14 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         window?.backgroundColor = UIColor.black_100
 
 
+
         let rootVC = OnBoarding1VC()
 
         let navigationController = UINavigationController(rootViewController: rootVC)
 
 
         window?.rootViewController = navigationController
+
 
         window?.makeKeyAndVisible()
       

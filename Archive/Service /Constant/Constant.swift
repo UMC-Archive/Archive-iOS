@@ -33,21 +33,6 @@ extension Constant {
         (RecommendMusic, RecommendAlbum, String)] = [
             (RecommendMusic.loadingData(), RecommendAlbum.loadingData(), Constant.LoadString)
         ]
-    
-    // 탐색했던 시점 로딩 데이터
-//    static let PoinOfViewLoadingData: [(UserHistoryResponseDTO, String)] = [
-//        (UserHistoryResponseDTO.loadingData(), "탐색해주세요.")
-//    ]
-//    
-//    // 최근 추가한 노래 로딩 데이터
-//    static let RecentlyAddMusic: [RecentMusicResponseDTO] = [
-//        RecentMusicResponseDTO.loadingData()
-//    ]
-//    
-//    // 최근 들은 노래 로딩 데이터
-//    static let RecentlyPlayedMusic: [RecentPlayMusicResponseDTO] = [
-//        RecentPlayMusicResponseDTO.loadingData()
-//    ]
 }
 
 
@@ -119,4 +104,13 @@ extension Constant {
         (SameArtistAnotherAlbumResponseDTO, String)] = [
             (SameArtistAnotherAlbumResponseDTO.loadingData(), Constant.LoadString)
         ]
+}
+
+
+// 음악 재생 뷰 로딩 데이터
+extension Constant {
+    // 다음 트랙
+    static let NextTrackLoadingData: [SelectionResponseDTO] = [
+        SelectionResponseDTO.loadingData()
+    ]
 }

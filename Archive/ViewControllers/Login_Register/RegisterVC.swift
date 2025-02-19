@@ -13,8 +13,9 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         setupActions()
         registerView.authCodeField.delegate = self // Delegate 설정
         self.navigationController?.navigationBar.isHidden = true
+        
     }
-
+  
     private func setupActions() {
         // "인증메일 받기" 버튼 동작
         registerView.emailButton.addTarget(self, action: #selector(handleEmailButtonTap), for: .touchUpInside)
@@ -23,11 +24,18 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         registerView.nextButton.addTarget(self, action: #selector(handleNextButtonTap), for: .touchUpInside)
         registerView.emailField.addTarget(self,action: #selector(handleTextFieldEditingChanged), for: .editingChanged)
         registerView.authCodeField.addTarget(self,action: #selector (handleTextFieldEditingChanged), for: .editingChanged)
-        
+        registerView.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
+  
+    }
+    @objc private func leftButtonTapped(){
+        print("눌림!")
+        let moveVC = LoginVC()
+        navigationController?.pushViewController(moveVC,animated: true)
     }
 
     @objc private func handleEmailButtonTap() {
         guard let email = registerView.emailField.text, !email.isEmpty else {
+            showAlert(message : "이메일을 입력해주세요")
             registerView.errorLabel.isHidden = false
             registerView.errorLabel.text = "이메일을 입력해주세요"
             registerView.successLabel.isHidden = true
@@ -54,7 +62,8 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                                   print(" Keychain 저장 실패: \(status)")
                               }
                           }
-                          self.registerView.successLabel.text = response ?? "인증 코드가 전송되었습니다."
+                          self.registerView.successLabel.text = "인증 코드가 전송되었습니다."
+
                           self.registerView.authCodeLabel.isHidden = false
                           self.registerView.authCodeField.isHidden = false
                           
@@ -62,13 +71,16 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
                       case .failure(let error):
                           self.registerView.errorLabel.isHidden = false
                           print("Error: \(error.localizedDescription)")
+                          showAlert(message : "인증 코드 요청에 실패했습니다")
                           self.registerView.errorLabel.text = "인증 코드 요청에 실패했습니다: \(error.localizedDescription)"
+                          
                           self.registerView.successLabel.isHidden = true
                       }
                   
               }
           } else {
               registerView.errorLabel.isHidden = false
+              showAlert(message : "올바르지 않은 형식의 이메일입니다")
               registerView.errorLabel.text = "올바르지 않은 형식의 이메일입니다"
               registerView.successLabel.isHidden = true
           }
@@ -78,8 +90,24 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
 
     @objc private func handleNextButtonTap() {
         print("handleNextButtonTap")
+        guard let email = registerView.emailField.text, !email.isEmpty else {
+                   showAlert(message: "이메일을 입력해주세요.")
+                   return
+               }
+
+               guard let authCode = registerView.authCodeField.text, !authCode.isEmpty else {
+                   showAlert(message: "이메일 인증번호를 입력해주세요.")
+                   return
+               }
+
+               guard let cipherCode = KeychainService.shared.load(account: .userInfo, service: .cipherCode) else {
+                   showAlert(message: "인증코드 요청을 먼저 진행해주세요.")
+                   return
+               }
+        
         guard let authCode = registerView.authCodeField.text, !authCode.isEmpty else {
             registerView.authErrorLabel.isHidden = false
+            
             registerView.authErrorLabel.text = "인증번호를 입력해주세요."
             registerView.authSuccessLabel.isHidden = true
             registerView.nextButton.isEnabled = false
@@ -130,15 +158,25 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
             }
         }
     }
-    
+
     @objc private func handleTextFieldEditingChanged(_ sender: UITextField) {
         if let text = sender.text, !text.isEmpty {
-            sender.backgroundColor = .white // 입력값이 있을 때 배경색 변경
-        } else {
-            sender.backgroundColor = UIColor(white: 0.2, alpha: 1) // 입력값이 없을 때 기본 배경색
-        }
+                sender.backgroundColor = .white
+            } else {
+                sender.backgroundColor = UIColor(white: 0.2, alpha: 1)
+            }
+        
+        let isEmailEntered = !(registerView.emailField.text?.isEmpty ?? true)
+        let isAuthCodeEntered = !(registerView.authCodeField.text?.isEmpty ?? true)
+        
+        let isEmailValid = isValidEmail(registerView.emailField.text ?? "")
+           registerView.updateEmailButtonState(isEnabled: isEmailValid)
+
+        
+        let isEnabled = isEmailEntered && isAuthCodeEntered
+        registerView.updateNextButtonState(isEnabled: isEnabled)
     }
-    
+
         func textFieldShouldReturn(_ textField: UITextField) -> Bool {
             if textField == registerView.authCodeField {
                 handleNextButtonTap() // 인증 코드 확인 요청
@@ -151,5 +189,11 @@ class RegisterVC: UIViewController, UITextFieldDelegate {
         let emailPredicate = NSPredicate(format: "SELF MATCHES %@", emailRegex)
         return emailPredicate.evaluate(with: email)
     }
+    private func showAlert(message: String) {
+           let alert = UIAlertController(title: "알림", message: message, preferredStyle: .alert)
+           let okAction = UIAlertAction(title: "확인", style: .default, handler: nil)
+           alert.addAction(okAction)
+           present(alert, animated: true)
+       }
 }
 

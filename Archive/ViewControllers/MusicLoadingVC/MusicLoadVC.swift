@@ -15,15 +15,25 @@ class MusicLoadVC: UIViewController {
     private let musiceservice = MusicService()
     private let userService = UserService()
     public var musicInfo : MusicResponseDTO?
-    private var music: String
-    private var artist: String
     private var nextTracks: [SelectionResponseDTO] = []
     private var currentTrackIndex: Int = 0
+
 
 
     let libraryService = LibraryService()
 
     private var playerItemObserver: Any?
+
+
+    
+    private var musicSegmentVC: MusicSegmentVC?
+    private var music: String
+    private var artist: String
+    let libraryService = LibraryService()
+    private var playerItemObserver: Any?    // playerItemObserver가 있어야 시간 흐르는걸 인식함
+    
+    // 초기 반복재생 버튼 상태
+    private var repeatState: MusicLoadView.RepeatState = .RepeatAll
 
     
     override func loadView() {
@@ -36,6 +46,7 @@ class MusicLoadVC: UIViewController {
         super.init(nibName: nil, bundle: nil)
         
         setupActions()
+        loadNextTracks()
     }
     
     required init?(coder: NSCoder) {
@@ -45,7 +56,7 @@ class MusicLoadVC: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        setupActions()
+//        setupActions()
     }
     
     public func musicLoad(playMusic: Bool = false, artist: String, music: String) {
@@ -59,25 +70,26 @@ class MusicLoadVC: UIViewController {
                     self?.musicInfo = data
                     
                     // UI 업데이트
-                    DispatchQueue.main.async {
-                        self?.musicLoadView.updateUI(
-                            imageUrl: data.music.image,
-                            title: data.music.title,
-                            artist: data.artist.name,
-                            musicUrl: data.music.music
-                        )
-                    }
+//                    DispatchQueue.main.async {
+//                        self?.musicLoadView.updateUI(
+//                            imageUrl: data.music.image,
+//                            title: data.music.title,
+//                            artist: data.artist.name,
+//                            musicUrl: data.music.music
+//                        )
+//                    }
                     
                     NotificationCenter.default.post(
                                  name: .didChangeMusic,
                                  object: nil,
                                  userInfo: [
                                      "title": data.music.title,
-                                     "artist": data.music.id,
+                                     "artist": data.artist.name,
+                                     "image": data.music.image,
+                                     "isPlaying": playMusic,
                                      "lyrics": data.music.lyrics
                                  ]
                              )
-                    self?.loadNextTracks()
                     if playMusic {
                         self?.resetPlayer()
                         self?.playPauseMusic()
@@ -103,6 +115,10 @@ class MusicLoadVC: UIViewController {
 //                }
             case .failure(let error):
                 print("다음 트랙 로드 실패: \(error)")
+                let alert = NetworkAlert.shared.getRetryAlertController(title: "다음 트랙 불러오기") {
+                    self?.loadNextTracks()
+                }
+                self?.present(alert, animated: true)
             }
         }
     }
@@ -113,9 +129,17 @@ class MusicLoadVC: UIViewController {
             playTrack(at: nextIndex)
         } else {
             print("마지막 곡입니다.")
+            if nextTracks.isEmpty {
+                let alert = UIAlertController(title: "다음 곡 재생", message: "곡을 불러오고 있습니다.", preferredStyle: .alert)
+                let alertAction = UIAlertAction(title: "확인", style: .default)
+                alert.addAction(alertAction)
+                self.present(alert, animated: true)
+            }
             if repeatState == .RepeatAll {
-                        playTrack(at: 0) // 다시 처음 곡부터 재생
-                    }
+                playTrack(at: 0) // 다시 처음 곡부터 재생
+            }
+            
+            
         }
     }
     @objc private func playBackTrack(){
@@ -143,6 +167,9 @@ class MusicLoadVC: UIViewController {
         
        let musicId = track.music.id
         postPlayingRecord(musicId: musicId) // 음악 재생 기록
+        
+        // 뮤직 정보 가져오기
+        musicLoad(playMusic: true, artist: track.artist, music: track.music.title)
 
         musicLoadView.updateUI(
             imageUrl: track.music.image,
@@ -157,7 +184,9 @@ class MusicLoadVC: UIViewController {
                userInfo: [
                    "title": track.music.title,
                    "artist": track.artist,
-                   "lyrics": track.music.lyrics // 가사도 같이 보내줌
+                   "lyrics": track.music.lyrics, // 가사도 같이 보내줌
+                   "image": track.music.image,
+                   "isPlaying": true,
                ]
            )
         musicLoadView.updatePlayButton(isPlaying: true)
@@ -220,6 +249,9 @@ class MusicLoadVC: UIViewController {
 
         self.musicLoadView.titleIcon.isUserInteractionEnabled = true
         self.musicLoadView.titleIcon.addGestureRecognizer(GoToLibraryGesture)
+        
+        // 음악 재생 플로팅 뷰 구독
+        NotificationCenter.default.addObserver(self, selector: #selector(handleMusicChange(_:)), name: .didChangeMusic, object: nil)
 
     }
     // 라이브러리로 이동 액션
@@ -253,7 +285,8 @@ class MusicLoadVC: UIViewController {
 
     // 다음 트랙 화면으로 이동
     @objc public func goToNextTrack() {
-        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil)
+        let nextTrackVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
+        self.musicSegmentVC = MusicSegmentVC(segmentIndexNum: 0, lyrics: nil, nextTracks: self.nextTracks)
         nextTrackVC.segmentIndexNum = 0
         present(nextTrackVC, animated: true)
     }
@@ -270,7 +303,7 @@ class MusicLoadVC: UIViewController {
                 segmentIndexNum: 1,
 //                musicTitle: currentTrack.title,
 //                artistName: currentTrack.id
-                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }
+                lyrics: musicInfo?.music.lyrics.components(separatedBy: "\n").map { $0.replacingOccurrences(of: "\\[.*?\\]", with: "", options: .regularExpression) }, nextTracks: self.nextTracks
 
             )
             
@@ -293,7 +326,7 @@ class MusicLoadVC: UIViewController {
 
     // 추천 콘텐츠 화면으로 이동
     @objc private func goToRecommend() {
-        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil)
+        let recommendVC = MusicSegmentVC(segmentIndexNum: 2, lyrics: nil, nextTracks: self.nextTracks)
         recommendVC.segmentIndexNum = 2
         let nextVC = UINavigationController(rootViewController: recommendVC)
         present(nextVC,animated: true)
@@ -301,28 +334,53 @@ class MusicLoadVC: UIViewController {
 
     // 재생 버튼 누를 시에 음악 재생하기
     @objc public func playPauseMusic() {
-        guard let musicUrlString = musicInfo?.music.music, let url = URL(string: musicUrlString), let musicId = musicInfo?.music.id else {
-                print(" 음악 URL이 유효하지 않습니다.")
-                return
-            }
-
-            if player == nil {
-                player = AVPlayer(url: url)
-                addPeriodicTimeObserver()
-                self.postPlayingRecord(musicId: musicId) // 음악 재생 기록
-            }
-
-            if player?.timeControlStatus == .playing {
-                player?.pause()
-                musicLoadView.updatePlayButton(isPlaying: false)
-            } else {
-                player?.play()
-                musicLoadView.updatePlayButton(isPlaying: true)
-            }
+        guard let musicInfo = musicInfo,
+              let url = URL(string: musicInfo.music.music)
+        else {
+            print(" 음악 URL이 유효하지 않습니다.")
+            return
         }
+        
+
+        let musicId = musicInfo.music.id
+        var isPlaying = true
+        
+        if player == nil {
+            player = AVPlayer(url: url)
+            addPeriodicTimeObserver()
+            self.postPlayingRecord(musicId: musicId) // 음악 재생 기록
+        }
+
+        if player?.timeControlStatus == .playing {
+            player?.pause()
+            isPlaying = false
+                musicLoadView.updatePlayButton(isPlaying: false)
+        } else {
+            player?.play()
+            isPlaying = true
+                musicLoadView.updatePlayButton(isPlaying: true)
+        }
+
+        
+        //  현재 재생 중인 곡 정보 Notification 전송 -> 가사에서 사용하려고
+           NotificationCenter.default.post(
+               name: .didChangeMusic,
+               object: nil,
+               userInfo: [
+                  "title": musicInfo.music.title,
+                   "artist": musicInfo.artist.name,
+                   "lyrics": musicInfo.music.lyrics, // 가사도 같이 보내줌
+                   "image": musicInfo.music.image,
+                   "isPlaying": isPlaying,
+               ]
+           )
+    }
+    
+
     // 초기 반복재생 버튼 상태
     private var repeatState: MusicLoadView.RepeatState = .RepeatAll
-
+   // layItemObserver가 있어야 시간 흐르는걸 인식함
+    
     // 반복재생 누를시에 바뀌는거
     @objc private func changeRepeatMode(){
         switch repeatState {
@@ -339,6 +397,7 @@ class MusicLoadVC: UIViewController {
     }
     // 자연스럽게 다음 노래 나오게 하는거
     private func observePlayerItemDidEnd() {
+        
         NotificationCenter.default.addObserver(self,
             selector: #selector(trackDidFinishPlaying),
             name: .AVPlayerItemDidPlayToEndTime,
@@ -462,6 +521,23 @@ class MusicLoadVC: UIViewController {
                 self.present(alert, animated: true)
             }
         }
+    }
+    
+    // 음악이 변경될 떄마다 호출됨
+    @objc private func handleMusicChange(_ notification: Notification) {
+        guard let userInfo = notification.userInfo,
+            let title = userInfo["title"] as? String,
+            let artist = userInfo["artist"] as? String,
+            let image = userInfo["image"] as? String,
+            let isPlaying = userInfo["isPlaying"] as? Bool
+        else {
+            print("handleMusicChange - Notification 데이터 없음")
+            return
+        }
+        
+        // 데이터 전달
+        musicLoadView.updateUI(imageUrl: image, title: title, artist: artist)
+        musicLoadView.updatePlayButton(isPlaying: isPlaying)
     }
     
 }
