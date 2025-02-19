@@ -20,19 +20,14 @@ class LoginVC: UIViewController {
 
         // 버튼 액션 설정
         setupActions()
-        
-        
+    
         // 음악 재생 기록 예시
-//        let param = UserPlayingRecordRequestDTO(musicId: 1)
-//        postPlayingRecord(param: param)
+
     }
 
     private func setupActions() {
         // 회원가입 버튼 액션
-//        loginView.onRegisterButtonTapped = { [weak self] in
-//            self?.navigateToRegister()
-//        }
-//        
+        
         loginView.emailButton.addTarget(self, action: #selector(navigateToRegister), for: .touchUpInside)
 
         // 로그인 버튼 액션
@@ -75,10 +70,7 @@ class LoginVC: UIViewController {
                 let alert = NetworkAlert.shared.getAlertController(title: error.description)
                 self?.present(alert, animated: true)
                 print("실패: \(error.description)")
-//                DispatchQueue.main.async {
-//                    print("Login Failed: \(error.localizedDescription)")
-//                    self?.showAlert(title: "Login Failed", message: error.localizedDescription)
-//                }
+
             }
         }
     }
@@ -106,9 +98,7 @@ class LoginVC: UIViewController {
                 print("postPlayingRecord() 성공")
                 print(response?.musicId)
                 Task{
-//                    LoginViewController.keychain.set(response.token, forKey: "serverAccessToken")
-//                    LoginViewController.keychain.set(response.nickname, forKey: "userNickname")
-//                    self.goToNextView()
+
                 }
             case .failure(let error):
                 // 네트워크 연결 실패 얼럿
