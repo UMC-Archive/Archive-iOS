@@ -94,7 +94,7 @@ class ProfileChangeView : UIView {
             $0.height.equalTo(1)
         }
         button.snp.makeConstraints{
-            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-(40 + FloatingViewHeight))
+            $0.bottom.equalTo(safeAreaLayoutGuide).offset(-(40 + Constant.FloatingViewHeight))
             $0.centerX.equalToSuperview()
             $0.size.equalTo(CGSize(width: 335, height: 50))
         }

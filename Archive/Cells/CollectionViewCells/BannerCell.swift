@@ -74,18 +74,6 @@ class BannerCell: UICollectionViewCell {
         }
     }
     
-    public func configMusic(data: MusicDummyModel){
-        imageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = data.musicTitle
-        artistLabel.text = data.artist
-    }
-    
-    public func configAlbum(data: AlbumDummyModel) {
-        imageView.kf.setImage(with: URL(string: data.albumImageURL))
-        titleLabel.text = data.albumTitle
-        artistLabel.text = data.artist
-    }
-    
     // 앨범 뷰 추천 앨범
     public func configAlbumRecommendAlbum(album: AlbumRecommendAlbum, artist: String) {
         imageView.kf.setImage(with: URL(string: album.image))

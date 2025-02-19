@@ -134,7 +134,7 @@ class ExploreView: UIView {
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(recapCollectionView.snp.bottom).offset(17)
             make.horizontalEdges.equalToSuperview().inset(20)
-            make.bottom.equalTo(safeAreaLayoutGuide).inset(FloatingViewHeight)
+            make.bottom.equalTo(safeAreaLayoutGuide).inset(Constant.FloatingViewHeight)
         }
     }
     

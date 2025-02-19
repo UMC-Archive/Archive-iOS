@@ -2,17 +2,24 @@ import UIKit
 
 class MusicSegmentView: UIView {
 
-    let albumInfoView = AlbumInfoView()
+    let albumInfoView = AlbumInfoView(inMusicView: true)
 
     let tabBar: UISegmentedControl = {
         let items = ["다음 트랙", "가사", "추천 콘텐츠"]
         let segmentedControl = UISegmentedControl(items: items)
         segmentedControl.selectedSegmentIndex = 0
-        segmentedControl.backgroundColor = .black
+        segmentedControl.backgroundColor = .clear
         segmentedControl.selectedSegmentTintColor = .clear
         
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.white, .font: UIFont.boldSystemFont(ofSize: 16)], for: .selected)
-        segmentedControl.setTitleTextAttributes([.foregroundColor: UIColor.gray, .font: UIFont.systemFont(ofSize: 16)], for: .normal)
+        segmentedControl.setTitleTextAttributes([
+            .foregroundColor: UIColor.white,
+            .font: UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400),
+            .baselineOffset: 7], for: .selected)
+        
+        segmentedControl.setTitleTextAttributes([
+            .foregroundColor: UIColor.white_70,
+            .font: UIFont.customFont(font: .SFPro, ofSize: 14, rawValue: 400),
+            .baselineOffset: 7], for: .normal)
 
         segmentedControl.setBackgroundImage(UIImage(), for: .normal, barMetrics: .default)
         segmentedControl.setDividerImage(UIImage(), forLeftSegmentState: .normal, rightSegmentState: .normal, barMetrics: .default)
@@ -22,10 +29,10 @@ class MusicSegmentView: UIView {
     let nextTrackCollectionView: UICollectionView = {
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection = .vertical
-        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
-        layout.minimumLineSpacing = 10
+        layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 50)
+        layout.minimumLineSpacing = 12
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
 
@@ -34,7 +41,7 @@ class MusicSegmentView: UIView {
         layout.scrollDirection = .vertical
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 40)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
     private lazy var normalUnderbar = UIView().then{
@@ -54,7 +61,7 @@ class MusicSegmentView: UIView {
         layout.scrollDirection = .vertical
         layout.itemSize = CGSize(width: UIScreen.main.bounds.width, height: 60)
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
 
@@ -64,7 +71,7 @@ class MusicSegmentView: UIView {
         layout.itemSize = CGSize(width: 140, height: 186)
         layout.minimumLineSpacing = 10
         let collectionView = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collectionView.backgroundColor = .black
+        collectionView.backgroundColor = .clear
         return collectionView
     }()
 
@@ -86,7 +93,7 @@ class MusicSegmentView: UIView {
 
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .black
+        backgroundColor = .black_100
         setupViews()
         setupConstraints()
     }
@@ -114,7 +121,7 @@ class MusicSegmentView: UIView {
     private func setupConstraints() {
         albumInfoView.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(10)
-            make.leading.trailing.equalToSuperview().inset(10)
+            make.leading.trailing.equalToSuperview()
             make.height.equalTo(70)
         }
 
@@ -152,24 +159,27 @@ class MusicSegmentView: UIView {
         albumCollectionView.snp.makeConstraints { make in
             make.top.equalTo(tabBar.snp.bottom).offset(10)
             make.leading.trailing.equalToSuperview()
-            make.height.equalTo(300)
+//            make.height.equalTo(300)
+            make.bottom.equalTo(recommendTitleLabel.snp.top).offset(-30)
         }
         recommendTitleLabel.snp.makeConstraints { make in
-            make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
+//            make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
+            make.bottom.equalTo(albumRecommendCollectionView.snp.top).offset(-20)
             make.leading.equalToSuperview().offset(10)
         }
         
         rightButton.snp.makeConstraints { make in
             make.top.equalTo(albumCollectionView.snp.bottom).offset(20)
             make.centerY.equalTo(recommendTitleLabel)
-            make.leading.equalTo(recommendTitleLabel.snp.trailing).offset(146)
+            make.trailing.equalToSuperview().inset(20)
         }
        
 
         albumRecommendCollectionView.snp.makeConstraints { make in
             make.top.equalTo(recommendTitleLabel.snp.bottom).offset(10)
-            make.leading.trailing.bottom.equalToSuperview()
+            make.leading.trailing.equalToSuperview().inset(20)
             make.height.equalTo(200)
+            make.bottom.equalToSuperview().inset(50)
         }
     }
     

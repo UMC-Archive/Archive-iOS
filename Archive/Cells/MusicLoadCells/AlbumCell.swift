@@ -1,11 +1,11 @@
 //
-//  ArtistCell.swift
+//  AlbumCell.swift
 //  Archive
 //
-//  Created by 손현빈 on 2/20/25.
+//  Created by 이수현 on 2/19/25.
 //
-import UIKit
 
+import UIKit
 class AlbumCell: UICollectionViewCell {
     static let identifier = "AlbumCell"
     
@@ -20,19 +20,17 @@ class AlbumCell: UICollectionViewCell {
     
     public let titleLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 14, weight: .bold)
+        label.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         label.textColor = .white
-        label.numberOfLines = 2
-        label.textAlignment = .center
+        label.numberOfLines = 1
         label.isUserInteractionEnabled = true
         return label
     }()
     
     public let artistLabel: UILabel = {
         let label = UILabel()
-        label.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        label.font = .customFont(font: .SFPro, ofSize: 16, rawValue: 400)
         label.textColor = .gray
-        label.textAlignment = .center
         label.isUserInteractionEnabled = true
         return label
     }()
@@ -48,6 +46,16 @@ class AlbumCell: UICollectionViewCell {
         fatalError("init(coder:) has not been implemented")
     }
    
+    
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        
+        albumImageView.image = nil
+        titleLabel.text = nil
+        artistLabel.text = nil
+       
+        gestureRecognizers = nil
+    }
     
     private func setupViews() {
         contentView.addSubview(albumImageView)
@@ -92,5 +100,3 @@ class AlbumCell: UICollectionViewCell {
 
 
 }
-
-

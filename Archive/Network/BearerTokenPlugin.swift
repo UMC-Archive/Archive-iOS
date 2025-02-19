@@ -12,10 +12,11 @@ import Moya
 // 라이브러리 : Moya, KeychainSwift 사용
 final class BearerTokenPlugin: PluginType {
     private var accessToken: String? {
+       return KeychainService.shared.load(account: .token, service: .serverAccessToken)
 
-        return KeychainService.shared.load(account: .token, service: .serverAccessToken)
-        
-        
+    }
+    
+  
         func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
             var request = request
             
@@ -26,5 +27,5 @@ final class BearerTokenPlugin: PluginType {
             return request
         }
         
-    }
+    
 }

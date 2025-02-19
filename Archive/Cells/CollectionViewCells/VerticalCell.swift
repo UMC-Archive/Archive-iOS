@@ -58,8 +58,8 @@ class VerticalCell: UICollectionViewCell {
         super.prepareForReuse()
         
         imageView.image = nil
-        titleLabel.text = ""
-        artistYearLabel.text = ""
+        titleLabel.text = nil
+        artistYearLabel.text = nil
         overflowButton.removeTarget(nil, action: nil, for: .allEvents)
         
         gestureRecognizers = nil
@@ -121,12 +121,6 @@ class VerticalCell: UICollectionViewCell {
             make.centerY.equalToSuperview()
             make.trailing.equalTo(overflowButton).offset(-7)
         }
-    }
-    
-    public func config(data: MusicDummyModel){
-        imageView.kf.setImage(with: URL(string: data.albumURL))
-        titleLabel.text = data.musicTitle
-        artistYearLabel.text = "\(data.artist) ⦁ \(data.year)"
     }
     
     // 숨겨진 명곡

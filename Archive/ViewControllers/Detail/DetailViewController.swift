@@ -13,7 +13,6 @@ class DetailViewController: UIViewController {
     
     private lazy var detailView = DetailView(section: section)
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let musicData = MusicDummyModel.dummy()
     private let libraryService = LibraryService()
     
     

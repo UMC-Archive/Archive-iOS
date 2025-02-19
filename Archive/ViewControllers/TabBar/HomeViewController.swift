@@ -16,8 +16,6 @@ class HomeViewController: UIViewController {
 
     private let homeView = HomeView()
     private var dataSource: UICollectionViewDiffableDataSource<Section, Item>?
-    private let musicData = MusicDummyModel.dummy()
-    private let pointData = PointOfViewDummyModel.dummy()
     private var overflowView: OverflowView?
     
     private var archiveData: [(AlbumRecommendAlbum, String)] = Constant.ArchiveLoadingData // 당신을 위한 아카이브
@@ -216,7 +214,7 @@ class HomeViewController: UIViewController {
                 verticalCell.setOverflowView(type: .other)
                 
                 // 노래 보관함으로 이동 탭 제스처
-                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self!.goToLibrary(_:)))
+                let tapGoToLibraryGesture = CustomTapGesture(target: self, action: #selector(self?.goToLibrary(_:)))
                 tapGoToLibraryGesture.musicId = data.music.id
                 verticalCell.overflowView.libraryButton.addGestureRecognizer(tapGoToLibraryGesture)
 

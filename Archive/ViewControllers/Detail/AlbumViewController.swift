@@ -15,7 +15,6 @@ class AlbumViewController: UIViewController {
     private let album: String
     
     private let albumView = AlbumView()
-    private let data = AlbumCurationDummyModel.dummy()
     private var albumData: AlbumInfoReponseDTO = Constant.AlbumInfoLoadingData // 앨범 데이터
     private var trackListData: [TrackListResponse] = Constant.TrackListLoadingData// 트랙 리스트 데이터
     private var recommendAlbumData: [(AlbumRecommendAlbum, String)] = Constant.ArchiveLoadingData // 추천 앨범
@@ -102,12 +101,8 @@ class AlbumViewController: UIViewController {
         }
     }
     private func updateTrackViewHeight(){
-//        albumView.trackView.snp.updateConstraints { make in
-//            make.height.equalTo(180 + data.albumTrack.count * 60)
-//        }
-        
         // 앨범 리스트가 4개 이하일 경우
-        let musicCount = self.data.albumTrack.musicList.count
+        let musicCount = self.trackListData.count
         print("musicCount: \(musicCount)")
         if musicCount <= 4 {
             albumView.trackView.pageControl.isHidden = true

@@ -27,7 +27,7 @@ class MusicLoadView: UIView {
 
     // 곡 제목
     lazy var titleLabel = UILabel().then { make in
-        make.text = "Supernatural"
+        make.text = Constant.LoadString
         make.textColor = .white
         make.font = .customFont(font: .SFPro, ofSize: 28,rawValue : 700)
         make.textAlignment = .left
@@ -42,8 +42,8 @@ class MusicLoadView: UIView {
 
     // 아티스트 이름
     lazy var artistLabel = UILabel().then { make in
-        make.text = "NewJeans"
-        make.textColor = .gray
+        make.text = Constant.LoadString
+        make.textColor = .white_70
         make.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         make.textAlignment = .left
     }
@@ -79,13 +79,13 @@ class MusicLoadView: UIView {
     // 재생 시간 레이블
     lazy var currentTimeLabel = UILabel().then { make in
         make.text = "0:00"
-        make.textColor = .gray
+        make.textColor = .white_70
         make.font = UIFont.systemFont(ofSize: 12)
     }
 
     lazy var totalTimeLabel = UILabel().then { make in
         make.text = "0:30"
-        make.textColor = .gray
+        make.textColor = .white_70
         make.font = UIFont.systemFont(ofSize: 12)
     }
 
@@ -178,13 +178,13 @@ class MusicLoadView: UIView {
         // 앨범 정보 스택뷰
         albumInfoStackView.snp.makeConstraints { make in
             make.top.equalTo(albumImageView.snp.bottom).offset(20)
-            make.leading.equalToSuperview().offset(50) // 약간 뒤로 이동
-            make.trailing.equalToSuperview().offset(-20)
+            make.leading.equalTo(albumImageView) // 약간 뒤로 이동
+            make.trailing.equalTo(albumImageView)
         }
 
         // 제목 옆 아이콘
         titleIcon.snp.makeConstraints { make in
-            make.width.height.equalTo(20)
+            make.width.height.equalTo(24)
             make.trailing.equalTo(albumImageView.snp.trailing).offset(10) // 살짝 앞으로 이동
         }
 

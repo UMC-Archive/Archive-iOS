@@ -80,43 +80,52 @@ class AlbumView: UIView {
     }
     
     private func setUI(){
+        
+        // 스크롤뷰
         scrollView.snp.makeConstraints { make in
             make.horizontalEdges.top.equalToSuperview()
-            make.bottom.equalToSuperview().inset(FloatingViewHeight)
+            make.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
         
+        // 콘텐츠뷰
         contentView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
             make.width.equalTo(scrollView)
             make.bottom.equalTo(collectionView)
         }
         
+        // CD뷰
         albumCDView.snp.makeConstraints { make in
             make.centerY.equalToSuperview().multipliedBy(0.1)
             make.centerX.equalToSuperview()
         }
         
+        // 타이틀
         titleLabel.snp.makeConstraints { make in
             make.top.equalTo(albumCDView.snp.bottom).offset(30)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
+        // 아티스트 라벨
         artistLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
+        // 큐레아션 라벨
         contentLabel.snp.makeConstraints { make in
             make.top.equalTo(artistLabel.snp.bottom).offset(10)
             make.horizontalEdges.equalToSuperview().inset(20)
         }
         
+        // 트랙 리스트
         trackView.snp.makeConstraints { make in
             make.top.equalTo(contentLabel.snp.bottom).offset(40)
             make.horizontalEdges.equalToSuperview().inset(20)
             make.height.equalTo(420) // 수정 필요 180 + 60 * x -> 동적으로 바꿔야 함
         }
         
+        // 콜렉션뷰
         collectionView.snp.makeConstraints { make in
             make.top.equalTo(trackView.snp.bottom).offset(54)
             make.leading.equalToSuperview().offset(20)
@@ -125,6 +134,7 @@ class AlbumView: UIView {
         }
     }
     
+    // 레이아웃 생성
     private func createLayout() -> UICollectionViewCompositionalLayout {
         let config = UICollectionViewCompositionalLayoutConfiguration()
         config.interSectionSpacing = 40
@@ -154,6 +164,7 @@ class AlbumView: UIView {
         return section
     }
     
+    // 아티스트 정보 데이터
     public func config(data: AlbumInfoReponseDTO, artist: String, description: String?) {
         albumCDView.config(albumImageURL: data.image)
         titleLabel.text = data.title
@@ -161,6 +172,7 @@ class AlbumView: UIView {
         contentLabel.text = description
     }
     
+    // 트랙 데이터
     public func configTrack(data: AlbumTrackListResponseDTO){
         trackView.config(data: data)
     }

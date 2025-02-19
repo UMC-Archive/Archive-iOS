@@ -160,7 +160,7 @@ class MyPageView: UIView {
         scrollView.snp.makeConstraints {
             $0.top.equalTo(topView.snp.bottom) // scrollView는 navigationView 아래에 위치
             $0.leading.trailing.equalToSuperview()
-            $0.bottom.equalToSuperview().inset(FloatingViewHeight)
+            $0.bottom.equalToSuperview().inset(Constant.FloatingViewHeight)
         }
                 
                 
