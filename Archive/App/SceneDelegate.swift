@@ -25,7 +25,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 
 
-        let rootVC = OnBoarding1VC()
+        let rootVC = ProfileSelectVC()
 
         let navigationController = UINavigationController(rootViewController: rootVC)
 
