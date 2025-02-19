@@ -80,18 +80,21 @@ class PreferGenreView: UIView {
         return collectionView
     }()
 
+    
+  
     // 다음 버튼
     lazy var nextButton: UIButton = {
         let button = UIButton()
         button.setTitle("다음", for: .normal)
+        button.titleLabel?.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 700)
         button.setTitleColor(.white, for: .normal)
-        button.backgroundColor = UIColor(white: 1.0, alpha: 0.2)
+        button.backgroundColor = UIColor(white: 0.2, alpha: 1) // 초기 비활성화 색상
+        button.backgroundColor = .clear
         button.layer.cornerRadius = 8
-        button.isEnabled = true
-        button.translatesAutoresizingMaskIntoConstraints = false
+        button.clipsToBounds = true
+        button.isEnabled = false // 초기 상태에서 비활성화
         return button
     }()
-
     override init(frame: CGRect) {
         super.init(frame: frame)
         self.backgroundColor = .black
@@ -133,15 +136,16 @@ class PreferGenreView: UIView {
         }
 
         leftArrowButton.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(57)
-            make.leading.equalToSuperview().offset(20)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
+            make.leading.equalToSuperview().offset(16)
             make.centerY.equalTo(title)
             make.width.height.equalTo(24)
         }
       
         title.snp.makeConstraints { make in
-            make.top.equalTo(safeAreaLayoutGuide).offset(57)
-            make.leading.equalTo(leftArrowButton.snp.trailing).offset(64)
+            make.top.equalTo(safeAreaLayoutGuide).offset(20)
+            
+            make.centerX.equalToSuperview()
         }
         progress4.snp.makeConstraints { make in
             make.top.equalTo(leftArrowButton.snp.bottom).offset(10)
@@ -154,5 +158,20 @@ class PreferGenreView: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+    func updateNextButtonState(isEnabled: Bool) {
+        nextButton.isEnabled = isEnabled
+        
+        if isEnabled {
+            nextButton.backgroundColor = UIColor(hex: "#2D2D2C")
+            nextButton.setTitleColor(.white, for: .normal)
+        } else {
+            nextButton.backgroundColor = .clear
+            nextButton.setTitleColor(UIColor(white: 1.0, alpha: 0.5), for: .normal)
+            nextButton.layer.borderWidth = 1
+            nextButton.layer.borderColor = UIColor(hex: "#2D2D2C")?.cgColor
+        }
+    }
+
 }
+
 
