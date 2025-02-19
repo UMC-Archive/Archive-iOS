@@ -32,7 +32,7 @@ class TrackCell: UICollectionViewCell {
         let label = UILabel()
         label.font = .customFont(font: .SFPro, ofSize: 13, rawValue: 400)
         label.textColor = .white_70
-        label.isUserInteractionEnabled = true
+        label.isUserInteractionEnabled = false
         return label
     }()
     

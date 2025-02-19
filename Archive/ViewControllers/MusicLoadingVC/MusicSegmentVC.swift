@@ -76,6 +76,11 @@ class MusicSegmentVC: UIViewController {
         setupInitialView(index: segmentIndexNum)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        self.segmentIndexNum = segmentView.tabBar.selectedSegmentIndex
+    }
+    
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -347,24 +352,25 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
             musicGesture.musicImageURL = trackData.music.image
             musicGesture.artist = trackData.artist
             cell.touchView.addGestureRecognizer(musicGesture)
-            cell.touchView.isUserInteractionEnabled = true
+            cell.touchView.isUserInteractionEnabled = nextTracks?.count != 1
 
             // 아티스트 탭 제스처
             let tapArtistGesture = CustomTapGesture(target: self, action: #selector(self.tapArtistLabelGesture(_:)))
             tapArtistGesture.artist = trackData.artist
             tapArtistGesture.album = trackData.album.title
             cell.detailLabel.addGestureRecognizer(tapArtistGesture)
-            cell.detailLabel.isUserInteractionEnabled = true
+            cell.detailLabel.isUserInteractionEnabled = nextTracks?.count != 1
 
             // 앨범 으로 이동 제스처
             let tapAlbumGesture = CustomTapGesture(target: self, action: #selector(self.tapGoToAlbumGesture(_:)))
             tapAlbumGesture.artist = trackData.artist
             tapAlbumGesture.album = trackData.album.title
-            cell.overflowView.goToAlbumButton.isUserInteractionEnabled = true
+            cell.overflowView.goToAlbumButton.isUserInteractionEnabled = nextTracks?.count != 1
             cell.overflowView.goToAlbumButton.addGestureRecognizer(tapAlbumGesture)
 
             // etc 버튼 눌렀을 때의 제스처
             cell.moreButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+            cell.moreButton.isUserInteractionEnabled = nextTracks?.count != 1
             cell.setOverflowView(type: .other)
             
             // 노래 보관함으로 이동 탭 제스처
@@ -413,6 +419,7 @@ extension MusicSegmentVC: UICollectionViewDataSource, UICollectionViewDelegate {
 
             // etc 버튼 눌렀을 때의 제스처
             cell.moreButton.addTarget(self, action: #selector(self.touchUpInsideOverflowButton(_:)), for: .touchUpInside)
+            cell.moreButton.isUserInteractionEnabled = recommendMusic.count != 1
             cell.setOverflowView(type: .other)
             
             // 노래 보관함으로 이동 탭 제스처
