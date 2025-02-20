@@ -133,7 +133,7 @@ class LibraryMainView : UIView {
             addSubview($0)
         }
         
-        topView.snp.makeConstraints
+        topView.snp.makeConstraints{
             $0.top.equalTo(safeAreaLayoutGuide)
             $0.leading.equalTo(librarySegmentControl)
             $0.horizontalEdges.equalToSuperview().inset(20)
