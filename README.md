@@ -7,7 +7,7 @@
 |:-----:|:-----:|:-----:|
 |[이수현 (Soo)](https://github.com/LeeeeSuHyeon)|[송재곤 (Azin)](https://github.com/worhs02)|[손현빈 (Lemon)](https://github.com/SickofU)|
 |팀장 👑|팀원 👨🏻‍💻|팀원 👨🏻‍💻|
-|`Home`<br/>`앨범 큐레이션`<br/>`Explore`<br/>`아티스트 뷰`<br/>|`Library`<br/>`마이페이지`<br/>|`온보딩`<br/>`Search`<br/>`음악 재생 뷰`<br/>`탭바`<br/>
+|`Home`<br/>`앨범 큐레이션`<br/>`Explore`<br/>`아티스트 뷰`<br/>`탭바 / 음악 재생 바`<br/>|`Library`<br/>`마이페이지`<br/>|`온보딩`<br/>`Search`<br/>`음악 재생 뷰`<br/>
 </div>
 <br/>
 
