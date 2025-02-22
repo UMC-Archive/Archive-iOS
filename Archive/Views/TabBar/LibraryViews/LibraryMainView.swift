@@ -22,8 +22,8 @@ class LibraryMainView : UIView {
         
         static let playlistCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
         
-        static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 350, height: 422) : CGSize(width: 335, height: 422)
-        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 170, height: 226) : CGSize(width: 160, height: 206)
+        static let albumCollectionViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 335, height: 422) : CGSize(width: 335, height: 422)
+        static let albumCollectionViewIconSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 206) : CGSize(width: 160, height: 206)
       }
     
     

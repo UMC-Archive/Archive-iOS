@@ -195,6 +195,10 @@ class PreferArtistVC: UIViewController {
                 updateNextButtonState()
             }
         }
+
+        func scrollViewDidScroll(_ scrollView: UIScrollView) {
+            view.endEditing(true)
+        }
     }
     
   

@@ -2,7 +2,7 @@ import UIKit
 import SnapKit
 
 class ProfileSelectView: UIView, UITextFieldDelegate {
-
+    public let backgroundView = UIView()
     // 회원가입 타이틀
     lazy var title = UILabel().then { make in
         make.textColor = .white
@@ -133,6 +133,7 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     }
 
     private func setupViews() {
+        addSubview(backgroundView)
         addSubview(leftArrowButton)
         addSubview(title)
         addSubview(rightArrowButton)
@@ -147,6 +148,10 @@ class ProfileSelectView: UIView, UITextFieldDelegate {
     }
 
     private func setupConstraints() {
+        backgroundView.snp.makeConstraints{
+            make in
+            make.edges.equalToSuperview()
+        }
         leftArrowButton.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalToSuperview().offset(16)

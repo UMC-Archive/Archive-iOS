@@ -13,7 +13,7 @@ class AlbumCollectionViewCell: UICollectionViewCell {
     static let albumCollectionViewIdentifier = "albumCollectionViewIdentifier"
     
     private enum constant {
-        static let albumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 170, height: 170) : CGSize(width: 160, height: 160)
+        static let albumImageSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 160, height: 160) : CGSize(width: 160, height: 160)
         static let albumLabelStackViewSize = UIScreen.main.isWiderThan375pt ? CGSize(width: 101, height: 39) : CGSize(width: 101, height: 39)
     }
     
