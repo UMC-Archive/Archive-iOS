@@ -12,6 +12,8 @@ class Register2VC: UIViewController {
         super.viewDidLoad()
         self.navigationController?.navigationBar.isHidden = true
         setupActions()
+       
+        hideKeyboard()
         
     }
 
@@ -25,7 +27,9 @@ class Register2VC: UIViewController {
         register2View.leftArrowButton.addTarget(self,action: #selector(leftButtonTapped),for: .touchUpInside)
     }
     @objc private func leftButtonTapped(){
-        navigationController?.popViewController(animated: true)
+        print("눌림!")
+        let moveVC = RegisterVC()
+        navigationController?.pushViewController(moveVC,animated: true)
     }
     @objc private func handlePasswordInput() {
         guard let password = register2View.PWField.text else { return }
@@ -81,7 +85,10 @@ class Register2VC: UIViewController {
         }
      
     }
+    
+ 
     @objc private func handleNextButtonTap() {
+        print("다음 버튼 클릭됨")
         guard let password = register2View.PWField.text, !password.isEmpty else {
                showAlert(message: "비밀번호를 입력해주세요.")
                return
@@ -109,5 +116,23 @@ class Register2VC: UIViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
+    
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            view.endEditing(true)
+        }
+    func hideKeyboard() {
+            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self,
+                                                                     action: #selector(dismissKeyboard))
+        register2View.backgroundView.addGestureRecognizer(tap)
+            
+            // 또는 아래처럼 작성하셔도 됩니다.
+            
+           // view.addGestureRecognizer(UITapGestureRecognizer(target: self,
+           //                                                  action: #selector(dismissKeyboard)))
+        }
+        
+       @objc func dismissKeyboard() {
+           view.endEditing(true)
+       }
 }
 

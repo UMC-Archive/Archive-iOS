@@ -3,6 +3,8 @@ import Then
 import SnapKit
 
 class Register2View: UIView, UITextFieldDelegate {
+    // 백그라운드뷰
+    public let backgroundView = UIView()
     
     // 회원가입 타이틀
     lazy var title = UILabel().then { make in
@@ -103,6 +105,7 @@ class Register2View: UIView, UITextFieldDelegate {
         textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
         textField.backgroundColor = UIColor(white: 0.2, alpha: 1) // 기본 배경색
+        textField.textColor = .black_100
         return textField
     }()
     
@@ -133,6 +136,7 @@ class Register2View: UIView, UITextFieldDelegate {
         textField.font = .customFont(font: .SFPro, ofSize: 16,rawValue : 400)
         textField.delegate = self
         textField.backgroundColor = UIColor(white: 0.2, alpha: 1) // 기본 배경색
+        textField.textColor = .black_100
         return textField
     }()
     // 비밀번호 확인 오류 메시지
@@ -171,6 +175,7 @@ class Register2View: UIView, UITextFieldDelegate {
     }
     
     private func setupViews() {
+        addSubview(backgroundView)
         addSubview(leftArrowButton)
         
         addSubview(title)
@@ -187,6 +192,9 @@ class Register2View: UIView, UITextFieldDelegate {
     }
     
     private func setupConstraints() {
+        backgroundView.snp.makeConstraints { make in
+            make.edges.equalToSuperview()
+        }
         leftArrowButton.snp.makeConstraints { make in
             make.top.equalTo(safeAreaLayoutGuide).offset(20)
             make.leading.equalToSuperview().offset(16)

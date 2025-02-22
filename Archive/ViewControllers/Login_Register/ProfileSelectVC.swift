@@ -14,7 +14,7 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         profileSelectView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        
+        hideKeyboard()
         setupActions()
         updateCompleteButtonState() // 초기 상태 업데이트
     }
@@ -34,7 +34,9 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
     }
     
     @objc private func leftButtonTapped() {
-        navigationController?.popViewController(animated: true)
+        print("눌림!")
+        let moveVC = Register2VC()
+        navigationController?.pushViewController(moveVC, animated: true)
     }
     
     @objc private func nicknameEditingChanged() {
@@ -98,5 +100,22 @@ class ProfileSelectVC: UIViewController, UIImagePickerControllerDelegate, UINavi
         alert.addAction(okAction)
         present(alert, animated: true)
     }
+    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+            view.endEditing(true)
+        }
+    func hideKeyboard() {
+            let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self,
+                                                                     action: #selector(dismissKeyboard))
+        profileSelectView.backgroundView.addGestureRecognizer(tap)
+            
+            // 또는 아래처럼 작성하셔도 됩니다.
+            
+           // view.addGestureRecognizer(UITapGestureRecognizer(target: self,
+           //                                                  action: #selector(dismissKeyboard)))
+        }
+        
+       @objc func dismissKeyboard() {
+           view.endEditing(true)
+       }
 }
 
