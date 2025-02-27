@@ -11,6 +11,44 @@
 </div>
 <br/>
 
+## 🎥 주요 기능 시연 영상
+
+<table>
+  <tr>
+    <td align="center">회원가입</td>
+    <td align="center">로그인-홈-앨범</td>
+    <td align="center">홈-아티스트</td>
+    <td align="center">시대별 음악 탐색</td>
+    <td align="center">음악 재생</td>
+    <td align="center">보관함</td>
+    <td align="center">마이페이지</td>
+  </tr>
+  <tr>
+    <td>
+      <img src="https://github.com/user-attachments/assets/feed0dce-0bee-474d-b317-3f6299894ea6" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/fbfa854d-329f-499d-a5c0-9ee7f93314cf" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/3777c1ba-93a2-41ff-a2e6-7a9461e96c40" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/5cd45aea-63c6-4046-9183-78018818926e" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/38d3b752-a767-42ba-a9f9-384d0482b707" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/ff59b4c3-a376-4984-a7b0-78ae3d0ff445" width="200">
+    </td>
+    <td>
+      <img src="https://github.com/user-attachments/assets/a0db3582-459b-4eaa-ba8f-d6f761e34831" width="200">
+    </td>
+  </tr>
+</table>
+
+
 ## 🛠️ Development Environment 🛠️
 ![iOS](https://img.shields.io/badge/iOS-000000?style=for-the-badge&logo=ios&logoColor=white)
 ![Xcode](https://img.shields.io/badge/Xcode-007ACC?style=for-the-badge&logo=Xcode&logoColor=white)
