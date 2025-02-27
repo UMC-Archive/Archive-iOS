@@ -1,3 +1,6 @@
+> <img src="https://github.com/user-attachments/assets/827a0a8d-00ca-4416-8806-0116f52732fd" width="150"><br/>
+> UMC 7기 데모데이 우수상작
+
 <div align=center>
 
 # 🍎 Archive_iOS 🍎
